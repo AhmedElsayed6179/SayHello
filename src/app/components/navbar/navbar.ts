@@ -15,7 +15,6 @@ export class Navbar {
   currentLang = localStorage.getItem('lang') || 'en';
   private translate = inject(TranslateService);
   usersInRoom$: Observable<number>;
-  private sub!: Subscription;
 
   constructor(private socketService: SocketService) {
     const darkMode = localStorage.getItem('darkMode');
