@@ -50,7 +50,7 @@ export class Chat implements OnInit, OnDestroy {
 
   initSocket(token: string) {
     if (this.socket) this.socket.disconnect();
-    this.socket = io('https://sayhelloserver-production.up.railway.app');
+    this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
     this.socket.emit('join', token);
 
     this.socket.on('connected', () => this.zone.run(() => {
