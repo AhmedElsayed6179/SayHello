@@ -82,7 +82,7 @@ export class Home {
     const name = this.usernameForm.value.username.trim();
     if (!name) return;
 
-    fetch('sayhelloserver-production.up.railway.app/start-chat', {
+    fetch('https://sayhelloserver-production.up.railway.app/start-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })

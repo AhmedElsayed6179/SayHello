@@ -50,7 +50,7 @@ export class Chat implements OnInit, OnDestroy {
 
   initSocket(token: string) {
     if (this.socket) this.socket.disconnect();
-    this.socket = io('sayhelloserver-production.up.railway.app');
+    this.socket = io('https://sayhelloserver-production.up.railway.app');
     this.socket.emit('join', token);
 
     this.socket.on('connected', () => this.zone.run(() => {
@@ -128,7 +128,7 @@ export class Chat implements OnInit, OnDestroy {
     this.waitingMessageShown = false;
     this.cd.detectChanges();
 
-    fetch('sayhelloserver-production.up.railway.app/start-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
+    fetch('https://sayhelloserver-production.up.railway.app/start-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
       .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
       .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER') }); this.router.navigate(['/']); });
