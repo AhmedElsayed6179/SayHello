@@ -1,59 +1,51 @@
-# SayHello
+# 💬 SayHello – Anonymous Random Chat App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+SayHello is a modern, fast, and secure **anonymous random chat application** inspired by platforms like Omegle.  
+It allows users to instantly connect with random people around the world **without registration**, while maintaining privacy and simplicity.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Features
 
-```bash
-ng serve
-```
+- 🔒 Anonymous chat (no accounts, no emails)
+- ⚡ Instant random user matching
+- 🔁 Next chat button
+- ⌨️ Real-time typing indicator
+- 🌙 Dark / Light mode support
+- 🌍 Multi-language support (Arabic & English)
+- 📱 Fully responsive design
+- 🧠 Secure session handling using tokens
+- 😊 Emoji support
+- 🚫 Username hidden from URL for privacy
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🛠️ Tech Stack
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Frontend
+- Angular  
+  https://angular.io/
+- Bootstrap  
+  https://getbootstrap.com/
+- Font Awesome  
+  https://fontawesome.com/
+- SweetAlert2  
+  https://sweetalert2.github.io/
+- ngx-translate  
+  https://github.com/ngx-translate/core
 
-```bash
-ng generate component component-name
-```
+### Backend
+- Node.js  
+  https://nodejs.org/
+- Express.js  
+  https://expressjs.com/
+- Socket.IO  
+  https://socket.io/
+- UUID / Crypto  
+  https://nodejs.org/api/crypto.html
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 📂 Project Structure
 
-## Building
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
