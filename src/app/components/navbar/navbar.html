@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary px-3">
+  <!-- الشعار دائمًا على الشمال -->
+  <a class="navbar-brand d-flex align-items-center" routerLink="/Home">
+    SayHello
+    <img src="SayHello.png" alt="Logo" width="30" height="30" class="ms-2">
+  </a>
+
+  <!-- مساحة فارغة لتوسيط الأزرار -->
+  <div class="ms-auto d-flex gap-2">
+    <div class="btn-group-custom">
+      <button class="btn btn-lang" (click)="toggleLang()">
+        {{ currentLang === 'en' ? 'عربي' : 'EN' }}
+      </button>
+
+      <button class="btn btn-theme" (click)="toggleTheme()" [ngStyle]="{
+          'background-color': isDarkMode ? '#f1f1f1' : '#212529',
+          'color': isDarkMode ? '#212529' : '#fff'
+        }">
+        {{ isDarkMode ? '☀️' : '🌙' }}
+      </button>
+    </div>
+  </div>
+</nav>

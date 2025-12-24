@@ -1,0 +1,33 @@
+<footer class="footer py-4" [ngClass]="isDarkMode ? 'dark-mode' : ''">
+  <div class="container text-center">
+    <!-- شعار وحقوق -->
+    <div class="footer-brand mb-3" style="direction: ltr;">
+      <h5 class="mb-1">&copy; 2025 SayHello Chat</h5>
+      <p class="mb-0 small">
+        {{ 'FOOTER.Website_by' | translate }} :
+        <a href="#" target="_blank">{{ 'FOOTER.My_Name' | translate }}</a>
+      </p>
+    </div>
+
+    <!-- أيقونات التواصل الاجتماعي -->
+    <div class="social-icons d-flex justify-content-center gap-3 mb-2">
+      <a href="https://facebook.com" target="_blank" aria-label="Facebook" class="social-btn fb">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://x.com" target="_blank" aria-label="Twitter" class="social-btn tw">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="social-btn ig">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn" class="social-btn li">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </div>
+
+    <!-- نص إضافي -->
+    <p class="small text mb-0">
+      {{ 'FOOTER.COPYRIGHT' | translate }}
+    </p>
+  </div>
+</footer>

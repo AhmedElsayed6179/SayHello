@@ -1,0 +1,55 @@
+{
+  "HOME": {
+    "TITLE": "Welcome to SayHello",
+    "DESC": "A simple text-based chat platform. Enter without registration, just write your name and start chatting!",
+    "START": "Start Chatting",
+    "NAME_PLACEHOLDER": "Enter your name",
+    "ERROR_TITLE": "Invalid Name",
+    "ERROR_REQUIRED": "Name is required",
+    "ERROR_MINLENGTH": "Name must be at least 3 characters",
+    "ERROR_MAXLENGTH": "Name must be at most 20 characters",
+    "ERROR_PATTERN": "Name cannot contain spaces",
+    "ERROR_SERVER": "Failed to start chat. Try again later"
+  },
+  "SECTIONS": {
+    "ONE": {
+      "TITLE": "Quick Communication",
+      "DESC": "Start instant conversations with other users.",
+      "DETAIL1": "Instant connection without long waiting.",
+      "DETAIL2": "Text chat easily.",
+      "DETAIL3": "Share your interests with others."
+    },
+    "TWO": {
+      "TITLE": "Meet Others",
+      "DESC": "Discover common interests and communicate easily.",
+      "DETAIL1": "Users from all over the world.",
+      "DETAIL2": "Opportunities to make new friends.",
+      "DETAIL3": "Fun and safe conversations."
+    },
+    "THREE": {
+      "TITLE": "Security & Privacy",
+      "DESC": "Enjoy a safe and protected chat experience.",
+      "DETAIL1": "Your personal information is not shared.",
+      "DETAIL2": "Message content is monitored for safety.",
+      "DETAIL3": "Ability to report inappropriate content."
+    }
+  },
+  "CHAT": {
+    "TITLE": "Chat Room",
+    "PLACEHOLDER": "Type a message...",
+    "STOP": "Exit",
+    "WAITING": "No partner connected yet. Please wait...",
+    "CONNECTED": "You are now connected!",
+    "NO_PARTNER": "No partner connected yet.",
+    "PARTNER_LEFT": "Your partner has left the chat.",
+    "SYSTEM": "System",
+    "TYPING": "is typing...",
+    "NEXT": "Next",
+    "YOU": "You"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "All rights reserved",
+    "Website_by": "Website by",
+    "My_Name": "Ahmed Elsayed"
+  }
+}

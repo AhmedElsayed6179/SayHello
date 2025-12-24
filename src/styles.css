@@ -1,1 +1,59 @@
 /* You can add global styles to this file, and also import other style files */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+body.swal2-shown {
+  overflow-y: auto !important;
+  padding-right: 0 !important;
+}
+
+body[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-mode .navbar {
+  background-color: #1f1f1f !important;
+}
+
+/* ================= SweetAlert2 - Light Mode ================= */
+.swal2-popup {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+.swal2-title,
+.swal2-html-container {
+  color: #212529 !important;
+}
+
+.swal2-confirm {
+  background-color: #0b93f6 !important;
+  color: #ffffff !important;
+}
+
+/* ================= SweetAlert2 - Dark Mode ================= */
+body.dark-mode .swal2-popup {
+  background-color: #1f1f1f !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .swal2-title,
+body.dark-mode .swal2-html-container {
+  color: #ffffff !important;
+}
+
+body.dark-mode .swal2-confirm {
+  background-color: #0b93f6 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .swal2-cancel {
+  background-color: #444 !important;
+  color: #ffffff !important;
+}

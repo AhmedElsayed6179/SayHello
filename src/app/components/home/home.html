@@ -1,0 +1,33 @@
+<div class="container text-center my-5" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
+
+  <!-- Hero Section -->
+  <section class="hero-section mb-5">
+    <h1 class="display-4">{{ 'HOME.TITLE' | translate }}</h1>
+    <p class="lead">{{ 'HOME.DESC' | translate }}</p>
+
+    <!-- إدخال الاسم وزر البداية -->
+    <form [formGroup]="usernameForm" (ngSubmit)="startChat()">
+      <div class="d-flex justify-content-center gap-2 mt-3 flex-column flex-sm-row align-items-center">
+        <input type="text" formControlName="username" class="form-control w-auto hero-input"
+          placeholder="{{ 'HOME.NAME_PLACEHOLDER' | translate }}">
+        <button type="submit" class="btn btn-primary btn-lg hero-btn">
+          {{ 'HOME.START' | translate }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Sections -->
+  <section class="sections-wrapper row g-4" [attr.dir]="currentDir">
+    <div class="col-lg-4 col-md-6" *ngFor="let section of sections">
+      <div class="card h-100 shadow-sm p-4 section-card text-center">
+        <i [class]="section.icon + ' fa-2x mb-3 section-icon'"></i>
+        <h3 class="card-title">{{ section.title | translate }}</h3>
+        <p class="card-text">{{ section.desc | translate }}</p>
+        <ul class="card-detail-list">
+          <li *ngFor="let detail of section.details">{{ detail | translate }}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>

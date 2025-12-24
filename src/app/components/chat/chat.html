@@ -1,0 +1,59 @@
+<div class="chat-container" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
+
+  <!-- عنوان الشات -->
+  <h2 class="chat-title">{{ 'CHAT.TITLE' | translate }}</h2>
+
+  <!-- Messages Box -->
+  <div #chatBox class="chat-box">
+    <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{
+           'system-msg': msg.sender === 'system',
+           'message-right': msg.senderName === myName && msg.sender === 'user',
+           'message-left': msg.senderName !== myName && msg.sender === 'user'
+         }">
+
+      <!-- System messages -->
+      <ng-container *ngIf="msg.sender === 'system'">
+        <div class="system-text">{{ msg.key | translate }}</div>
+      </ng-container>
+
+      <!-- User messages -->
+      <ng-container *ngIf="msg.sender === 'user'">
+        <div class="message-content">
+          <span class="sender-name">{{ msg.senderName === myName ? ('CHAT.YOU' | translate) : msg.senderName }}</span>
+          <span class="bubble-text">{{ msg.text }}</span>
+          <small class="time-text" style="direction: ltr;">{{ msg.time }}</small>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div *ngIf="isTyping" class="typing-indicator">
+      {{ 'CHAT.TYPING' | translate }}
+    </div>
+  </div>
+
+  <!-- Input & Buttons -->
+  <div class="input-wrapper">
+    <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
+      [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
+
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+
+    <!-- Emoji button -->
+    <button class="emoji-btn" type="button" (click)="toggleEmoji()">😊</button>
+
+    <!-- Emoji picker -->
+    <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" class="emoji-picker"></emoji-picker>
+
+    <button class="next-btn" (click)="nextChat()">{{ 'CHAT.NEXT' | translate }}</button>
+    <button class="exit-btn" (click)="exitChat()">{{ 'CHAT.STOP' | translate }}</button>
+  </div>
+
+  <!-- Waiting State -->
+  <!-- <div *ngIf="waiting && !connected" class="waiting-text">
+    {{ 'CHAT.WAITING' | translate }}
+  </div> -->
+
+</div>
