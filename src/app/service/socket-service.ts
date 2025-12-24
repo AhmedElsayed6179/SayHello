@@ -9,7 +9,7 @@ export class SocketService {
 
   constructor(private zone: NgZone) { }
 
-  connect(token: string) {
+  async connect(token: string) {
     if (this.socket) this.socket.disconnect();
 
     this.socket = io('https://sayhelloserver-production.up.railway.app', {
@@ -18,14 +18,13 @@ export class SocketService {
 
     this.socket.emit('join', token);
 
+    // كل ما يجي العدد من السيرفر يحدث مباشرة الـ BehaviorSubject
     this.socket.on('roomUsersCount', (count: number) => {
-      this.zone.run(() => {
-        this.usersInRoom$.next(count);
-      });
+      this.zone.run(() => this.usersInRoom$.next(count));
     });
   }
 
-  disconnect() {
+  async disconnect() {
     this.socket?.disconnect();
   }
 }

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RouterLink } from "@angular/router";
 import { SocketService } from '../../service/socket-service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs';
   templateUrl: './navbar.html',
   styleUrls: ['./navbar.css'],
 })
-export class Navbar implements OnInit, OnDestroy {
+export class Navbar {
   currentLang = localStorage.getItem('lang') || 'en';
   private translate = inject(TranslateService);
-  usersInRoom = 0;
+  usersInRoom$: Observable<number>;
   private sub!: Subscription;
 
   constructor(private socketService: SocketService) {
@@ -22,6 +22,7 @@ export class Navbar implements OnInit, OnDestroy {
     if (darkMode === 'true') {
       document.body.classList.add('dark-mode');
     }
+    this.usersInRoom$ = this.socketService.usersInRoom$;
   }
 
   toggleLang() {
@@ -45,15 +46,5 @@ export class Navbar implements OnInit, OnDestroy {
 
   get isDarkMode(): boolean {
     return document.body.classList.contains('dark-mode');
-  }
-
-  ngOnInit() {
-    this.sub = this.socketService.usersInRoom$.subscribe(count => {
-      this.usersInRoom = count;
-    });
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
   }
 }
