@@ -16,15 +16,12 @@ export class SocketService {
       transports: ['websocket']
     });
 
-    this.socket.emit('join', token);
+    this.socket.on('connect', () => {
+      this.socket.emit('join', token);
+    })
 
     this.socket.on('roomUsersCount', (count: number) => {
       this.zone.run(() => this.usersInRoom$.next(count));
-    });
-
-    // إضافة حدث "connect" للتأكد من الاتصال قبل انتظار أي أحداث
-    this.socket.on('connect', () => {
-      this.socket.emit('join', token); // تأكد من إعادة الانضمام بعد اتصال WebSocket
     });
   }
 
