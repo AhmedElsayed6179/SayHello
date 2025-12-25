@@ -29,6 +29,30 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #0b93f6 #e0e0e0;
+}
+
+/* Chrome, Edge, Safari */
+.chat-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: #a4a4a4;
+  border-radius: 8px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: #0b93f6;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+  background-color: #0a7cd5;
 }
 
 /* ------------------ Messages ------------------ */
