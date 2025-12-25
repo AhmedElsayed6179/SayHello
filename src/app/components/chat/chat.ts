@@ -154,42 +154,6 @@ export class Chat implements OnInit, OnDestroy {
 
   toggleEmoji() {
     this.showEmoji = !this.showEmoji;
-
-    if (this.showEmoji) {
-      setTimeout(() => {
-        const picker: any = document.querySelector('emoji-picker');
-        if (!picker) return;
-
-        const shadow = picker.shadowRoot;
-        if (!shadow) return;
-
-        // كل التبويبات
-        const tabs = shadow.querySelectorAll('.tab');
-        tabs.forEach((tab: HTMLElement) => {
-          tab.style.paddingBottom = '6px'; // لضبط ارتفاع الخط
-          tab.style.position = 'relative';
-        });
-
-        // الخط تحت التبويب النشط
-        const activeTab = shadow.querySelector('.tab.selected') as HTMLElement;
-        if (activeTab) {
-          const line = document.createElement('div');
-          line.style.position = 'absolute';
-          line.style.bottom = '0';
-          line.style.left = '50%';
-          line.style.transform = 'translateX(-50%)';
-          line.style.width = '60%';
-          line.style.height = '2px';
-          line.style.borderRadius = '2px';
-          line.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#fff' : '#0b93f6';
-          activeTab.appendChild(line);
-
-          // دائرة حول التبويب النشط
-          activeTab.style.border = `2px solid ${document.body.classList.contains('dark-mode') ? '#fff' : '#0b93f6'}`;
-          activeTab.style.borderRadius = '50%';
-        }
-      }, 50);
-    }
   }
 
   onEmojiSelect(event: any) {
