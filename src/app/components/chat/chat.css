@@ -295,7 +295,7 @@
 
   .emoji-picker {
     position: relative !important;
-    bottom: 6px !important;
+    bottom: 4px !important;
     margin-bottom: 10px !important;
   }
 }
