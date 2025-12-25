@@ -152,7 +152,7 @@ export class Chat implements OnInit, OnDestroy {
     }
   }
 
-  showEmojiPicker() {
+  toggleEmoji() {
     this.showEmoji = !this.showEmoji;
 
     if (this.showEmoji) {
