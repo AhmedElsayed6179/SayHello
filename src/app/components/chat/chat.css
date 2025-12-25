@@ -55,6 +55,37 @@
   background-color: #0a7cd5;
 }
 
+/* ------------------ Dark Mode Scrollbar ------------------ */
+.dark-mode .chat-box {
+  background-color: #1e1e1e;
+  /* لون خلفية الداكن */
+  color: #f1f1f1;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #0b93f6 #2c2c2c;
+}
+
+/* Chrome, Edge, Safari */
+.dark-mode .chat-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark-mode .chat-box::-webkit-scrollbar-track {
+  background: #2c2c2c;
+  border-radius: 8px;
+}
+
+.dark-mode .chat-box::-webkit-scrollbar-thumb {
+  background-color: #0b93f6;
+  border-radius: 8px;
+  border: 2px solid #2c2c2c;
+}
+
+.dark-mode .chat-box::-webkit-scrollbar-thumb:hover {
+  background-color: #0a7cd5;
+}
+
 /* ------------------ Messages ------------------ */
 .message-wrapper {
   display: flex;
@@ -322,7 +353,9 @@
     margin-bottom: 10px !important;
     width: 100% !important;
     max-height: 50vh !important;
-    bottom: auto !important;;
-    margin-bottom: 10px !important;;
+    bottom: auto !important;
+    ;
+    margin-bottom: 10px !important;
+    ;
   }
 }
