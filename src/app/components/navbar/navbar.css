@@ -43,6 +43,24 @@
   background-color: #0972c0;
 }
 
+.btn-like {
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-weight: 500;
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s;
+}
+
+.btn-like:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
 .btn-theme {
   background-color: #212529;
   color: #fff;
@@ -63,11 +81,44 @@ body.dark-mode .btn-theme:hover {
   background-color: #ddd;
 }
 
-/* Responsive */
 @media (max-width: 576px) {
-  .btn-group-custom .btn {
-    min-width: 50px;
+  .navbar {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .navbar .navbar-brand {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .btn-group-custom {
+    display: flex !important;
+    justify-content: center !important;
+    flex-wrap: wrap;
+    width: auto;
+    gap: 8px;
+    order: 1;
+  }
+
+  .btn-group-custom .btn,
+  .connected-users {
+    min-width: auto;
     font-size: 0.85rem;
     padding: 5px 10px;
+  }
+
+  .connected-users {
+    display: flex;
+    align-items: center;
+    justify-content: center !important;
+  }
+
+  .ms-auto {
+    margin-left: 0 !important;
   }
 }

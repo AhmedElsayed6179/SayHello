@@ -19,7 +19,10 @@
         {{ isDarkMode ? '☀️' : '🌙' }}
       </button>
 
-      <div class="d-flex align-items-center bg-light text-dark rounded px-2 py-1 shadow-sm" style="font-size: 0.9rem;">
+      <div class="btn btn-like" [ngStyle]="{
+     'background-color': isDarkMode ? '#2c2f33' : '#f1f1f1',
+     'color': isDarkMode ? '#f1f1f1' : '#212529'
+   }" style="font-size: 0.95rem;">
         <span class="me-1">👤</span>
         <strong>{{ connectedUsers$ | async }}</strong>
       </div>
