@@ -34,22 +34,30 @@
 
   <!-- Input & Buttons -->
   <div class="input-wrapper">
-    <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
-      [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
+    <div class="input-inner" [ngClass]="isRtl ? 'rtl' : 'ltr'">
+      <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
+        [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
 
-    <button class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
-      <i class="fa-solid fa-paper-plane"></i>
-    </button>
+      <button class="emoji-btn" type="button" (click)="toggleEmoji()">😊</button>
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
 
-    <!-- Emoji button -->
-    <button class="emoji-btn" type="button" (click)="toggleEmoji()">😊</button>
+    <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" [ngStyle]="{
+    'bottom.px': 120,
+    'left.px': isRtl ? null : 3,
+    'right.px': isRtl ? 0 : null
+  }" class="emoji-picker">
+    </emoji-picker>
 
-    <!-- Emoji picker -->
-    <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" class="emoji-picker"></emoji-picker>
-
-    <button class="next-btn" (click)="nextChat()">{{ 'CHAT.NEXT' | translate }}</button>
-    <button class="exit-btn" (click)="exitChat()">{{ 'CHAT.STOP' | translate }}</button>
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <button class="next-btn" (click)="nextChat()">{{ 'CHAT.NEXT' | translate }}</button>
+      <button class="exit-btn" (click)="exitChat()">{{ 'CHAT.STOP' | translate }}</button>
+    </div>
   </div>
+
 
   <!-- Waiting State -->
   <!-- <div *ngIf="waiting && !connected" class="waiting-text">

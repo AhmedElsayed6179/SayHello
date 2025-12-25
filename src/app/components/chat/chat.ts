@@ -208,4 +208,9 @@ export class Chat implements OnInit, OnDestroy {
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
 
   ngOnDestroy() { this.socket?.disconnect(); clearTimeout(this.typingTimeout); }
+
+  // افتراضياً: تحقق من لغة التطبيق
+  get isRtl(): boolean {
+    return this.translate.currentLang === 'ar'; // لو العربية
+  }
 }
