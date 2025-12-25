@@ -18,12 +18,15 @@ export class Home {
 
   constructor(private router: Router, private translate: TranslateService) {
     this.usernameForm = new FormGroup({
-      username: new FormControl('', [
-        Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(20),
-        Validators.pattern(/^[a-zA-Z\u0600-\u06FF]+( [a-zA-Z\u0600-\u06FF]+)*$/)
-      ])
+      username: new FormControl<string>('', {
+        nonNullable: true,
+        validators: [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+          Validators.pattern(/^[a-zA-Z\u0600-\u06FF]+( [a-zA-Z\u0600-\u06FF]+)*$/)
+        ]
+      })
     });
     this.sections = [
       {
