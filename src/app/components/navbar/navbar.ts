@@ -29,7 +29,7 @@ export class Navbar {
 
   ngOnInit() {
     // فتح Socket لمتابعة عدد المستخدمين فورًا
-    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
+    this.socket = io(`${environment.SayHello_Server}`, { path: '/socket.io' });
     this.socket.on('user_count', (count: number) => this.zone.run(() => {
       this.chatService.connectedUsers$.next(count);
       this.cd.detectChanges();
