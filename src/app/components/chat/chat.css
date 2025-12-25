@@ -156,7 +156,6 @@
   right: 5px;
   background-color: #0b93f6;
   color: #fff;
-  border-radius: 40%;
 }
 
 /* ------------------ Action Buttons ------------------ */
@@ -295,7 +294,7 @@
 
   .emoji-picker {
     position: relative !important;
-    bottom: 4px !important;
+    bottom: 3px !important;
     margin-bottom: 10px !important;
   }
 }
