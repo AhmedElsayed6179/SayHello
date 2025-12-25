@@ -111,7 +111,7 @@ export class Chat implements OnInit, OnDestroy {
         this.typingTimeout = setTimeout(() => {
           this.isTyping = false;
           this.cd.detectChanges();
-        }, 1200); // يختفي بعد 1.2 ثانية
+        }, 1000); // يختفي بعد 1.2 ثانية
       }
     }));
   }

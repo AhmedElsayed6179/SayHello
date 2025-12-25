@@ -18,6 +18,11 @@
   flex-wrap: wrap;
 }
 
+.navbar-actions {
+  display: flex;
+  gap: 2px;
+}
+
 .btn-group-custom .btn {
   min-width: 60px;
   padding: 6px 14px;
@@ -81,44 +86,44 @@ body.dark-mode .btn-theme:hover {
   background-color: #ddd;
 }
 
+/* Desktop */
+@media (min-width: 577px) {
+  .navbar-actions {
+    margin-left: auto;
+  }
+}
+
+/* Mobile */
 @media (max-width: 576px) {
   .navbar {
     flex-direction: column !important;
     align-items: center !important;
-    text-align: center;
-    gap: 8px;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
 
-  .navbar .navbar-brand {
+  .navbar-brand {
+    width: auto;
     display: flex;
     justify-content: center;
-    width: 100%;
-    margin-bottom: 5px;
+    align-items: center;
+    margin-bottom: 8px;
+    margin-left: 8px;
+  }
+
+  .navbar-actions {
+    width: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0 !important;
   }
 
   .btn-group-custom {
-    display: flex !important;
-    justify-content: center !important;
-    flex-wrap: wrap;
-    width: auto;
-    gap: 8px;
-    order: 1;
-  }
-
-  .btn-group-custom .btn,
-  .connected-users {
-    min-width: auto;
-    font-size: 0.85rem;
-    padding: 5px 10px;
-  }
-
-  .connected-users {
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: center !important;
-  }
-
-  .ms-auto {
-    margin-left: 0 !important;
+    gap: 8px;
   }
 }
