@@ -4,13 +4,11 @@
     "DESC": "A simple text-based chat platform. Enter without registration, just write your name and start chatting!",
     "START": "Start Chatting",
     "NAME_PLACEHOLDER": "Enter your name",
-    {
-  "ERROR_TITLE": "Invalid Name",
-  "ERROR_REQUIRED": "Name is required",
-  "ERROR_MINLENGTH": "Name must be at least 3 characters",
-  "ERROR_MAXLENGTH": "Name must be at most 20 characters",
-  "ERROR_PATTERN": "Name can contain letters only, with a single space between words"
-},
+    "ERROR_TITLE": "Invalid Name",
+    "ERROR_REQUIRED": "Name is required",
+    "ERROR_MINLENGTH": "Name must be at least 3 characters",
+    "ERROR_MAXLENGTH": "Name must be at most 20 characters",
+    "ERROR_PATTERN": "Name cannot contain spaces",
     "ERROR_SERVER": "Failed to start chat. Try again later"
   },
   "SECTIONS": {
