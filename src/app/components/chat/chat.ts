@@ -39,42 +39,41 @@ export class Chat implements OnInit, OnDestroy {
   showEmoji = false;
   connectedUsers: number = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private zone: NgZone,
-    private translate: TranslateService,
-    private cd: ChangeDetectorRef,
-    private router: Router,
-    private chatService: ChatService
-  ) { }
+  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
 
   ngOnInit() {
-    // إنشاء اتصال Socket مرة واحدة عند فتح الصفحة
+    // إنشاء الاتصال فور فتح الصفحة
     this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
 
-    // استقبال العدد الفعلي للمتواجدين فورًا لأي زائر
     this.socket.on('user_count', (count: number) => this.zone.run(() => {
       this.connectedUsers = count;
       this.chatService.connectedUsers$.next(this.connectedUsers);
       this.cd.detectChanges();
     }));
 
-    // التعامل مع query params للانضمام
     this.route.queryParams.subscribe(params => {
       this.token = params['token'];
       this.myName = params['name'] || '';
-      if (!this.token || !this.myName) {
-        this.router.navigate(['/']);
-        return;
-      }
-      this.joinChat(this.token);
+      if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
+      this.initSocket(this.token);
     });
+  }
 
-    // أحداث الدردشة العامة
+  initSocket(token: string) {
+    if (this.socket) this.socket.disconnect();
+    this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
+    this.socket.emit('join', token);
+
     this.socket.on('connected', () => this.zone.run(() => {
       this.connected = true;
       this.waiting = false;
       this.addSystemMessage('CHAT.CONNECTED');
+    }));
+
+    this.socket.on('user_count', (count: number) => this.zone.run(() => {
+      this.connectedUsers = count;
+      this.chatService.connectedUsers$.next(this.connectedUsers);
+      this.cd.detectChanges();
     }));
 
     this.socket.on('waiting', () => this.zone.run(() => {
@@ -111,14 +110,9 @@ export class Chat implements OnInit, OnDestroy {
         this.typingTimeout = setTimeout(() => {
           this.isTyping = false;
           this.cd.detectChanges();
-        }, 1200);
+        }, 1200); // يختفي بعد 1.2 ثانية
       }
     }));
-  }
-
-  private joinChat(token: string) {
-    if (!this.socket) return;
-    this.socket.emit('join', token);
   }
 
   sendMessage() {
@@ -144,36 +138,26 @@ export class Chat implements OnInit, OnDestroy {
 
   nextChat() {
     if (!this.socket) return;
-
     this.socket.emit('leave');
+    this.socket.disconnect();
     this.messages = [];
     this.connected = false;
     this.waiting = true;
     this.waitingMessageShown = false;
     this.cd.detectChanges();
 
-    // طلب توكن جديد
-    fetch('https://sayhelloserver-production.up.railway.app/start-chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: this.myName })
-    })
+    fetch('https://sayhelloserver-production.up.railway.app/start-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
-      .then(data => { this.token = data.token; setTimeout(() => this.joinChat(this.token), 500); })
-      .catch(err => {
-        console.error(err);
-        Swal.fire({
-          icon: 'error',
-          title: this.translate.instant('HOME.ERROR_TITLE'),
-          text: this.translate.instant('HOME.ERROR_SERVER')
-        });
-        this.router.navigate(['/']);
-      });
+      .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
+      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER') }); this.router.navigate(['/']); });
   }
 
-  exitChat() {
-    this.socket?.disconnect();
-    this.router.navigate(['/']);
+  exitChat() { this.socket?.disconnect(); this.router.navigate(['/']); }
+
+  private addChatMessage(sender: string, text: string, isoTime: string) {
+    this.messages.push({ sender: 'user', text: `${sender}: ${text}`, time: this.formatTime(isoTime) });
+    this.scrollToBottom();
+    this.cd.detectChanges();
   }
 
   private addSystemMessage(key: string) {
@@ -183,9 +167,7 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   private scrollToBottom() {
-    setTimeout(() => {
-      if (this.chatBox) this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight;
-    }, 50);
+    setTimeout(() => { if (this.chatBox) this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight; }, 50);
   }
 
   private formatTime(isoTime: string): string {
@@ -200,8 +182,5 @@ export class Chat implements OnInit, OnDestroy {
 
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
 
-  ngOnDestroy() {
-    this.socket?.disconnect();
-    clearTimeout(this.typingTimeout);
-  }
+  ngOnDestroy() { this.socket?.disconnect(); clearTimeout(this.typingTimeout); }
 }
