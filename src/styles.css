@@ -57,19 +57,3 @@ body.dark-mode .swal2-cancel {
   background-color: #444 !important;
   color: #ffffff !important;
 }
-
-/* ================= emoji-picker ================= */
-/* الوضع النهاري */
-emoji-picker {
-  --emoji-picker-tab-border-color: #0b93f6;
-  --emoji-picker-background: #ffffff;
-  --emoji-picker-tab-background: transparent;
-  --emoji-picker-tab-color: #212529;
-}
-
-/* الوضع الليلي */
-body.dark-mode emoji-picker {
-  --emoji-picker-tab-border-color: #ffffff;
-  --emoji-picker-background: #2c2c2c;
-  --emoji-picker-tab-color: #ffffff;
-}
