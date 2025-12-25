@@ -22,7 +22,7 @@ export class Home {
         Validators.required,
         Validators.minLength(3),
         Validators.maxLength(20),
-        Validators.pattern(/^\S+$/)
+        Validators.pattern(/^[a-zA-Z\u0600-\u06FF]+( [a-zA-Z\u0600-\u06FF]+)*$/)
       ])
     });
     this.sections = [
