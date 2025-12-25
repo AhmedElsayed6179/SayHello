@@ -180,6 +180,30 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* ------------------ Emoji Picker Tabs Fix ------------------ */
+emoji-picker::part(tablist) {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+emoji-picker::part(tab) {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+emoji-picker::part(tab)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 70%;
+  background-color: #0b93f6;
+  border-radius: 2px;
+}
+
 /* ------------------ Waiting ------------------ */
 .waiting-text {
   text-align: center;
