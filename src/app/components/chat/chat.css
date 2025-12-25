@@ -180,6 +180,16 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.emoji-picker .category.active {
+  border-bottom: none !important;
+}
+
+.emoji-picker .indicator-wrapper,
+.emoji-picker .indicator {
+  display: none !important;
+}
+
+
 /* ------------------ Waiting ------------------ */
 .waiting-text {
   text-align: center;
