@@ -26,8 +26,6 @@ type ChatMessage = {
 })
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('chatBox') chatBox!: ElementRef;
-  @ViewChild('emojiBtn', { static: true }) emojiBtn!: ElementRef;
-  @ViewChild('pickerElem', { static: true }) pickerElem!: ElementRef;
 
   socket!: Socket;
   messages: ChatMessage[] = [];
@@ -156,19 +154,6 @@ export class Chat implements OnInit, OnDestroy {
 
   toggleEmoji() {
     this.showEmoji = !this.showEmoji;
-    
-    // إذا ظهر picker، نعدل Shadow DOM
-    if (this.showEmoji) {
-      setTimeout(() => {
-        const shadowRoot = this.pickerElem?.nativeElement?.shadowRoot;
-        if (shadowRoot) {
-          const indicator = shadowRoot.querySelector('.picker .indicator-wrapper .indicator') as HTMLElement;
-          if (indicator) {
-            indicator.style.display = 'none';
-          }
-        }
-      }, 0);
-    }
   }
 
   onEmojiSelect(event: any) {
