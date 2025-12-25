@@ -42,10 +42,10 @@
     </button>
 
     <!-- Emoji button -->
-    <button class="emoji-btn" type="button" (click)="toggleEmoji()">😊</button>
+    <button #emojiBtn class="emoji-btn" type="button" (click)="toggleEmoji()">😊</button>
 
     <!-- Emoji picker -->
-    <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" class="emoji-picker"></emoji-picker>
+    <emoji-picker #pickerElem *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" class="emoji-picker"></emoji-picker>
 
     <button class="next-btn" (click)="nextChat()">{{ 'CHAT.NEXT' | translate }}</button>
     <button class="exit-btn" (click)="exitChat()">{{ 'CHAT.STOP' | translate }}</button>
