@@ -296,6 +296,8 @@
     position: relative !important;
     left: 3px !important;
     margin-bottom: 10px !important;
+    width: 100% !important;
+    max-height: 50vh !important;
     bottom: auto !important;;
     margin-bottom: 10px !important;;
   }
