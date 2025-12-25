@@ -180,19 +180,23 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* تعديل الخط تحت التاب النشط */
-.emoji-picker .category.active {
-  border-bottom: 3px solid #0b93f6 !important;
-  padding-bottom: 4px !important;
-  margin-bottom: -3px;
-  border-radius: 0;
+.emoji-picker .indicator-wrapper {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
-.emoji-picker .categories {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
+.emoji-picker .indicator {
+  height: 3px;
+  width: 60%;
+  background-color: #0b93f6;
+  border-radius: 2px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
 }
+
 
 /* ------------------ Waiting ------------------ */
 .waiting-text {
