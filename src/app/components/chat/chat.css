@@ -180,7 +180,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ------------------ Emoji Picker Tabs Fix ------------------ */
+/* ------------------ Emoji Picker Tabs Circle ------------------ */
 emoji-picker::part(tablist) {
   display: flex;
   justify-content: space-around;
@@ -189,19 +189,15 @@ emoji-picker::part(tablist) {
 
 emoji-picker::part(tab) {
   position: relative;
-  padding-bottom: 4px;
+  padding: 5px;
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
-emoji-picker::part(tab)::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 2px;
-  width: 70%;
-  background-color: #0b93f6;
-  border-radius: 2px;
+emoji-picker::part(tab[selected]) {
+  border: 2px solid #0b93f6;
+  background-color: rgba(11, 147, 246, 0.1);
+  padding: 5px;
 }
 
 /* ------------------ Waiting ------------------ */
