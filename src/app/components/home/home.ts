@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -12,13 +11,11 @@ import Swal from 'sweetalert2';
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
 })
-export class Home implements OnInit{
+export class Home {
   usernameForm: FormGroup;
   sections: any[] = [];
-  socket!: Socket;
-  connectedUsers: number = 0;
 
-  constructor(private router: Router, private translate: TranslateService, private zone: NgZone, private cd: ChangeDetectorRef) {
+  constructor(private router: Router, private translate: TranslateService) {
     this.usernameForm = new FormGroup({
       username: new FormControl('', [
         Validators.required,
@@ -63,16 +60,6 @@ export class Home implements OnInit{
 
   get currentDir() {
     return this.translate.currentLang === 'ar' ? 'rtl' : 'ltr';
-  }
-
-  ngOnInit() {
-    // إنشاء Socket عند فتح الصفحة لمتابعة عدد المستخدمين
-    this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
-
-    this.socket.on('user_count', (count: number) => this.zone.run(() => {
-      this.connectedUsers = count;
-      this.cd.detectChanges();
-    }));
   }
 
   startChat() {
