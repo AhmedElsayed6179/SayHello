@@ -7,7 +7,7 @@ export class SocketService {
   private socket!: Socket;
   public usersInRoom$ = new BehaviorSubject<number>(0);
 
-  constructor(private zone: NgZone) {}
+  constructor(private zone: NgZone) { }
 
   connect(token: string) {
     if (this.socket) this.socket.disconnect();
@@ -18,8 +18,10 @@ export class SocketService {
 
     // الانضمام بعد اتصال WebSocket
     this.socket.on('connect', () => {
+      console.log('Connected to server');
       this.socket.emit('join', token);
     });
+
 
     // استقبال عدد المستخدمين في main-room
     this.socket.on('roomUsersCount', (count: number) => {
