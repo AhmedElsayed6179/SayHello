@@ -49,7 +49,6 @@ export class Chat implements OnInit, OnDestroy {
       this.token = params['token'];
       this.myName = params['name'] || '';
       if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
-      this.initSocket(this.token);
       this.socketService.connect(this.token);
       this.usersInRoom$ = this.socketService.usersInRoom$;
     });
