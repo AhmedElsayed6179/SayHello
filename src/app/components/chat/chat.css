@@ -180,24 +180,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.emoji-picker .indicator-wrapper {
-  position: relative;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.emoji-picker .indicator {
-  height: 3px;
-  width: 60%;
-  background-color: #0b93f6;
-  border-radius: 2px;
-  margin-bottom: 4px;
-  transition: all 0.2s ease;
-}
-
-
 /* ------------------ Waiting ------------------ */
 .waiting-text {
   text-align: center;
@@ -237,12 +219,6 @@
 
 .dark-mode .exit-btn {
   background-color: #dc3545;
-}
-
-.dark-mode .emoji-picker {
-  background-color: #2c2c2c;
-  color: #f1f1f1;
-  border-color: #555;
 }
 
 /* ------------------ Responsive ------------------ */
