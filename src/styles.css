@@ -57,7 +57,3 @@ body.dark-mode .swal2-cancel {
   background-color: #444 !important;
   color: #ffffff !important;
 }
-
-emoji-picker .indicator {
-    display: none !important;
-}
