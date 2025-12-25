@@ -59,49 +59,17 @@ body.dark-mode .swal2-cancel {
 }
 
 /* ================= emoji-picker ================= */
-emoji-picker::part(tablist) {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+/* الوضع النهاري */
+emoji-picker {
+  --emoji-picker-tab-border-color: #0b93f6;
+  --emoji-picker-background: #ffffff;
+  --emoji-picker-tab-background: transparent;
+  --emoji-picker-tab-color: #212529;
 }
 
-emoji-picker::part(tab) {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 0;
-}
-
-emoji-picker::part(tab)[aria-selected="true"]::after {
-  content: "";
-  position: absolute;
-  bottom: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 2px;
-  width: 60%;
-  background-color: #0b93f6;
-  border-radius: 2px;
-}
-
-body.dark-mode emoji-picker::part(tab)[aria-selected="true"]::after {
-  background-color: #ffffff;
-}
-
-emoji-picker::part(tab)[aria-selected="true"]::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 32px;
-  height: 32px;
-  border: 2px solid #0b93f6;
-  border-radius: 50%;
-  z-index: -1;
-}
-
-body.dark-mode emoji-picker::part(tab)[aria-selected="true"]::before {
-  border-color: #ffffff;
+/* الوضع الليلي */
+body.dark-mode emoji-picker {
+  --emoji-picker-tab-border-color: #ffffff;
+  --emoji-picker-background: #2c2c2c;
+  --emoji-picker-tab-color: #ffffff;
 }
