@@ -18,8 +18,10 @@
         }">
         {{ isDarkMode ? '☀️' : '🌙' }}
       </button>
-      <div class="connected-users">
-        Users: {{ connectedUsers$ | async }}
+
+      <div class="d-flex align-items-center bg-light text-dark rounded px-2 py-1 shadow-sm" style="font-size: 0.9rem;">
+        <span class="me-1">👤</span>
+        <strong>{{ connectedUsers$ | async }}</strong>
       </div>
     </div>
   </div>

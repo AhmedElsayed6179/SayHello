@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-home',
@@ -82,7 +83,7 @@ export class Home {
     const name = this.usernameForm.value.username.trim();
     if (!name) return;
 
-    fetch('https://sayhelloserver-production.up.railway.app/start-chat', {
+    fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })

@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
+import { environment } from '../../environments/environment.development';
 
 type ChatMessage = {
   sender: 'user' | 'system';
@@ -43,7 +44,7 @@ export class Chat implements OnInit, OnDestroy {
 
   ngOnInit() {
     // إنشاء الاتصال فور فتح الصفحة
-    this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
+    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
 
     this.socket.on('user_count', (count: number) => this.zone.run(() => {
       this.connectedUsers = count;
@@ -61,7 +62,7 @@ export class Chat implements OnInit, OnDestroy {
 
   initSocket(token: string) {
     if (this.socket) this.socket.disconnect();
-    this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
+    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.emit('join', token);
 
     this.socket.on('connected', () => this.zone.run(() => {
@@ -146,7 +147,7 @@ export class Chat implements OnInit, OnDestroy {
     this.waitingMessageShown = false;
     this.cd.detectChanges();
 
-    fetch('https://sayhelloserver-production.up.railway.app/start-chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
+    fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
       .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
       .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER') }); this.router.navigate(['/']); });

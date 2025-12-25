@@ -5,6 +5,7 @@ import { RouterLink } from "@angular/router";
 import { Observable } from 'rxjs';
 import { ChatService } from '../../service/chat-service';
 import { io, Socket } from 'socket.io-client';
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-navbar',
@@ -28,7 +29,7 @@ export class Navbar {
 
   ngOnInit() {
     // فتح Socket لمتابعة عدد المستخدمين فورًا
-    this.socket = io('https://sayhelloserver-production.up.railway.app', { transports: ['websocket'] });
+    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.on('user_count', (count: number) => this.zone.run(() => {
       this.chatService.connectedUsers$.next(count);
       this.cd.detectChanges();
