@@ -22,7 +22,6 @@ export class SocketService {
       this.socket.emit('join', token);
     });
 
-
     // استقبال عدد المستخدمين في main-room
     this.socket.on('roomUsersCount', (count: number) => {
       this.zone.run(() => this.usersInRoom$.next(count));
