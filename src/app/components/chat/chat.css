@@ -180,6 +180,20 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* تعديل الخط تحت التاب النشط */
+.emoji-picker .category.active {
+  border-bottom: 3px solid #0b93f6 !important;
+  padding-bottom: 4px !important;
+  margin-bottom: -3px;
+  border-radius: 0;
+}
+
+.emoji-picker .categories {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+
 /* ------------------ Waiting ------------------ */
 .waiting-text {
   text-align: center;
