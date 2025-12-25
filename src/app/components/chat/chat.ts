@@ -41,22 +41,43 @@ export class Chat implements OnInit, OnDestroy {
   connectedUsers: number = 0;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
-
   ngOnInit() {
-    // إنشاء الاتصال فور فتح الصفحة
-    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
-
-    this.socket.on('user_count', (count: number) => this.zone.run(() => {
-      this.connectedUsers = count;
-      this.chatService.connectedUsers$.next(this.connectedUsers);
-      this.cd.detectChanges();
-    }));
-
     this.route.queryParams.subscribe(params => {
-      this.token = params['token'];
       this.myName = params['name'] || '';
-      if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
-      this.initSocket(this.token);
+      if (!this.myName) {
+        this.router.navigate(['/']);
+        return;
+      }
+
+      // طلب سيرفر للحصول على توكن جديد عند كل refresh
+      fetch(`${environment.SayHello_Server}/start-chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: this.myName })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to get new token');
+          return res.json();
+        })
+        .then(data => {
+          this.token = data.token;
+
+          // إنشاء الاتصال بعد الحصول على التوكن الجديد
+          this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
+
+          this.socket.on('user_count', (count: number) => this.zone.run(() => {
+            this.connectedUsers = count;
+            this.chatService.connectedUsers$.next(this.connectedUsers);
+            this.cd.detectChanges();
+          }));
+
+          this.initSocket(this.token); // init socket بالتوكن الجديد
+        })
+        .catch(err => {
+          console.error(err);
+          Swal.fire('Error', 'Failed to reconnect', 'error');
+          this.router.navigate(['/']);
+        });
     });
   }
 
