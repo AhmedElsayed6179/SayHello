@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
+import { ChatService } from '../../service/chat-service';
 
 type ChatMessage = {
   sender: 'user' | 'system';
@@ -36,8 +37,9 @@ export class Chat implements OnInit, OnDestroy {
   private typingTimeout: any;
   public myName = '';
   showEmoji = false;
+  connectedUsers: number = 0;
 
-  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router) { }
+  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -59,6 +61,12 @@ export class Chat implements OnInit, OnDestroy {
       this.addSystemMessage('CHAT.CONNECTED');
     }));
 
+    this.socket.on('user_count', (count: number) => this.zone.run(() => {
+      this.connectedUsers = count;
+      this.chatService.connectedUsers$.next(this.connectedUsers);
+      this.cd.detectChanges();
+    }));
+
     this.socket.on('waiting', () => this.zone.run(() => {
       this.connected = false;
       this.waiting = true;
@@ -71,6 +79,7 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.on('partner_left', () => this.zone.run(() => {
       this.connected = false;
       this.addSystemMessage('CHAT.PARTNER_LEFT');
+      this.cd.detectChanges();
     }));
 
     this.socket.on('newMessage', msg => this.zone.run(() => {

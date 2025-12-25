@@ -18,6 +18,9 @@
         }">
         {{ isDarkMode ? '☀️' : '🌙' }}
       </button>
+      <div class="connected-users">
+        Users: {{ connectedUsers$ | async }}
+      </div>
     </div>
   </div>
 </nav>
