@@ -25,6 +25,7 @@ export class SocketService {
     // استقبال عدد المستخدمين في main-room
     this.socket.on('roomUsersCount', (count: number) => {
       this.zone.run(() => this.usersInRoom$.next(count));
+      console.log('Connected to server, count =', count);
     });
   }
 
