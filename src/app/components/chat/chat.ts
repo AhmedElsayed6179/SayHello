@@ -5,7 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
-import { SocketService } from '../../service/socket-service';
 
 type ChatMessage = {
   sender: 'user' | 'system';
@@ -38,7 +37,7 @@ export class Chat implements OnInit, OnDestroy {
   public myName = '';
   showEmoji = false;
 
-  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private socketService: SocketService) { }
+  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -46,7 +45,6 @@ export class Chat implements OnInit, OnDestroy {
       this.myName = params['name'] || '';
       if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
       this.initSocket(this.token);
-      this.socketService.connect(this.token); // اتصال فوري بالسيرفر
     });
   }
 
