@@ -57,3 +57,50 @@ body.dark-mode .swal2-cancel {
   background-color: #444 !important;
   color: #ffffff !important;
 }
+
+/* ================= emoji-picker ================= */
+emoji-picker::part(tablist) {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+emoji-picker::part(tab) {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
+}
+
+emoji-picker::part(tab)::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 60%;
+  background-color: #0b93f6;
+  border-radius: 2px;
+}
+
+body.dark-mode emoji-picker::part(tab)::after {
+  background-color: #ffffff;
+}
+
+emoji-picker::part(tab).selected::after {
+  content: "";
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  width: 32px;
+  height: 32px;
+  border: 2px solid #0b93f6;
+  border-radius: 50%;
+}
+
+body.dark-mode emoji-picker::part(tab).selected::after {
+  border-color: #ffffff;
+}
