@@ -16,9 +16,5 @@ export class App implements OnInit {
     const lang = localStorage.getItem('lang') || 'en';
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    const darkMode = localStorage.getItem('darkMode');
-    if (darkMode === 'true') {
-      document.body.classList.add('dark-mode');
-    }
   }
 }
