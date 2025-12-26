@@ -77,11 +77,13 @@ export class Chat implements OnInit, OnDestroy {
         });
     });
 
-    this.confirmText$ = this.translate.get('CHAT.CONFIRM');
-
-    // لفحص القيمة مباشرة:
-    this.confirmText$.subscribe(translated => {
-      console.log('ترجمة confirm:', translated); // يجب أن يظهر "هل أنت متأكد؟"
+    this.translate.get('CHAT').subscribe(translations => {
+      console.log('محتوى CHAT:', translations);
+      // بعد التأكد
+      this.confirmText$ = this.translate.get('CHAT.CONFIRM');
+      this.confirmText$.subscribe(translated => {
+        console.log('ترجمة confirm:', translated);
+      });
     });
   }
 
