@@ -45,7 +45,11 @@
     "SYSTEM": "System",
     "TYPING": "is typing...",
     "NEXT": "Next",
-    "YOU": "You"
+    "YOU": "You",
+    "WELCOME1": "Welcome",
+    "WELCOME2": "Get ready to meet new friends!",
+    "WELCOME3": "You can send text or voice messages",
+    "START": "Start Chat"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
