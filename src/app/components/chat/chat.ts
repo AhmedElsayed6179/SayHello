@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
 import { ChatMessage } from '../../models/chat-message';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -24,7 +25,7 @@ export class Chat implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   message = '';
   token = '';
-  confirmText = '';
+  confirmText$!: Observable<string>;
   connected = false;
   waiting = false;
   isTyping = false;
@@ -76,8 +77,11 @@ export class Chat implements OnInit, OnDestroy {
         });
     });
 
-    this.translate.get('CHAT.CONFIRM').subscribe(translated => {
-      this.confirmText = translated;
+    this.confirmText$ = this.translate.get('CHAT.CONFIRM');
+
+    // لفحص القيمة مباشرة:
+    this.confirmText$.subscribe(translated => {
+      console.log('ترجمة confirm:', translated); // يجب أن يظهر "هل أنت متأكد؟"
     });
   }
 
