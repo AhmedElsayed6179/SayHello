@@ -213,7 +213,8 @@
   color: #fff;
 }
 
-.next-btn.confirm {
+.next-btn.confirm,
+.exit-btn.confirm {
   background-color: #ff9800;
   color: #fff;
   animation: pulse 1s infinite;

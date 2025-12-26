@@ -34,6 +34,8 @@ export class Chat implements OnInit, OnDestroy {
   connectedUsers: number = 0;
   confirmNext = false;
   private confirmTimeout: any;
+  exitConfirm = false;
+  private exitTimeout: any;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -201,6 +203,26 @@ export class Chat implements OnInit, OnDestroy {
       .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER') }); this.router.navigate(['/']); });
   }
 
+  onExitClick() {
+    if (!this.exitConfirm) {
+      // أول ضغطة: عرض التأكيد
+      this.exitConfirm = true;
+
+      clearTimeout(this.exitTimeout);
+      this.exitTimeout = setTimeout(() => {
+        this.exitConfirm = false;
+        this.cd.detectChanges();
+      }, 3000); // يرجع طبيعي بعد 3 ثواني
+
+      return;
+    }
+
+    // الضغطة الثانية: الخروج فعلياً
+    this.exitConfirm = false;
+    clearTimeout(this.exitTimeout);
+    this.exitChat();
+  }
+
   exitChat() { this.socket?.disconnect(); this.router.navigate(['/']); }
 
   private addChatMessage(sender: string, text: string, isoTime: string) {
@@ -235,6 +257,7 @@ export class Chat implements OnInit, OnDestroy {
     this.socket?.disconnect();
     clearTimeout(this.typingTimeout);
     clearTimeout(this.confirmTimeout);
+    clearTimeout(this.exitTimeout);
   }
 
   get isRtl(): boolean {

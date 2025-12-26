@@ -56,14 +56,14 @@
       <button class="next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
         {{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}
       </button>
-      <button class="exit-btn" (click)="exitChat()">{{ 'CHAT.STOP' | translate }}</button>
+      <button class="exit-btn" [class.confirm]="exitConfirm" (click)="onExitClick()">
+        {{ exitConfirm ? confirmText : ('CHAT.STOP' | translate) }}
+      </button>
     </div>
   </div>
-
 
   <!-- Waiting State -->
   <!-- <div *ngIf="waiting && !connected" class="waiting-text">
     {{ 'CHAT.WAITING' | translate }}
   </div> -->
-
 </div>
