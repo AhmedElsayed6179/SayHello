@@ -35,6 +35,61 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #0b93f6 #e0e0e0;
+}
+
+/* Chrome, Edge, Safari */
+.chat-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 8px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+  background-color: #0b93f6;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+  background-color: #0a7cd5;
+}
+
+/* ------------------ Dark Mode Scrollbar ------------------ */
+.dark-mode .chat-box {
+  background-color: #1e1e1e;
+  /* لون خلفية الداكن */
+  color: #f1f1f1;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #0b93f6 #2c2c2c;
+}
+
+/* Chrome, Edge, Safari */
+.dark-mode .chat-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark-mode .chat-box::-webkit-scrollbar-track {
+  background: #2c2c2c;
+  border-radius: 8px;
+}
+
+.dark-mode .chat-box::-webkit-scrollbar-thumb {
+  background-color: #0b93f6;
+  border-radius: 8px;
+  border: 2px solid #2c2c2c;
+}
+
+.dark-mode .chat-box::-webkit-scrollbar-thumb:hover {
+  background-color: #0a7cd5;
 }
 
 /* ------------------ Messages ------------------ */
