@@ -7,14 +7,7 @@ import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
-
-type ChatMessage = {
-  sender: 'user' | 'system';
-  text?: string;
-  key?: string;
-  time?: string;
-  senderName?: string;
-};
+import { ChatMessage } from '../../models/chat-message';
 
 @Component({
   selector: 'app-chat',
@@ -39,6 +32,8 @@ export class Chat implements OnInit, OnDestroy {
   public myName = '';
   showEmoji = false;
   connectedUsers: number = 0;
+  confirmNext = false;
+  private confirmTimeout: any;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -161,6 +156,26 @@ export class Chat implements OnInit, OnDestroy {
     this.showEmoji = false;
   }
 
+  onNextClick() {
+    if (!this.confirmNext) {
+      // أول ضغطة
+      this.confirmNext = true;
+
+      clearTimeout(this.confirmTimeout);
+      this.confirmTimeout = setTimeout(() => {
+        this.confirmNext = false;
+        this.cd.detectChanges();
+      }, 2000); // يرجع طبيعي بعد 3 ثواني
+
+      return;
+    }
+
+    // الضغطة الثانية
+    this.confirmNext = false;
+    clearTimeout(this.confirmTimeout);
+    this.nextChat();
+  }
+
   nextChat() {
     if (!this.socket) return;
     this.socket.emit('leave');
@@ -207,10 +222,13 @@ export class Chat implements OnInit, OnDestroy {
 
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
 
-  ngOnDestroy() { this.socket?.disconnect(); clearTimeout(this.typingTimeout); }
+  ngOnDestroy() {
+    this.socket?.disconnect();
+    clearTimeout(this.typingTimeout);
+    clearTimeout(this.confirmTimeout);
+  }
 
-  // افتراضياً: تحقق من لغة التطبيق
   get isRtl(): boolean {
-    return this.translate.currentLang === 'ar'; // لو العربية
+    return this.translate.currentLang === 'ar';
   }
 }

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -9,7 +8,4 @@ import { RouterLink } from '@angular/router';
   styleUrl: './notfound.css',
 })
 export class Notfound {
- constructor(private titleService: Title) {
-    this.titleService.setTitle('Not Found')
-  }
 }

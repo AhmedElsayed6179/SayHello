@@ -45,7 +45,8 @@
     "SYSTEM": "System",
     "TYPING": "is typing...",
     "NEXT": "Next",
-    "YOU": "You"
+    "YOU": "You",
+    "CONFIRM": "Are you sure?"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
