@@ -165,7 +165,7 @@ export class Chat implements OnInit, OnDestroy {
       this.confirmTimeout = setTimeout(() => {
         this.confirmNext = false;
         this.cd.detectChanges();
-      }, 2000); // يرجع طبيعي بعد 3 ثواني
+      }, 3000); // يرجع طبيعي بعد 3 ثواني
 
       return;
     }
