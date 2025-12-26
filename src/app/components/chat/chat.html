@@ -116,7 +116,7 @@
         </div>
       </ng-container>
       <!-- زر الإرسال -->
-      @if(isRecording){
+      @if(!isRecording){
       <button *ngIf="!showWelcome" class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
