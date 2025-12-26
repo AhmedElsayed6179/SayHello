@@ -57,7 +57,8 @@ export class Navbar {
   }
 
   toggleTheme() {
-    const isDark = document.body.classList.toggle('dark-mode');
+    const body = document.body;
+    const isDark = body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', isDark ? 'true' : 'false');
   }
 
