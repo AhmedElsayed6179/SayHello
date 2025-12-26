@@ -8,7 +8,6 @@ import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
 import { ChatMessage } from '../../models/chat-message';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -25,7 +24,6 @@ export class Chat implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   message = '';
   token = '';
-  confirmText$!: Observable<string>;
   connected = false;
   waiting = false;
   isTyping = false;
@@ -75,16 +73,6 @@ export class Chat implements OnInit, OnDestroy {
           Swal.fire('Error', 'Failed to reconnect', 'error');
           this.router.navigate(['/']);
         });
-    });
-
-    this.translate.get('CHAT').subscribe(translations => {
-      console.log('محتوى CHAT:', translations);
-      // هنا تأكد إذا CONFIRM موجود
-      if (translations.CONFIRM) {
-        this.confirmText$ = this.translate.get('CHAT.CONFIRM');
-      } else {
-        console.warn('مفتاح CONFIRM غير موجود في ملف الترجمة!');
-      }
     });
   }
 
@@ -145,6 +133,15 @@ export class Chat implements OnInit, OnDestroy {
         }, 1000); // يختفي بعد 1.2 ثانية
       }
     }));
+  }
+
+  get confirmText(): string {
+    // لو اللغة الحالية عربي
+    if (this.translate.currentLang === 'ar') {
+      return 'هل أنت متأكد؟';
+    }
+    // غير كده (افتراضي إنجليزية)
+    return 'Are you sure?';
   }
 
   sendMessage() {

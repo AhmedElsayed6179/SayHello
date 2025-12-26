@@ -54,7 +54,7 @@
     <!-- Action buttons -->
     <div class="action-buttons">
       <button class="next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
-        {{ confirmNext ? (confirmText$ | async) : ('CHAT.NEXT' | translate) }}
+        {{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}
       </button>
       <button class="exit-btn" (click)="exitChat()">{{ 'CHAT.STOP' | translate }}</button>
     </div>
