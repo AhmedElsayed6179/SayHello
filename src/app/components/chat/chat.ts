@@ -24,6 +24,7 @@ export class Chat implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   message = '';
   token = '';
+  confirmText = '';
   connected = false;
   waiting = false;
   isTyping = false;
@@ -73,6 +74,10 @@ export class Chat implements OnInit, OnDestroy {
           Swal.fire('Error', 'Failed to reconnect', 'error');
           this.router.navigate(['/']);
         });
+    });
+
+    this.translate.get('CHAT.CONFIRM').subscribe(translated => {
+      this.confirmText = translated;
     });
   }
 
