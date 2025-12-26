@@ -50,7 +50,8 @@
     "WELCOME2": "Get ready to meet new friends!",
     "WELCOME3": "You can send text or voice messages",
     "START": "Start Chat",
-    "PARTNER_RECORDING": "Partner is recording..."
+    "PARTNER_RECORDING": "Partner is recording...",
+    "WELCOME_PLACEHOLDER": "Press (Start Chat) to begin"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",

@@ -93,7 +93,11 @@
   <div class="input-wrapper">
     <div class="input-inner" [ngClass]="isRtl ? 'rtl' : 'ltr'">
       <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
-        [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
+        [disabled]="!connected" [placeholder]="
+    showWelcome
+      ? ('CHAT.WELCOME_PLACEHOLDER' | translate)
+      : ('CHAT.PLACEHOLDER' | translate)
+  " />
       <!-- زر الإيموجي -->
       <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">😊</button>
       <!-- زر التسجيل -->
