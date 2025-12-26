@@ -95,19 +95,21 @@
       <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
         [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
       <!-- زر الإيموجي -->
-      <button class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">😊</button>
+      <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">😊</button>
       <!-- زر التسجيل -->
+      @if(!showWelcome){
       <button class="voice-btn" *ngIf="!isRecording" (click)="onStartVoiceClick()">🎤</button>
+      }
       <!-- زر الإيقاف + الإلغاء + العداد -->
       <ng-container *ngIf="isRecording">
-        <button class="voice-btn stop-btn" (click)="stopRecording()">⏹️</button>
+        <button class="voice-btn stop-btn" *ngIf="!showWelcome" (click)="stopRecording()">⏹️</button>
         <div class="cancel-container">
-          <button class="voice-btn cancel-btn" (click)="cancelRecording()">✖️</button>
-          <span class="record-timer">{{ recordTime }}</span>
+          <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()">✖️</button>
+          <span *ngIf="!showWelcome" class="record-timer">{{ recordTime }}</span>
         </div>
       </ng-container>
       <!-- زر الإرسال -->
-      <button class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
+      <button *ngIf="!showWelcome" class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
     </div>

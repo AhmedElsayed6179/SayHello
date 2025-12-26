@@ -194,14 +194,13 @@ export class Chat implements OnInit, OnDestroy {
         if (isRecording) {
           this.partnerRecording = true;
 
-          // كل ما يجي Ping نأجل الإخفاء
+          // 🔴 مهم: timeout أطول من ping
           clearTimeout(this.recordingTimeout);
           this.recordingTimeout = setTimeout(() => {
             this.partnerRecording = false;
             this.cd.detectChanges();
-          }, 1000);
+          }, 1500);
         } else {
-          // إيقاف فوري
           this.partnerRecording = false;
           clearTimeout(this.recordingTimeout);
         }
