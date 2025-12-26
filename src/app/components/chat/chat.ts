@@ -79,11 +79,12 @@ export class Chat implements OnInit, OnDestroy {
 
     this.translate.get('CHAT').subscribe(translations => {
       console.log('محتوى CHAT:', translations);
-      // بعد التأكد
-      this.confirmText$ = this.translate.get('CHAT.CONFIRM');
-      this.confirmText$.subscribe(translated => {
-        console.log('ترجمة confirm:', translated);
-      });
+      // هنا تأكد إذا CONFIRM موجود
+      if (translations.CONFIRM) {
+        this.confirmText$ = this.translate.get('CHAT.CONFIRM');
+      } else {
+        console.warn('مفتاح CONFIRM غير موجود في ملف الترجمة!');
+      }
     });
   }
 
