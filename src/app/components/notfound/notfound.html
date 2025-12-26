@@ -6,15 +6,14 @@
         <img src="error.webp" alt="error" class="img-fluid mb-4" style="max-width: 200px;">
 
         <h1 class="display-4 fw-bold text-danger">404</h1>
-        <h2 class="mb-3">Page Not Found</h2>
+        <h2 class="mb-3">{{ 'ERROR.PAGE_NOT_FOUND' | translate }}</h2>
 
         <p class="lead mb-4">
-          Sorry, the page you are looking for does not exist.
-          Please return to the Home Page.
+          {{ 'ERROR.DESCRIPTION' | translate }}
         </p>
 
         <a routerLink="/Home" class="btn btn-primary btn-lg px-4">
-          Go to Home <i class="fas fa-home ms-2"></i>
+          {{ 'ERROR.GO_HOME' | translate }} <i class="fas fa-home ms-2"></i>
         </a>
       </div>
     </div>

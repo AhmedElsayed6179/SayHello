@@ -51,5 +51,10 @@
     "COPYRIGHT": "All rights reserved",
     "Website_by": "Website by",
     "My_Name": "Ahmed Elsayed"
+  },
+  "ERROR": {
+    "PAGE_NOT_FOUND": "Page Not Found",
+    "DESCRIPTION": "Sorry, the page you are looking for does not exist. Please return to the Home Page.",
+    "GO_HOME": "Go to Home"
   }
 }
