@@ -58,49 +58,45 @@ body.dark-mode .swal2-cancel {
   color: #ffffff !important;
 }
 
-/* تطبيق على body كامل */
-body.scrollable {
-  overflow-y: auto;
-  /* اجعل الصفحة قابلة للتمرير عموديًا */
+.scrollable {
   scrollbar-width: thin;
-  /* Firefox */
   scrollbar-color: #0b93f6 #e0e0e0;
 }
 
 /* Chrome, Edge, Safari */
-body.scrollable::-webkit-scrollbar {
+.scrollable::-webkit-scrollbar {
   width: 8px;
 }
 
-body.scrollable::-webkit-scrollbar-track {
+.scrollable::-webkit-scrollbar-track {
   background: #e0e0e0;
   border-radius: 8px;
 }
 
-body.scrollable::-webkit-scrollbar-thumb {
+.scrollable::-webkit-scrollbar-thumb {
   background-color: #0b93f6;
   border-radius: 8px;
   border: 2px solid #e0e0e0;
 }
 
-body.scrollable::-webkit-scrollbar-thumb:hover {
+.scrollable::-webkit-scrollbar-thumb:hover {
   background-color: #0a7cd5;
 }
 
 /* Dark Mode */
-body.scrollable.dark-mode {
+.dark-mode .scrollable {
   scrollbar-color: #0b93f6 #2c2c2c;
 }
 
-body.scrollable.dark-mode::-webkit-scrollbar-track {
+.dark-mode .scrollable::-webkit-scrollbar-track {
   background: #2c2c2c;
 }
 
-body.scrollable.dark-mode::-webkit-scrollbar-thumb {
+.dark-mode .scrollable::-webkit-scrollbar-thumb {
   background-color: #0b93f6;
   border: 2px solid #2c2c2c;
 }
 
-body.scrollable.dark-mode::-webkit-scrollbar-thumb:hover {
+.dark-mode .scrollable::-webkit-scrollbar-thumb:hover {
   background-color: #0a7cd5;
 }

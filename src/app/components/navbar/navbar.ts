@@ -57,8 +57,16 @@ export class Navbar {
   }
 
   toggleTheme() {
-    const isDark = document.body.classList.toggle('dark-mode');
+    const body = document.body;
+    const isDark = body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+
+    // لتطبيق dark-mode على wrapper scrollable
+    const wrapper = document.querySelector('.scrollable');
+    if (wrapper) {
+      if (isDark) wrapper.classList.add('dark-mode');
+      else wrapper.classList.remove('dark-mode');
+    }
   }
 
   get isDarkMode(): boolean {
