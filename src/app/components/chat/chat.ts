@@ -47,7 +47,7 @@ export class Chat implements OnInit, OnDestroy {
   showWelcome = true;
   partnerRecording = false;
   private recordingTimeout: any;
-
+  private recordingPing: any;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -193,19 +193,20 @@ export class Chat implements OnInit, OnDestroy {
 
         if (isRecording) {
           this.partnerRecording = true;
-          this.cd.detectChanges();
 
+          // كل ما يجي Ping نأجل الإخفاء
           clearTimeout(this.recordingTimeout);
           this.recordingTimeout = setTimeout(() => {
             this.partnerRecording = false;
             this.cd.detectChanges();
           }, 1000);
         } else {
+          // إيقاف فوري
           this.partnerRecording = false;
           clearTimeout(this.recordingTimeout);
-          this.cd.detectChanges();
         }
 
+        this.cd.detectChanges();
       });
     });
   }
@@ -213,8 +214,14 @@ export class Chat implements OnInit, OnDestroy {
   async startRecording() {
     if (!this.connected) return;
 
-    // إشعار الطرف الآخر
+    // 🔴 أول إشعار
     this.socket.emit('startRecording');
+
+    // 🔴 Ping كل 800ms طول ما أنا بسجل
+    clearInterval(this.recordingPing);
+    this.recordingPing = setInterval(() => {
+      this.socket.emit('startRecording');
+    }, 800);
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.audioChunks = [];
@@ -228,7 +235,8 @@ export class Chat implements OnInit, OnDestroy {
     this.mediaRecorder.onstop = () => {
       stream.getTracks().forEach(track => track.stop());
 
-      // إشعار الطرف الآخر بانتهاء التسجيل
+      // 🔴 وقف الإشعار
+      clearInterval(this.recordingPing);
       this.socket.emit('stopRecording');
 
       if (!this.isCanceled && this.audioChunks.length > 0) {
@@ -252,15 +260,19 @@ export class Chat implements OnInit, OnDestroy {
     this.stopRecordTimer();
     if (this.isRecording) {
       this.isCanceled = true;
+      clearInterval(this.recordingPing);
+      this.socket.emit('stopRecording');
       this.mediaRecorder?.stop();
       this.isRecording = false;
       this.cd.detectChanges();
-      this.socket.emit('stopRecording');
     }
   }
 
   stopRecording() {
     if (!this.mediaRecorder || !this.isRecording) return;
+
+    clearInterval(this.recordingPing);
+    this.socket.emit('stopRecording');
 
     this.mediaRecorder.stop();
     this.isRecording = false;
@@ -493,6 +505,7 @@ export class Chat implements OnInit, OnDestroy {
     clearTimeout(this.exitTimeout);
     clearTimeout(this.recordingTimeout);
     clearInterval(this.recordInterval);
+    clearInterval(this.recordingPing);
   }
 
   get isRtl(): boolean {
