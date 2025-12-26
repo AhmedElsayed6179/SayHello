@@ -1,7 +1,10 @@
 <div class="chat-container" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
 
   <!-- عنوان الشات -->
-  <h2 class="chat-title">{{ 'CHAT.TITLE' | translate }}</h2>
+  <h2 class="chat-title">
+    {{ 'CHAT.TITLE' | translate }}
+    <img src="SayHello.png" alt="Chat Icon" class="chat-icon">
+  </h2>
 
   <!-- Messages Box -->
   <div #chatBox class="chat-box">
