@@ -45,12 +45,12 @@
     "SYSTEM": "System",
     "TYPING": "is typing...",
     "NEXT": "Next",
-    "YOU": "You",
-    "CONF": "Are you sure?"
+    "YOU": "You"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
     "Website_by": "Website by",
     "My_Name": "Ahmed Elsayed"
-  }
+  },
+  "CONFIRM": "Are you sure?"
 }
