@@ -74,7 +74,6 @@ export class Chat implements OnInit, OnDestroy {
           this.router.navigate(['/']);
         });
     });
-    console.log(this.translate.instant('CHAT.CONFIRM'));
   }
 
   initSocket(token: string) {
