@@ -79,6 +79,9 @@
     </div>
     }
 
+    <div *ngIf="partnerRecording" class="recording-indicator">
+      {{ 'CHAT.PARTNER_RECORDING' | translate }}
+    </div>
 
     <!-- Typing Indicator -->
     <div *ngIf="isTyping" class="typing-indicator">

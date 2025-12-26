@@ -49,7 +49,8 @@
     "WELCOME1": "Welcome",
     "WELCOME2": "Get ready to meet new friends!",
     "WELCOME3": "You can send text or voice messages",
-    "START": "Start Chat"
+    "START": "Start Chat",
+    "PARTNER_RECORDING": "Partner is recording..."
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",

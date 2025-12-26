@@ -45,6 +45,9 @@ export class Chat implements OnInit, OnDestroy {
   private recordInterval: any;
   sendSound = new Audio('sendSound.mp3');
   showWelcome = true;
+  partnerRecording = false;
+  private recordingTimeout: any;
+
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -129,16 +132,15 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
     }));
 
-    this.socket.on('typing', (senderName: string) => this.zone.run(() => {
-      if (senderName !== this.myName) {
-        this.isTyping = true;
+    this.socket.on('typing', () => this.zone.run(() => {
+      this.isTyping = true;
+      this.cd.detectChanges();
+
+      clearTimeout(this.typingTimeout);
+      this.typingTimeout = setTimeout(() => {
+        this.isTyping = false;
         this.cd.detectChanges();
-        clearTimeout(this.typingTimeout);
-        this.typingTimeout = setTimeout(() => {
-          this.isTyping = false;
-          this.cd.detectChanges();
-        }, 1000); // يختفي بعد 1.2 ثانية
-      }
+      }, 1000);
     }));
 
     this.socket.on('newVoice', msg => {
@@ -185,10 +187,34 @@ export class Chat implements OnInit, OnDestroy {
         this.cd.detectChanges();
       });
     });
+
+    this.socket.on('partnerRecording', (isRecording: boolean) => {
+      this.zone.run(() => {
+
+        if (isRecording) {
+          this.partnerRecording = true;
+          this.cd.detectChanges();
+
+          clearTimeout(this.recordingTimeout);
+          this.recordingTimeout = setTimeout(() => {
+            this.partnerRecording = false;
+            this.cd.detectChanges();
+          }, 1000);
+        } else {
+          this.partnerRecording = false;
+          clearTimeout(this.recordingTimeout);
+          this.cd.detectChanges();
+        }
+
+      });
+    });
   }
 
   async startRecording() {
     if (!this.connected) return;
+
+    // إشعار الطرف الآخر
+    this.socket.emit('startRecording');
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.audioChunks = [];
@@ -201,6 +227,9 @@ export class Chat implements OnInit, OnDestroy {
 
     this.mediaRecorder.onstop = () => {
       stream.getTracks().forEach(track => track.stop());
+
+      // إشعار الطرف الآخر بانتهاء التسجيل
+      this.socket.emit('stopRecording');
 
       if (!this.isCanceled && this.audioChunks.length > 0) {
         const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
@@ -226,6 +255,7 @@ export class Chat implements OnInit, OnDestroy {
       this.mediaRecorder?.stop();
       this.isRecording = false;
       this.cd.detectChanges();
+      this.socket.emit('stopRecording');
     }
   }
 
@@ -367,7 +397,7 @@ export class Chat implements OnInit, OnDestroy {
 
   onTyping() {
     if (this.connected) {
-      this.socket.emit('typing', this.myName);
+      this.socket.emit('typing');
     }
   }
 
@@ -461,6 +491,8 @@ export class Chat implements OnInit, OnDestroy {
     clearTimeout(this.typingTimeout);
     clearTimeout(this.confirmTimeout);
     clearTimeout(this.exitTimeout);
+    clearTimeout(this.recordingTimeout);
+    clearInterval(this.recordInterval);
   }
 
   get isRtl(): boolean {
