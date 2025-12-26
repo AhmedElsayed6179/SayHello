@@ -481,6 +481,16 @@
   }
 }
 
+.voice-btn i {
+  color: #0b93f6;
+  transition: color 0.3s;
+}
+
+body.dark-mode .voice-btn i {
+  color: #f5a623;
+}
+
+
 /* ------------------ Action Buttons ------------------ */
 .action-buttons {
   display: flex;
