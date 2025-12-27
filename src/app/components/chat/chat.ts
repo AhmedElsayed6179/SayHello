@@ -443,26 +443,36 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   sendMessage() {
+    if (!this.connected) {
+      Swal.fire({
+        icon: 'info',
+        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك إرسال رسالة بدون شريك' : 'You cannot send a message without a partner',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+      });
+      return;
+    }
+
+    const text = this.message.trim();
+    if (!text) return; // منع إرسال نص فارغ
+
     const chatMsg: ChatMessage = {
       id: this.generateUniqueId(),
       sender: 'user',
       senderName: this.myName,
-      text: this.message.trim(),
+      text,
       time: this.formatTime(new Date().toISOString())
     };
 
-    this.messages.push(chatMsg); // ← اختياري إذا عايز يظهر فورًا
-    this.socket.emit('sendMessage', {
-      id: chatMsg.id,
-      text: chatMsg.text
-    });
+    this.messages.push(chatMsg);
+    this.socket.emit('sendMessage', { id: chatMsg.id, text });
+
+    // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
 
     // تشغيل صوت الإرسال
-    this.sendSound.currentTime = 0; // إعادة الصوت من البداية
+    this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
-
-    this.message = '';
   }
 
   generateUniqueId(): string {
