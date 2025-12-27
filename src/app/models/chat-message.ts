@@ -1,11 +1,23 @@
 export interface ChatMessage {
+  id?: string;
   sender: 'user' | 'system';
+
+  /* نص */
   text?: string;
-  audioUrl?: string;
   key?: string;
-  time?: string;
-  senderName?: string;
-  currentTime?: string;
+
+  /* صوت */
+  audioUrl?: string;
+  duration?: number;
+  remainingTime?: string;
   isPlaying?: boolean;
   audioRef?: HTMLAudioElement;
+
+  /* بيانات عامة */
+  senderName?: string;
+  time?: string;
+
+  // ردود الأفعال
+  reaction?: string; 
 }
+

@@ -44,7 +44,13 @@
       <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
           <span class="sender-name">{{ msg.senderName === myName ? ('CHAT.YOU' | translate) : msg.senderName }}</span>
-          <span class="bubble-text">{{ msg.text }}</span>
+          <div class="bubble-wrapper">
+            <span class="bubble-text" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
+            <!-- الريأكشن يظهر فوق الفقاعة -->
+            <div class="reaction" *ngIf="msg.reaction">
+              {{ msg.reaction }}
+            </div>
+          </div>
           <small class="time-text" style="direction: ltr;">{{ msg.time }}</small>
         </div>
       </ng-container>
@@ -56,21 +62,30 @@
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : msg.senderName }}
           </span>
 
-          <div class="voice-bubble">
+          <div class="voice-bubble" style="cursor: pointer; position: relative;"
+            (click)="$event.stopPropagation(); reactToMessage(msg, '❤️')">
             <!-- زرار التشغيل -->
-            <button class="play-btn" (click)="togglePlay(msg)">
+            <button class="play-btn" (click)="togglePlay(msg); $event.stopPropagation()">
               <i class="fa" [ngClass]="msg.isPlaying ? 'fa-pause' : 'fa-play'"></i>
             </button>
 
             <!-- العنصر الصوتي -->
             <audio #audio [src]="msg.audioUrl"></audio>
 
+            <!-- Slider للتحكم في الوقت -->
+            <input type="range" min="0" [max]="msg.duration || 0" [value]="msg.audioRef?.currentTime || 0"
+              (input)="seekAudio(msg, $event)" (click)="togglePlay(msg); $event.stopPropagation()" />
+
             <div class="wave" [class.active]="isRecording || msg.isPlaying">
               <span></span><span></span><span></span><span></span>
             </div>
 
             <!-- عداد الوقت -->
-            <span class="voice-counter">{{ msg.currentTime || '0:00' }}</span>
+            <span class="voice-counter">{{ msg.remainingTime }}</span>
+
+            <div class="reaction" *ngIf="msg.reaction">
+              {{ msg.reaction }}
+            </div>
           </div>
 
           <small class="voice-time">{{ msg.time }}</small>
@@ -110,6 +125,9 @@
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">
           <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()">✖️</button>
+          <button class="voice-btn pause-btn" *ngIf="!showWelcome" (click)="togglePauseResume()">
+            {{ isRecordingPaused ? '▶️' : '⏸️' }}
+          </button>
           <span *ngIf="!showWelcome" class="record-timer">{{ recordTime }}</span>
         </div>
       </ng-container>

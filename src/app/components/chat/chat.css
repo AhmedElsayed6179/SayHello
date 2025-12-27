@@ -185,6 +185,58 @@
   margin-left: auto;
 }
 
+input[type="range"] {
+  width: 100px;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  accent-color: #0b93f6;
+  outline: none;
+  cursor: pointer;
+}
+
+/* مؤشر السلايدر */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #0b93f6;
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  transition: background 0.3s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #0664c1;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #0b93f6;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+input[type="range"]::-moz-range-track {
+  background: #e0e0e0;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.reaction {
+  position: absolute;
+  bottom: -8px;
+  right: 8px;
+  background: #fff;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  padding: 2px;
+}
+
 /* ------------------ Dark Mode Scrollbar ------------------ */
 .dark-mode .chat-box {
   background-color: #1e1e1e;
@@ -292,6 +344,7 @@
 }
 
 @keyframes blink {
+
   0%,
   50%,
   100% {
@@ -406,8 +459,8 @@
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 4px;
-  z-index: 6;
+  gap: 12px;
+  z-index: 10;
 }
 
 /* LTR */
@@ -421,13 +474,25 @@
   right: auto;
 }
 
+.pause-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
 .cancel-btn {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   border: none;
-  background: transparent;
-  color: #fff;
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -441,10 +506,13 @@
   background-color: #dc3545;
   padding: 2px 6px;
   border-radius: 12px;
-  min-width: 30px;
   text-align: center;
-  user-select: none;
-  z-index: 5;
+}
+
+/* 🔴 نكسر position:absolute من voice-btn */
+.cancel-container .voice-btn {
+  position: static !important;
+  transform: none !important;
 }
 
 /* الوضع الداكن */
@@ -484,11 +552,6 @@
   100% {
     transform: scale(1);
   }
-}
-
-.voice-btn i {
-  color: #0b93f6;
-  transition: color 0.3s;
 }
 
 /* ------------------ Action Buttons ------------------ */
@@ -704,6 +767,96 @@ body.dark-mode {
 
 .dark-mode .exit-btn {
   background-color: #dc3545;
+}
+
+/* ------------------ Reaction ------------------ */
+.bubble-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* نص الفقاعة */
+.bubble-text {
+  padding: 8px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: inline-block;
+  max-width: 250px;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.reaction {
+  position: absolute;
+  bottom: 0;
+  right: -16px;
+  background-color: white;
+  border-radius: 50%;
+  padding: 2px 4px;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.dark-mode .reaction {
+  background-color: #333;
+  color: white;
+}
+
+.light-mode .reaction {
+  background-color: #fff;
+  color: black;
+}
+
+.voice-bubble {
+  position: relative;
+  padding: 8px 12px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  max-width: 250px;
+  position: relative;
+  z-index: 1;
+}
+
+/* زرار التشغيل */
+.play-btn {
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+/* الريأكشن الصغير على جنب */
+.voice-bubble .reaction {
+  position: absolute;
+  bottom: 0;
+  right: -16px;
+  background-color: white;
+  border-radius: 50%;
+  padding: 2px 4px;
+  font-size: 14px;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 2;
+  color: black;
+}
+
+.dark-mode .voice-bubble .reaction {
+  background-color: #333;
+  color: white;
+}
+
+.light-mode .voice-bubble .reaction {
+  background-color: #fff;
+  color: black;
 }
 
 /* ------------------ Responsive ------------------ */

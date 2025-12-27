@@ -49,6 +49,11 @@ export class Chat implements OnInit, OnDestroy {
   partnerRecording = false;
   private recordingTimeout: any;
   private recordingPing: any;
+  private lastClickTime: number = 0;
+  private doubleClickThreshold = 300;
+  isRecordingPaused = false;
+  recordedSeconds = 0;
+
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -123,12 +128,16 @@ export class Chat implements OnInit, OnDestroy {
     }));
 
     this.socket.on('newMessage', msg => this.zone.run(() => {
-      this.messages.push({
-        sender: 'user',
-        senderName: msg.sender,
-        text: msg.text,
-        time: this.formatTime(msg.time)
-      });
+      const exists = this.messages.find(m => m.id === msg.id);
+      if (!exists) {
+        this.messages.push({
+          id: msg.id,
+          sender: 'user',
+          senderName: msg.sender,
+          text: msg.text,
+          time: this.formatTime(msg.time)
+        });
+      }
       this.scrollToBottom();
       this.cd.detectChanges();
     }));
@@ -146,42 +155,52 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket.on('newVoice', msg => {
       this.zone.run(() => {
+
         const chatMsg: ChatMessage = {
+          id: msg.id,
           sender: 'user',
           senderName: msg.sender,
           audioUrl: msg.url,
-          time: this.formatTime(msg.time),
-          currentTime: '0:00',
-          isPlaying: false
+          duration: msg.duration,
+          remainingTime: this.formatSeconds(msg.duration),
+          isPlaying: false,
+          time: this.formatTime(msg.time) // لو عندك الوقت
         };
 
+        // 🔴 هنا ضيف push + detectChanges + scroll
         this.messages.push(chatMsg);
+        this.cd.detectChanges();
+        this.scrollToBottom();
 
         setTimeout(() => {
-          const lastAudio = this.audioEls.toArray().pop();
-          if (lastAudio) {
-            chatMsg.audioRef = lastAudio.nativeElement;
+          const audioList = this.audioEls.toArray();
+          if (!audioList.length) return;
 
-            chatMsg.isPlaying = false;
-            chatMsg.currentTime = '0:00';
+          const lastAudio = audioList[audioList.length - 1];
+          chatMsg.audioRef = lastAudio.nativeElement;
 
-            chatMsg.audioRef.onended = () => {
-              this.zone.run(() => {
-                chatMsg.isPlaying = false;
-                chatMsg.currentTime = '0:00';
-                this.cd.detectChanges();
-              });
-            };
+          chatMsg.audioRef.onended = () => {
+            this.zone.run(() => {
+              chatMsg.isPlaying = false;
+              chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
+              chatMsg.audioRef!.currentTime = 0;
+              this.cd.detectChanges();
+            });
+          };
 
-            chatMsg.audioRef.ontimeupdate = () => {
-              const minutes = Math.floor(chatMsg.audioRef!.currentTime / 60);
-              const seconds = Math.floor(chatMsg.audioRef!.currentTime % 60).toString().padStart(2, '0');
-              this.zone.run(() => {
-                chatMsg.currentTime = `${minutes}:${seconds}`;
-                this.cd.detectChanges(); // إعادة الرسم في كل تحديث
-              });
-            };
-          }
+          chatMsg.audioRef.ontimeupdate = () => {
+            const remaining =
+              Math.max(
+                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
+                0
+              );
+
+            this.zone.run(() => {
+              chatMsg.remainingTime = this.formatSeconds(remaining);
+              this.cd.detectChanges();
+            });
+          };
+
         }, 50);
 
         this.scrollToBottom();
@@ -209,24 +228,26 @@ export class Chat implements OnInit, OnDestroy {
         this.cd.detectChanges();
       });
     });
+
+    this.socket.on('newReaction', data => {
+      if (!data.messageId) return;          // ← تأكد من وجود الـ messageId
+      const msg = this.messages.find(m => m.id === data.messageId);
+      if (msg) {
+        msg.reaction = data.reaction;       // ← تعديل الرسالة مباشرة
+        this.cd.detectChanges();            // ← لتحديث العرض
+      }
+    });
   }
 
   async startRecording() {
     if (!this.connected) return;
 
-    // 🔴 أول إشعار
-    this.socket.emit('startRecording');
-
-    // 🔴 Ping كل 800ms طول ما أنا بسجل
-    clearInterval(this.recordingPing);
-    this.recordingPing = setInterval(() => {
-      this.socket.emit('startRecording');
-    }, 800);
-
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    this.audioChunks = [];
-    this.isCanceled = false; // كل مرة تسجيل جديد
     this.mediaRecorder = new MediaRecorder(stream);
+
+    this.audioChunks = [];
+    this.isCanceled = false;
+    this.isRecordingPaused = false;
 
     this.mediaRecorder.ondataavailable = e => {
       if (e.data.size > 0) this.audioChunks.push(e.data);
@@ -234,26 +255,39 @@ export class Chat implements OnInit, OnDestroy {
 
     this.mediaRecorder.onstop = () => {
       stream.getTracks().forEach(track => track.stop());
-
-      // 🔴 وقف الإشعار
-      clearInterval(this.recordingPing);
+      this.stopRecordingPing();
       this.socket.emit('stopRecording');
 
       if (!this.isCanceled && this.audioChunks.length > 0) {
         const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-        this.uploadVoice(audioBlob);
+        this.uploadVoice(audioBlob, this.recordedSeconds);
       }
+
       this.audioChunks = [];
+      this.recordedSeconds = 0;
     };
 
-    this.isRecording = true;
-    this.cd.detectChanges();
-
-    this.zone.run(() => {
-      this.startRecordTimer();
-    });
-
     this.mediaRecorder.start();
+    this.isRecording = true;
+
+    this.startRecordTimer();
+    this.startRecordingPing(); // ⬅️ هنا بس
+  }
+
+  startRecordingPing() {
+    this.stopRecordingPing();
+    this.recordingPing = setInterval(() => {
+      if (!this.isRecordingPaused) {
+        this.socket.emit('startRecording');
+      }
+    }, 800);
+  }
+
+  stopRecordingPing() {
+    if (this.recordingPing) {
+      clearInterval(this.recordingPing);
+      this.recordingPing = null;
+    }
   }
 
   cancelRecording() {
@@ -279,54 +313,43 @@ export class Chat implements OnInit, OnDestroy {
 
     this.mediaRecorder.stop();
     this.isRecording = false;
+    this.mediaRecorder.stop();
   }
 
-  async togglePlay(msg: ChatMessage) {
-    const audioEl = msg.audioRef;
-    if (!audioEl) return;
+  togglePlay(msg: ChatMessage) {
+    const audio = msg.audioRef!;
+    if (!audio) return;
 
-    // إيقاف أي صوت آخر
-    this.messages.forEach(m => {
-      if (m !== msg && m.isPlaying && m.audioRef) {
-        m.audioRef.pause();
-        this.zone.run(() => {
-          m.isPlaying = false;
-          m.currentTime = '0:00';
-          this.cd.detectChanges();
-        });
-      }
-    });
-
-    if (!audioEl.paused) {
-      audioEl.pause();
-      this.zone.run(() => {
-        msg.isPlaying = false;
-        msg.currentTime = '0:00';
-        this.cd.detectChanges();
-      });
+    if (msg.isPlaying) {
+      audio.pause();
+      msg.isPlaying = false;
       return;
     }
 
-    if (audioEl.readyState < 4) {
-      await new Promise<void>(resolve => audioEl.oncanplaythrough = () => resolve());
-    }
+    audio.play();
+    msg.isPlaying = true;
 
-    try {
-      await audioEl.play();
-      this.zone.run(() => {
-        msg.isPlaying = true;
-        this.cd.detectChanges();
-      });
-    } catch (err) {
-      console.error(err);
-      this.zone.run(() => {
-        msg.isPlaying = false;
-        this.cd.detectChanges();
-      });
-    }
+    audio.ontimeupdate = () => {
+      const remaining = Math.max((msg.duration || 0) - Math.floor(audio.currentTime), 0);
+      msg.remainingTime = this.formatSeconds(remaining);
+      this.cd.detectChanges();
+    };
+
+    audio.onended = () => {
+      msg.isPlaying = false;
+      msg.remainingTime = this.formatSeconds(msg.duration || 0);
+      audio.currentTime = 0;
+      this.cd.detectChanges();
+    };
   }
 
-  uploadVoice(blob: Blob) {
+  formatSeconds(sec: number): string {
+    const m = Math.floor(sec / 60);
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  uploadVoice(blob: Blob, duration: number) {
     const formData = new FormData();
     formData.append('voice', blob, 'voice.webm');
 
@@ -336,11 +359,27 @@ export class Chat implements OnInit, OnDestroy {
     })
       .then(res => res.json())
       .then(data => {
-        this.socket.emit('sendVoice', { url: data.url });
-        // تشغيل صوت الإرسال
+        const msgId = this.generateUniqueId();
+        this.socket.emit('sendVoice', {
+          id: msgId,
+          url: data.url,
+          duration
+        });
+
         this.sendSound.currentTime = 0;
-        this.sendSound.play().catch(err => console.warn(err));
+        this.sendSound.play().catch(() => { });
       });
+  }
+
+  seekAudio(msg: ChatMessage, event: any) {
+    const value = Number(event.target.value);
+    if (msg.audioRef) {
+      msg.audioRef.currentTime = value;
+
+      // لتحديث العداد مباشرة عند السحب
+      msg.remainingTime = this.formatSeconds(Math.max((msg.duration || 0) - value, 0));
+      this.cd.detectChanges();
+    }
   }
 
   onStartVoiceClick() {
@@ -373,19 +412,15 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   startRecordTimer() {
-    let seconds = 0;
-    this.recordTime = '0:00';
     clearInterval(this.recordInterval);
-
     this.recordInterval = setInterval(() => {
-      seconds++;
-      const mins = Math.floor(seconds / 60);
-      const secs = (seconds % 60).toString().padStart(2, '0');
-
-      this.zone.run(() => {
+      if (!this.isRecordingPaused) { // عد الثواني فقط لو التسجيل شغال
+        this.recordedSeconds++;
+        const mins = Math.floor(this.recordedSeconds / 60);
+        const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
         this.recordTime = `${mins}:${secs}`;
         this.cd.detectChanges();
-      });
+      }
     }, 1000);
   }
 
@@ -403,13 +438,81 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    if (!this.connected || !this.message.trim()) return;
-    this.socket.emit('sendMessage', this.message.trim());
+    const chatMsg: ChatMessage = {
+      id: this.generateUniqueId(),
+      sender: 'user',
+      senderName: this.myName,
+      text: this.message.trim(),
+      time: this.formatTime(new Date().toISOString())
+    };
+
+    this.messages.push(chatMsg); // ← اختياري إذا عايز يظهر فورًا
+    this.socket.emit('sendMessage', {
+      id: chatMsg.id,
+      text: chatMsg.text
+    });
+    this.message = '';
+
     // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0; // إعادة الصوت من البداية
     this.sendSound.play().catch(err => console.warn(err));
 
     this.message = '';
+  }
+
+  generateUniqueId(): string {
+    return 'msg-' + Math.random().toString(36).substr(2, 9);
+  }
+
+  togglePauseResume() {
+    if (!this.mediaRecorder) return;
+
+    if (this.isRecordingPaused) {
+      // ▶️ Resume
+      this.mediaRecorder.resume();
+      this.isRecordingPaused = false;
+
+      this.startRecordTimer();
+      this.startRecordingPing();
+      this.socket.emit('resumeRecording');
+
+    } else {
+      // ⏸️ Pause
+      this.mediaRecorder.pause();
+      this.isRecordingPaused = true;
+
+      this.stopRecordTimer();
+      this.stopRecordingPing();
+      this.socket.emit('pauseRecording');
+    }
+  }
+
+  reactToMessage(msg: ChatMessage, reaction: string) {
+    const now = Date.now();
+
+    if (now - this.lastClickTime < this.doubleClickThreshold) {
+      // ضغطتين متتاليتين → toggle الريأكشن
+      msg.reaction = msg.reaction === reaction ? undefined : reaction;
+
+      // أرسل للسيرفر
+      this.socket.emit('react', {
+        messageId: msg.id,
+        reaction: msg.reaction
+      });
+
+      this.cd.detectChanges();
+      this.lastClickTime = 0; // reset
+    } else {
+      // أول click → سجل الوقت
+      this.lastClickTime = now;
+    }
+  }
+
+  toggleReaction(msg: ChatMessage, reaction: string) {
+    if (!msg.id) return;
+    this.socket.emit('react', { messageId: msg.id, reaction });
+    msg.reaction = reaction;
+    this.cd.detectChanges();
   }
 
   onTyping() {
