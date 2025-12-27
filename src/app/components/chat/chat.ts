@@ -487,10 +487,31 @@ export class Chat implements OnInit, OnDestroy {
   reactToMessage(msg: ChatMessage, reaction: string) {
     if (!msg.id) return;
 
+    const user = this.myName;
+
+    if (!msg.reactions) msg.reactions = {};
+    if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
+
+    const idx = msg.reactions[reaction].indexOf(user);
+
+    if (idx === -1) {
+      // إضافة reaction
+      msg.reactions[reaction].push(user);
+    } else {
+      // إزالة reaction (toggle)
+      msg.reactions[reaction].splice(idx, 1);
+      if (msg.reactions[reaction].length === 0) {
+        delete msg.reactions[reaction];
+      }
+    }
+
+    // إرسال للسيرفر
     this.socket.emit('react', {
       messageId: msg.id,
       reaction
     });
+
+    this.cd.detectChanges();
   }
 
   toggleReaction(msg: ChatMessage, reaction: string) {
