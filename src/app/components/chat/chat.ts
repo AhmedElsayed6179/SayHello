@@ -486,12 +486,7 @@ export class Chat implements OnInit, OnDestroy {
 
   reactToMessage(msg: ChatMessage, reaction: string) {
     if (!msg.id) return;
-
-    this.socket.emit('react', {
-      messageId: msg.id,
-      reaction,
-      sender: this.myName
-    });
+    this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName });
   }
 
   toggleReaction(msg: ChatMessage, reaction: string) {
