@@ -239,6 +239,11 @@ export class Chat implements OnInit, OnDestroy {
   async startRecording() {
     if (!this.connected) return;
 
+    // إعادة تهيئة العداد قبل بداية التسجيل
+    this.recordedSeconds = 0;
+    this.recordTime = '0:00';
+    this.cd.detectChanges();
+
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.mediaRecorder = new MediaRecorder(stream);
 
@@ -260,15 +265,18 @@ export class Chat implements OnInit, OnDestroy {
         this.uploadVoice(audioBlob, this.recordedSeconds);
       }
 
+      // تصفير العداد بعد الإرسال
       this.audioChunks = [];
       this.recordedSeconds = 0;
+      this.recordTime = '0:00';
+      this.cd.detectChanges();
     };
 
     this.mediaRecorder.start();
     this.isRecording = true;
 
     this.startRecordTimer();
-    this.startRecordingPing(); // ⬅️ هنا بس
+    this.startRecordingPing();
   }
 
   startRecordingPing() {
