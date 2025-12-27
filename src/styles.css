@@ -63,7 +63,6 @@ body.dark-mode .swal2-cancel {
   height: 100vh;
   overflow-y: auto;
   direction: ltr;
-  /* scrollbar على اليمين */
   scrollbar-width: thin;
   /* Firefox */
   scrollbar-color: #0b93f6 #e0e0e0;
@@ -106,3 +105,22 @@ body.dark-mode .scroll-wrapper::-webkit-scrollbar-thumb {
 body.dark-mode .scroll-wrapper::-webkit-scrollbar-thumb:hover {
   background-color: #0a7cd5;
 }
+
+/* ================== MOBILE SCROLL ================== */
+@media (max-width: 768px) {
+
+  .scroll-wrapper {
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .scroll-wrapper::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+

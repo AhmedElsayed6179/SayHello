@@ -78,7 +78,8 @@ export class Home {
       Swal.fire({
         icon: 'error',
         title: this.translate.instant('HOME.ERROR_TITLE'),
-        text: message
+        text: message,
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
@@ -104,7 +105,8 @@ export class Home {
         Swal.fire({
           icon: 'error',
           title: this.translate.instant('HOME.ERROR_TITLE'),
-          text: this.translate.instant('HOME.ERROR_SERVER')
+          text: this.translate.instant('HOME.ERROR_SERVER'),
+          confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
         });
       });
   }

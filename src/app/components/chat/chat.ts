@@ -348,7 +348,8 @@ export class Chat implements OnInit, OnDestroy {
       Swal.fire({
         icon: 'info',
         title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
-        text: this.translate.currentLang === 'ar' ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك' : 'You cannot record a voice message without a partner'
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك' : 'You cannot record a voice message without a partner',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
@@ -362,7 +363,8 @@ export class Chat implements OnInit, OnDestroy {
       Swal.fire({
         icon: 'info',
         title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
-        text: this.translate.currentLang === 'ar' ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك' : 'You cannot record a voice message without a partner'
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك استخدام الإيموجي بدون شريك' : 'You cannot use emojis without a partner',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
@@ -474,7 +476,7 @@ export class Chat implements OnInit, OnDestroy {
     fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
       .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
-      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER') }); this.router.navigate(['/']); });
+      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK' }); this.router.navigate(['/']); });
   }
 
   exitChat() { this.socket?.disconnect(); this.router.navigate(['/']); }
