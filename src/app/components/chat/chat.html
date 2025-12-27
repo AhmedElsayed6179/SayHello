@@ -133,7 +133,7 @@
       </ng-container>
       <!-- زر الإرسال -->
       @if(!isRecording){
-      <button *ngIf="!showWelcome" class="send-btn" (click)="onStartsendMessage()" [disabled]="!connected || !message.trim()">
+      <button *ngIf="!showWelcome" class="send-btn" (click)="sendMessage()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
       }

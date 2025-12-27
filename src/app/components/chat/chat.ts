@@ -442,7 +442,7 @@ export class Chat implements OnInit, OnDestroy {
     return 'Are you sure?';
   }
 
-  onStartsendMessage() {
+  sendMessage() {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
@@ -453,30 +453,34 @@ export class Chat implements OnInit, OnDestroy {
       return;
     }
 
-    this.sendMessage();
-  }
+    const text = this.message.trim();
+    if (!text) {
+      Swal.fire({
+        icon: 'info',
+        title: this.translate.currentLang === 'ar' ? 'نص فارغ' : 'Empty text',
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك إرسال رسالة فارغة' : 'You cannot send an empty message',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+      });
+      return;
+    }
 
-  sendMessage() {
     const chatMsg: ChatMessage = {
       id: this.generateUniqueId(),
       sender: 'user',
       senderName: this.myName,
-      text: this.message.trim(),
+      text,
       time: this.formatTime(new Date().toISOString())
     };
 
-    this.messages.push(chatMsg); // ← اختياري إذا عايز يظهر فورًا
-    this.socket.emit('sendMessage', {
-      id: chatMsg.id,
-      text: chatMsg.text
-    });
+    this.messages.push(chatMsg);
+    this.socket.emit('sendMessage', { id: chatMsg.id, text });
+
+    // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
 
     // تشغيل صوت الإرسال
-    this.sendSound.currentTime = 0; // إعادة الصوت من البداية
+    this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
-
-    this.message = '';
   }
 
   generateUniqueId(): string {
