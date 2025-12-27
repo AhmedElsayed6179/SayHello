@@ -44,6 +44,7 @@ export class Chat implements OnInit, OnDestroy {
   recordTime = '0:00';
   private recordInterval: any;
   sendSound = new Audio('sendSound.mp3');
+  deleteSound = new Audio('deleteSound.wav');
   showWelcome = true;
   partnerRecording = false;
   private recordingTimeout: any;
@@ -264,6 +265,9 @@ export class Chat implements OnInit, OnDestroy {
       this.mediaRecorder?.stop();
       this.isRecording = false;
       this.cd.detectChanges();
+
+      this.deleteSound.currentTime = 0;
+      this.deleteSound.play().catch(err => console.warn(err));
     }
   }
 
