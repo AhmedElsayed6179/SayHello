@@ -49,8 +49,6 @@ export class Chat implements OnInit, OnDestroy {
   partnerRecording = false;
   private recordingTimeout: any;
   private recordingPing: any;
-  private lastClickTime: number = 0;
-  private doubleClickThreshold = 300;
   isRecordingPaused = false;
   recordedSeconds = 0;
 
@@ -230,12 +228,11 @@ export class Chat implements OnInit, OnDestroy {
     });
 
     this.socket.on('newReaction', data => {
-      if (!data.messageId) return;          // ← تأكد من وجود الـ messageId
       const msg = this.messages.find(m => m.id === data.messageId);
-      if (msg) {
-        msg.reaction = data.reaction;       // ← تعديل الرسالة مباشرة
-        this.cd.detectChanges();            // ← لتحديث العرض
-      }
+      if (!msg) return;
+
+      msg.reactions = data.reactions;
+      this.cd.detectChanges();
     });
   }
 
@@ -488,30 +485,38 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   reactToMessage(msg: ChatMessage, reaction: string) {
-    const now = Date.now();
+    if (!msg.id) return;
 
-    if (now - this.lastClickTime < this.doubleClickThreshold) {
-      // ضغطتين متتاليتين → toggle الريأكشن
-      msg.reaction = msg.reaction === reaction ? undefined : reaction;
-
-      // أرسل للسيرفر
-      this.socket.emit('react', {
-        messageId: msg.id,
-        reaction: msg.reaction
-      });
-
-      this.cd.detectChanges();
-      this.lastClickTime = 0; // reset
-    } else {
-      // أول click → سجل الوقت
-      this.lastClickTime = now;
-    }
+    this.socket.emit('react', {
+      messageId: msg.id,
+      reaction
+    });
   }
 
   toggleReaction(msg: ChatMessage, reaction: string) {
-    if (!msg.id) return;
-    this.socket.emit('react', { messageId: msg.id, reaction });
-    msg.reaction = reaction;
+    const user = this.myName;
+
+    if (!msg.reactions) msg.reactions = {};
+
+    if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
+
+    const idx = msg.reactions[reaction].indexOf(user);
+
+    if (idx === -1) {
+      // أضف المستخدم
+      msg.reactions[reaction].push(user);
+    } else {
+      // حذف المستخدم (unreact)
+      msg.reactions[reaction].splice(idx, 1);
+    }
+
+    // إرسال للسيرفر
+    this.socket.emit('react', {
+      messageId: msg.id,
+      reaction,
+      sender: user
+    });
+
     this.cd.detectChanges();
   }
 

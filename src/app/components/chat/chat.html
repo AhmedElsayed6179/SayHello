@@ -47,8 +47,8 @@
           <div class="bubble-wrapper">
             <span class="bubble-text" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
             <!-- الريأكشن يظهر فوق الفقاعة -->
-            <div class="reaction" *ngIf="msg.reaction">
-              {{ msg.reaction }}
+            <div class="reaction" *ngIf="msg.reactions?.['❤️']">
+              ❤️ {{ msg.reactions?.['❤️'] || 0 }}
             </div>
           </div>
           <small class="time-text" style="direction: ltr;">{{ msg.time }}</small>
@@ -83,8 +83,10 @@
             <!-- عداد الوقت -->
             <span class="voice-counter">{{ msg.remainingTime }}</span>
 
-            <div class="reaction" *ngIf="msg.reaction">
-              {{ msg.reaction }}
+            <div class="reactions" *ngIf="msg.reactions">
+              <span *ngFor="let r of msg.reactions | keyvalue">
+                {{ r.key }} {{ r.value }}
+              </span>
             </div>
           </div>
 

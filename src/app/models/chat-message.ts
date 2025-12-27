@@ -18,6 +18,8 @@ export interface ChatMessage {
   time?: string;
 
   // ردود الأفعال
-  reaction?: string; 
+  reactions?: {
+    [reaction: string]: string[];
+  };
 }
 
