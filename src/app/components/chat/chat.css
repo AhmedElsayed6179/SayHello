@@ -403,16 +403,21 @@
 .cancel-container {
   position: absolute;
   top: 50%;
-  right: 95px;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   z-index: 6;
 }
 
+/* LTR */
+.input-inner.ltr .cancel-container {
+  right: 50px;
+}
+
+/* RTL */
 .input-inner.rtl .cancel-container {
-  left: 95px;
+  left: 50px;
   right: auto;
 }
 

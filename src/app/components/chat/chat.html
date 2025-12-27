@@ -108,8 +108,6 @@
       }
       <!-- زر الإيقاف + الإلغاء + العداد -->
       <ng-container *ngIf="isRecording">
-        <button class="voice-btn stop-btn" *ngIf="!showWelcome" (click)="stopRecording()"><i
-            class="fa-solid fa-paper-plane"></i></button>
         <div class="cancel-container">
           <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()">✖️</button>
           <span *ngIf="!showWelcome" class="record-timer">{{ recordTime }}</span>
@@ -118,6 +116,11 @@
       <!-- زر الإرسال -->
       @if(!isRecording){
       <button *ngIf="!showWelcome" class="send-btn" (click)="sendMessage()" [disabled]="!connected || !message.trim()">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+      }
+      @if(isRecording){
+      <button *ngIf="!showWelcome" class="send-btn" (click)="stopRecording()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
       }
