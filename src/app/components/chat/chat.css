@@ -786,10 +786,10 @@ body.dark-mode {
   position: relative;
 }
 
+/* Reaction للنص */
 .reaction {
   position: absolute;
   bottom: 0;
-  right: -16px;
   background-color: white;
   border-radius: 50%;
   padding: 2px 4px;
@@ -803,16 +803,40 @@ body.dark-mode {
   pointer-events: none;
 }
 
-.dark-mode .reaction {
+/* اتجاه Reaction حسب مكان الرسالة */
+.message-right .bubble-wrapper .reaction {
+  left: -36px;
+  right: auto;
+}
+
+.message-left .bubble-wrapper .reaction {
+  right: -36px;
+  left: auto;
+}
+
+/* RTL دعم */
+.rtl .message-left .bubble-wrapper .reaction {
+  left: -36px;
+  right: auto;
+}
+
+.rtl .message-right .bubble-wrapper .reaction {
+  right: -36px;
+  left: auto;
+}
+
+/* وضع داكن وفاتح */
+.dark-mode .bubble-wrapper .reaction {
   background-color: #333;
   color: white;
 }
 
-.light-mode .reaction {
+.light-mode .bubble-wrapper .reaction {
   background-color: #fff;
   color: black;
 }
 
+/* ------------------ Voice Bubble ------------------ */
 .voice-bubble {
   position: relative;
   padding: 8px 12px;
@@ -820,7 +844,6 @@ body.dark-mode {
   display: flex;
   align-items: center;
   max-width: 250px;
-  position: relative;
   z-index: 1;
 }
 
@@ -830,11 +853,10 @@ body.dark-mode {
   margin-right: 8px;
 }
 
-/* الريأكشن الصغير على جنب */
+/* Reaction للرسائل الصوتية */
 .voice-bubble .reaction {
   position: absolute;
   bottom: 0;
-  right: -16px;
   background-color: white;
   border-radius: 50%;
   padding: 2px 4px;
@@ -849,6 +871,29 @@ body.dark-mode {
   color: black;
 }
 
+/* اتجاه Reaction حسب الصوت */
+.voice-right .reaction {
+  left: -36px;
+  right: auto;
+}
+
+.voice-left .reaction {
+  right: -36px;
+  left: auto;
+}
+
+/* RTL دعم */
+.rtl .voice-left .reaction {
+  left: -36px;
+  right: auto;
+}
+
+.rtl .voice-right .reaction {
+  right: -36px;
+  left: auto;
+}
+
+/* وضع داكن وفاتح للـVoice */
 .dark-mode .voice-bubble .reaction {
   background-color: #333;
   color: white;
