@@ -87,20 +87,13 @@ export class Home {
     const name = this.usernameForm.value.username.trim();
     if (!name) return;
 
-    let deviceId = localStorage.getItem('deviceId');
-    if (!deviceId) {
-      deviceId = crypto.randomUUID();
-      localStorage.setItem('deviceId', deviceId);
-    }
-
-    // إرسال طلب بدء المحادثة والتحقق من الاسم على نفس الجهاز فقط
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, deviceId })
+      body: JSON.stringify({ name })
     })
       .then(res => {
-        if (!res.ok) return res.json().then(err => { throw err; });
+        if (!res.ok) throw new Error('Failed to start chat');
         return res.json();
       })
       .then(data => {
@@ -108,16 +101,7 @@ export class Home {
         this.router.navigate(['/chat'], { queryParams: { token, name } });
       })
       .catch(err => {
-        if (err.error === 'NAME_TAKEN') {
-          Swal.fire({
-            icon: 'info',
-            title: this.translate.instant('HOME.ERROR_TITLE'),
-            text: this.translate.instant('HOME.ERROR_SAME_DEVICE'), // الاسم مستخدم على نفس الجهاز
-            confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
-          });
-          return;
-        }
-
+        console.error(err);
         Swal.fire({
           icon: 'error',
           title: this.translate.instant('HOME.ERROR_TITLE'),
