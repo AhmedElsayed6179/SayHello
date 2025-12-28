@@ -188,9 +188,9 @@
 input[type="range"] {
   width: 100px;
   height: 6px;
-  background: #e0e0e0;
+  background: #d6d6d6;
   border-radius: 3px;
-  accent-color: #0069b4;
+  accent-color: #0a5ea8;
   outline: none;
   cursor: pointer;
 }
@@ -200,7 +200,7 @@ input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
-  background: #e0e0e0;
+  background: #f0f0f0;
   border-radius: 50%;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   transition: background 0.3s;
@@ -214,7 +214,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #0b93f6;
+  background: #0a5ea8;
   border-radius: 50%;
   border: none;
   cursor: pointer;
@@ -222,7 +222,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 input[type="range"]::-moz-range-track {
-  background: #e0e0e0;
+  background: #d6d6d6;
   height: 6px;
   border-radius: 3px;
 }
