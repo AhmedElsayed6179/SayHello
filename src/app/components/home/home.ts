@@ -87,10 +87,16 @@ export class Home {
     const name = this.usernameForm.value.username.trim();
     if (!name) return;
 
+    let deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+      deviceId = crypto.randomUUID();
+      localStorage.setItem('deviceId', deviceId);
+    }
+
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name, deviceId })
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to start chat');

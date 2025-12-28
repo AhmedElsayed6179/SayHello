@@ -1,7 +1,7 @@
 export interface ChatMessage {
   id?: string;
   sender: 'me' | 'user' | 'system';
-  
+
   /* نص */
   text?: string;
   key?: string;
