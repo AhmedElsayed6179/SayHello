@@ -1,7 +1,6 @@
 export interface ChatMessage {
   id?: string;
-  senderId?:string
-  sender: 'user' | 'self' | 'system';
+  sender: 'user' | 'system';
 
   /* نص */
   text?: string;
