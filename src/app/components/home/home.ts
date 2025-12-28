@@ -85,25 +85,20 @@ export class Home {
     }
 
     const name = this.usernameForm.value.username.trim();
+    if (!name) return;
+
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to start chat');
+        return res.json();
+      })
       .then(data => {
-        if (data.error === 'NAME_TAKEN') {
-          Swal.fire({
-            icon: 'error',
-            title: this.translate.instant('HOME.ERROR_TITLE'),
-            text: this.translate.currentLang === 'ar'
-              ? 'هذا الاسم مستخدم بالفعل. يرجى اختيار اسم آخر.'
-              : 'This name is already taken. Please choose another one.',
-            confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
-          });
-          return;
-        }
-        this.router.navigate(['/chat'], { queryParams: { token: data.token, name } });
+        const token = data.token;
+        this.router.navigate(['/chat'], { queryParams: { token, name } });
       })
       .catch(err => {
         console.error(err);
