@@ -93,18 +93,22 @@ export class Home {
       localStorage.setItem('deviceId', deviceId);
     }
 
-    // أولاً، تحقق من السيرفر إذا الـ deviceId متصل بالفعل
-    fetch(`${environment.SayHello_Server}/check-device`, {
+    // إرسال طلب بدء المحادثة والتحقق من الاسم
+    fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deviceId })
+      body: JSON.stringify({ name, deviceId })
     })
       .then(res => {
-        if (!res.ok) throw new Error('Failed to check device');
+        if (!res.ok) return res.json().then(err => { throw err; });
         return res.json();
       })
       .then(data => {
-        if (data.exists) {
+        const token = data.token;
+        this.router.navigate(['/chat'], { queryParams: { token, name } });
+      })
+      .catch(err => {
+        if (err.error === 'NAME_TAKEN') {
           Swal.fire({
             icon: 'info',
             title: this.translate.instant('HOME.ERROR_TITLE'),
@@ -114,32 +118,6 @@ export class Home {
           return;
         }
 
-        // لو deviceId مش موجود، يدخل عادي
-        fetch(`${environment.SayHello_Server}/start-chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, deviceId })
-        })
-          .then(res => {
-            if (!res.ok) throw new Error('Failed to start chat');
-            return res.json();
-          })
-          .then(data => {
-            const token = data.token;
-            this.router.navigate(['/chat'], { queryParams: { token, name } });
-          })
-          .catch(err => {
-            console.error(err);
-            Swal.fire({
-              icon: 'error',
-              title: this.translate.instant('HOME.ERROR_TITLE'),
-              text: this.translate.instant('HOME.ERROR_SERVER'),
-              confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
-            });
-          });
-      })
-      .catch(err => {
-        console.error(err);
         Swal.fire({
           icon: 'error',
           title: this.translate.instant('HOME.ERROR_TITLE'),
