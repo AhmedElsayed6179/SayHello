@@ -85,20 +85,14 @@ export class Home {
     }
 
     const name = this.usernameForm.value.username.trim();
-    if (!name) return;
-
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to start chat');
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        const token = data.token;
-        this.router.navigate(['/chat'], { queryParams: { token, name } });
+        this.router.navigate(['/chat'], { queryParams: { token: data.token, name } });
       })
       .catch(err => {
         console.error(err);
