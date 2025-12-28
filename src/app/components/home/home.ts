@@ -93,18 +93,50 @@ export class Home {
       localStorage.setItem('deviceId', deviceId);
     }
 
-    fetch(`${environment.SayHello_Server}/start-chat`, {
+    // أولاً، تحقق من السيرفر إذا الـ deviceId متصل بالفعل
+    fetch(`${environment.SayHello_Server}/check-device`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, deviceId })
+      body: JSON.stringify({ deviceId })
     })
       .then(res => {
-        if (!res.ok) throw new Error('Failed to start chat');
+        if (!res.ok) throw new Error('Failed to check device');
         return res.json();
       })
       .then(data => {
-        const token = data.token;
-        this.router.navigate(['/chat'], { queryParams: { token, name } });
+        if (data.exists) {
+          Swal.fire({
+            icon: 'info',
+            title: this.translate.instant('HOME.ERROR_TITLE'),
+            text: this.translate.instant('HOME.ERROR_SAME_DEVICE'),
+            confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+          });
+          return;
+        }
+
+        // لو deviceId مش موجود، يدخل عادي
+        fetch(`${environment.SayHello_Server}/start-chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, deviceId })
+        })
+          .then(res => {
+            if (!res.ok) throw new Error('Failed to start chat');
+            return res.json();
+          })
+          .then(data => {
+            const token = data.token;
+            this.router.navigate(['/chat'], { queryParams: { token, name } });
+          })
+          .catch(err => {
+            console.error(err);
+            Swal.fire({
+              icon: 'error',
+              title: this.translate.instant('HOME.ERROR_TITLE'),
+              text: this.translate.instant('HOME.ERROR_SERVER'),
+              confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+            });
+          });
       })
       .catch(err => {
         console.error(err);
