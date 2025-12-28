@@ -135,7 +135,7 @@ export class Chat implements OnInit, OnDestroy {
         this.messages.push({
           id: msg.id,
           sender: msg.sender === this.myName ? 'me' : 'user',
-          senderName: msg.sender,
+          senderName: msg.senderName,
           text: msg.text,
           time: this.formatTime(msg.time)
         });
@@ -161,7 +161,7 @@ export class Chat implements OnInit, OnDestroy {
         const chatMsg: ChatMessage = {
           id: msg.id,
           sender: msg.sender === this.myName ? 'me' : 'user',
-          senderName: msg.sender,
+          senderName: msg.senderName,
           audioUrl: msg.url,
           duration: msg.duration,
           remainingTime: this.formatSeconds(msg.duration),
