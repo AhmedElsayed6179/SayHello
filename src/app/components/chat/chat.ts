@@ -7,23 +7,7 @@ import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
-
-// تعريف الواجهة محلياً أو استيرادها
-export interface ChatMessage {
-  id?: string;
-  sender: 'user' | 'partner' | 'system'; // user = أنا، partner = الشريك
-  senderId?: string; // لتخزين معرف المرسل
-  senderName?: string;
-  text?: string;
-  key?: string;
-  audioUrl?: string;
-  duration?: number;
-  remainingTime?: string;
-  isPlaying?: boolean;
-  audioRef?: HTMLAudioElement;
-  time?: string;
-  reactions?: { [reaction: string]: string[] };
-}
+import { ChatMessage } from '../../models/chat-message';
 
 @Component({
   selector: 'app-chat',
@@ -47,7 +31,6 @@ export class Chat implements OnInit, OnDestroy {
   waitingMessageShown = false;
   private typingTimeout: any;
   public myName = '';
-  public mySocketId = ''; // متغير جديد لحفظ هويتي
   showEmoji = false;
   connectedUsers: number = 0;
   confirmNext = false;
@@ -69,15 +52,8 @@ export class Chat implements OnInit, OnDestroy {
   isRecordingPaused = false;
   recordedSeconds = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private zone: NgZone,
-    private translate: TranslateService,
-    private cd: ChangeDetectorRef,
-    private router: Router,
-    private chatService: ChatService
-  ) { }
 
+  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.myName = params['name'] || '';
@@ -85,23 +61,12 @@ export class Chat implements OnInit, OnDestroy {
         this.router.navigate(['/']);
         return;
       }
-      if (params['token']) {
-        this.token = params['token'];
-      }
     });
-  }
-
-  get isRtl(): boolean {
-    return this.translate.currentLang === 'ar';
   }
 
   startChat() {
     this.showWelcome = false;
-    if (this.token) {
-      this.initSocket(this.token);
-    } else {
-      this.connectToServer();
-    }
+    this.connectToServer();
   }
 
   connectToServer() {
@@ -115,16 +80,12 @@ export class Chat implements OnInit, OnDestroy {
         return res.json();
       })
       .then(data => {
-        this.token = data.token;
-        this.initSocket(this.token);
+        const token = data.token;
+        this.initSocket(token); // توصيل مع السيرفر
       })
       .catch(err => {
         console.error(err);
-        Swal.fire(
-          this.isRtl ? 'خطأ' : 'Error',
-          this.isRtl ? 'فشل الاتصال بالسيرفر' : 'Failed to connect to server',
-          'error'
-        );
+        Swal.fire('Error', 'Failed to connect', 'error');
         this.router.navigate(['/']);
       });
   }
@@ -134,14 +95,7 @@ export class Chat implements OnInit, OnDestroy {
       this.socket.emit('leave');
       this.socket.disconnect();
     }
-
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
-
-    // عند نجاح الاتصال، احفظ المعرف الخاص بي
-    this.socket.on('connect', () => {
-        this.mySocketId = this.socket.id || '';
-    });
-
     this.socket.emit('join', token);
 
     this.socket.on('connected', () => this.zone.run(() => {
@@ -171,31 +125,25 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
     }));
 
-    // استقبال الرسائل النصية
-    this.socket.on('newMessage', (msg: any) => this.zone.run(() => {
+    this.socket.on('newMessage', msg => this.zone.run(() => {
       const exists = this.messages.find(m => m.id === msg.id);
-
-      // هنا الحل: المقارنة بالـ ID وليس بالاسم
-      const isMe = msg.senderId === this.socket.id;
-
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: isMe ? 'user' : 'partner', // إذا كان الـ ID لي، فهو user، وإلا فهو partner
-          senderId: msg.senderId,
-          senderName: msg.senderName,
+          sender: 'user',
+          senderName: msg.sender,
           text: msg.text,
-          time: this.formatTime(msg.time),
-          reactions: msg.reactions || {}
+          time: this.formatTime(msg.time)
         });
-        this.scrollToBottom();
-        this.cd.detectChanges();
       }
+      this.scrollToBottom();
+      this.cd.detectChanges();
     }));
 
     this.socket.on('typing', () => this.zone.run(() => {
       this.isTyping = true;
       this.cd.detectChanges();
+
       clearTimeout(this.typingTimeout);
       this.typingTimeout = setTimeout(() => {
         this.isTyping = false;
@@ -203,28 +151,21 @@ export class Chat implements OnInit, OnDestroy {
       }, 1000);
     }));
 
-    // استقبال الصوت
-    this.socket.on('newVoice', (msg: any) => {
+    this.socket.on('newVoice', msg => {
       this.zone.run(() => {
-        const exists = this.messages.find(m => m.id === msg.id);
-        if (exists) return;
-
-        // مقارنة الـ ID
-        const isMe = msg.senderId === this.socket.id;
 
         const chatMsg: ChatMessage = {
           id: msg.id,
-          sender: isMe ? 'user' : 'partner',
-          senderId: msg.senderId,
-          senderName: msg.senderName,
+          sender: 'user',
+          senderName: msg.sender,
           audioUrl: msg.url,
           duration: msg.duration,
           remainingTime: this.formatSeconds(msg.duration),
           isPlaying: false,
-          time: this.formatTime(msg.time),
-          reactions: msg.reactions || {}
+          time: this.formatTime(msg.time) // لو عندك الوقت
         };
 
+        // 🔴 هنا ضيف push + detectChanges + scroll
         this.messages.push(chatMsg);
         this.cd.detectChanges();
         this.scrollToBottom();
@@ -233,119 +174,115 @@ export class Chat implements OnInit, OnDestroy {
           const audioList = this.audioEls.toArray();
           if (!audioList.length) return;
 
-          const lastAudio = audioList.find((el, index) => index === audioList.length - 1);
-          if(lastAudio) {
-             chatMsg.audioRef = lastAudio.nativeElement;
+          const lastAudio = audioList[audioList.length - 1];
+          chatMsg.audioRef = lastAudio.nativeElement;
 
-             chatMsg.audioRef.onended = () => {
-               this.zone.run(() => {
-                 chatMsg.isPlaying = false;
-                 chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
-                 chatMsg.audioRef!.currentTime = 0;
-                 this.cd.detectChanges();
-               });
-             };
+          chatMsg.audioRef.onended = () => {
+            this.zone.run(() => {
+              chatMsg.isPlaying = false;
+              chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
+              chatMsg.audioRef!.currentTime = 0;
+              this.cd.detectChanges();
+            });
+          };
 
-             chatMsg.audioRef.ontimeupdate = () => {
-               const remaining = Math.max(
-                 chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
-                 0
-               );
-               this.zone.run(() => {
-                 chatMsg.remainingTime = this.formatSeconds(remaining);
-                 this.cd.detectChanges();
-               });
-             };
-          }
-        }, 100);
+          chatMsg.audioRef.ontimeupdate = () => {
+            const remaining =
+              Math.max(
+                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
+                0
+              );
+
+            this.zone.run(() => {
+              chatMsg.remainingTime = this.formatSeconds(remaining);
+              this.cd.detectChanges();
+            });
+          };
+
+        }, 50);
+
+        this.scrollToBottom();
+        this.cd.detectChanges();
       });
     });
 
     this.socket.on('partnerRecording', (isRecording: boolean) => {
       this.zone.run(() => {
+
         if (isRecording) {
           this.partnerRecording = true;
+
+          // 🔴 مهم: timeout أطول من ping
           clearTimeout(this.recordingTimeout);
           this.recordingTimeout = setTimeout(() => {
             this.partnerRecording = false;
             this.cd.detectChanges();
-          }, 2000);
+          }, 1500);
         } else {
           this.partnerRecording = false;
           clearTimeout(this.recordingTimeout);
         }
+
         this.cd.detectChanges();
       });
     });
 
-    this.socket.on('newReaction', (data: any) => {
-      this.zone.run(() => {
-        const msg = this.messages.find(m => m.id === data.messageId);
-        if (msg) {
-          msg.reactions = data.reactions;
-          this.cd.detectChanges();
-        }
-      });
+    this.socket.on('newReaction', data => {
+      const msg = this.messages.find(m => m.id === data.messageId);
+      if (!msg) return;
+
+      msg.reactions = data.reactions;
+      this.cd.detectChanges();
     });
   }
-
-  // --- دوال التسجيل والصوت ---
 
   async startRecording() {
     if (!this.connected) return;
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.mediaRecorder = new MediaRecorder(stream);
+    // إعادة تهيئة العداد قبل بداية التسجيل
+    this.recordedSeconds = 0;
+    this.recordTime = '0:00';
+    this.cd.detectChanges();
 
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    this.mediaRecorder = new MediaRecorder(stream);
+
+    this.audioChunks = [];
+    this.isCanceled = false;
+    this.isRecordingPaused = false;
+
+    this.mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) this.audioChunks.push(e.data);
+    };
+
+    this.mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(track => track.stop());
+      this.stopRecordingPing();
+      this.socket.emit('stopRecording');
+
+      if (!this.isCanceled && this.audioChunks.length > 0) {
+        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+        this.uploadVoice(audioBlob, this.recordedSeconds);
+      }
+
+      // تصفير العداد بعد الإرسال
+      this.audioChunks = [];
       this.recordedSeconds = 0;
       this.recordTime = '0:00';
-      this.audioChunks = [];
-      this.isCanceled = false;
-      this.isRecordingPaused = false;
-
-      this.mediaRecorder.ondataavailable = e => {
-        if (e.data.size > 0) this.audioChunks.push(e.data);
-      };
-
-      this.mediaRecorder.onstop = () => {
-        stream.getTracks().forEach(track => track.stop());
-        this.stopRecordingPing();
-        this.socket.emit('stopRecording');
-
-        if (!this.isCanceled && this.audioChunks.length > 0) {
-          const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-          this.uploadVoice(audioBlob, this.recordedSeconds);
-        }
-
-        this.audioChunks = [];
-        this.recordedSeconds = 0;
-        this.recordTime = '0:00';
-        this.cd.detectChanges();
-      };
-
-      this.mediaRecorder.start();
-      this.isRecording = true;
-      this.startRecordTimer();
-      this.startRecordingPing();
       this.cd.detectChanges();
+    };
 
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
-      Swal.fire({
-        icon: 'error',
-        title: this.isRtl ? 'خطأ' : 'Error',
-        text: this.isRtl ? 'لا يمكن الوصول للميكروفون' : 'Cannot access microphone',
-        confirmButtonText: this.isRtl ? 'حسناً' : 'OK'
-      });
-    }
+    this.mediaRecorder.start();
+    this.isRecording = true;
+
+    this.startRecordTimer();
+    this.startRecordingPing();
   }
 
   startRecordingPing() {
     this.stopRecordingPing();
-    this.socket.emit('startRecording');
     this.recordingPing = setInterval(() => {
-      if (!this.isRecordingPaused && this.isRecording) {
+      if (!this.isRecordingPaused) {
         this.socket.emit('startRecording');
       }
     }, 800);
@@ -362,44 +299,59 @@ export class Chat implements OnInit, OnDestroy {
     this.stopRecordTimer();
     if (this.isRecording) {
       this.isCanceled = true;
-      this.stopRecordingPing();
+      clearInterval(this.recordingPing);
       this.socket.emit('stopRecording');
-
-      if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-        this.mediaRecorder.stop();
-      }
-
+      this.mediaRecorder?.stop();
       this.isRecording = false;
       this.cd.detectChanges();
 
       this.deleteSound.currentTime = 0;
-      this.deleteSound.play().catch(() => {});
+      this.deleteSound.play().catch(err => console.warn(err));
     }
   }
 
   stopRecording() {
     if (!this.mediaRecorder || !this.isRecording) return;
-    this.stopRecordTimer();
+
+    clearInterval(this.recordingPing);
+    this.socket.emit('stopRecording');
+
     this.mediaRecorder.stop();
     this.isRecording = false;
+    this.mediaRecorder.stop();
   }
 
-  togglePauseResume() {
-    if (!this.mediaRecorder) return;
+  togglePlay(msg: ChatMessage) {
+    const audio = msg.audioRef!;
+    if (!audio) return;
 
-    if (this.isRecordingPaused) {
-      this.mediaRecorder.resume();
-      this.isRecordingPaused = false;
-      this.startRecordTimer();
-      this.startRecordingPing();
-      this.socket.emit('resumeRecording');
-    } else {
-      this.mediaRecorder.pause();
-      this.isRecordingPaused = true;
-      this.stopRecordTimer();
-      this.stopRecordingPing();
-      this.socket.emit('pauseRecording');
+    if (msg.isPlaying) {
+      audio.pause();
+      msg.isPlaying = false;
+      return;
     }
+
+    audio.play();
+    msg.isPlaying = true;
+
+    audio.ontimeupdate = () => {
+      const remaining = Math.max((msg.duration || 0) - Math.floor(audio.currentTime), 0);
+      msg.remainingTime = this.formatSeconds(remaining);
+      this.cd.detectChanges();
+    };
+
+    audio.onended = () => {
+      msg.isPlaying = false;
+      msg.remainingTime = this.formatSeconds(msg.duration || 0);
+      audio.currentTime = 0;
+      this.cd.detectChanges();
+    };
+  }
+
+  formatSeconds(sec: number): string {
+    const m = Math.floor(sec / 60);
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
   uploadVoice(blob: Blob, duration: number) {
@@ -413,114 +365,67 @@ export class Chat implements OnInit, OnDestroy {
       .then(res => res.json())
       .then(data => {
         const msgId = this.generateUniqueId();
-
-        // إرسال للسيرفر
         this.socket.emit('sendVoice', {
           id: msgId,
           url: data.url,
           duration
         });
 
-        // إظهار الرسالة محلياً فوراً
-        this.messages.push({
-          id: msgId,
-          sender: 'user', // أنا
-          senderId: this.socket.id,
-          senderName: this.myName,
-          audioUrl: data.url,
-          duration: duration,
-          remainingTime: this.formatSeconds(duration),
-          isPlaying: false,
-          time: this.formatTime(new Date().toISOString()),
-          reactions: {}
-        });
-        this.scrollToBottom();
-
         this.sendSound.currentTime = 0;
-        this.sendSound.play().catch(() => {});
-      })
-      .catch(err => console.error('Upload failed', err));
-  }
-
-  togglePlay(msg: ChatMessage) {
-    const audio = msg.audioRef;
-    if (!audio) return;
-
-    if (msg.isPlaying) {
-      audio.pause();
-      msg.isPlaying = false;
-    } else {
-      this.messages.forEach(m => {
-        if (m !== msg && m.isPlaying && m.audioRef) {
-          m.audioRef.pause();
-          m.isPlaying = false;
-        }
+        this.sendSound.play().catch(() => { });
       });
-
-      audio.play();
-      msg.isPlaying = true;
-    }
   }
 
   seekAudio(msg: ChatMessage, event: any) {
     const value = Number(event.target.value);
     if (msg.audioRef) {
       msg.audioRef.currentTime = value;
+
+      // لتحديث العداد مباشرة عند السحب
       msg.remainingTime = this.formatSeconds(Math.max((msg.duration || 0) - value, 0));
       this.cd.detectChanges();
     }
   }
 
-  // --- واجهة المستخدم والإرسال ---
-
   onStartVoiceClick() {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
-        title: this.isRtl ? 'لا يوجد شريك' : 'No partner',
-        text: this.isRtl ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك' : 'You cannot record a voice message without a partner',
-        confirmButtonText: this.isRtl ? 'حسناً' : 'OK'
+        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك' : 'You cannot record a voice message without a partner',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
+
     this.startRecording();
+    this.startRecordTimer(); // تشغيل العداد مباشرة
   }
 
   onOpentoggleEmoji() {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
-        title: this.isRtl ? 'لا يوجد شريك' : 'No partner',
-        text: this.isRtl ? 'لا يمكنك استخدام الإيموجي بدون شريك' : 'You cannot use emojis without a partner',
-        confirmButtonText: this.isRtl ? 'حسناً' : 'OK'
+        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك استخدام الإيموجي بدون شريك' : 'You cannot use emojis without a partner',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
-    this.toggleEmoji();
-  }
 
-  toggleEmoji() {
-    this.showEmoji = !this.showEmoji;
-  }
-
-  onEmojiSelect(event: any) {
-    this.message += event.detail.unicode;
-  }
-
-  onTyping() {
-    if (this.connected) {
-      this.socket.emit('typing');
-    }
+    this.toggleEmoji()
   }
 
   startRecordTimer() {
     clearInterval(this.recordInterval);
     this.recordInterval = setInterval(() => {
-      this.recordedSeconds++;
-      const mins = Math.floor(this.recordedSeconds / 60);
-      const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
-      this.recordTime = `${mins}:${secs}`;
-      this.cd.detectChanges();
+      if (!this.isRecordingPaused) { // عد الثواني فقط لو التسجيل شغال
+        this.recordedSeconds++;
+        const mins = Math.floor(this.recordedSeconds / 60);
+        const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
+        this.recordTime = `${mins}:${secs}`;
+        this.cd.detectChanges();
+      }
     }, 1000);
   }
 
@@ -528,13 +433,22 @@ export class Chat implements OnInit, OnDestroy {
     clearInterval(this.recordInterval);
   }
 
+  get confirmText(): string {
+    // لو اللغة الحالية عربي
+    if (this.translate.currentLang === 'ar') {
+      return 'هل أنت متأكد؟';
+    }
+    // غير كده (افتراضي إنجليزية)
+    return 'Are you sure?';
+  }
+
   sendMessage() {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
-        title: this.isRtl ? 'لا يوجد شريك' : 'No partner',
-        text: this.isRtl ? 'لا يمكنك إرسال رسالة بدون شريك' : 'You cannot send a message without a partner',
-        confirmButtonText: this.isRtl ? 'حسناً' : 'OK'
+        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك إرسال رسالة بدون شريك' : 'You cannot send a message without a partner',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
@@ -543,139 +457,159 @@ export class Chat implements OnInit, OnDestroy {
     if (!text) {
       Swal.fire({
         icon: 'info',
-        title: this.isRtl ? 'نص فارغ' : 'Empty text',
-        text: this.isRtl ? 'لا يمكنك إرسال رسالة فارغة' : 'You cannot send an empty message',
-        confirmButtonText: this.isRtl ? 'حسناً' : 'OK'
+        title: this.translate.currentLang === 'ar' ? 'نص فارغ' : 'Empty text',
+        text: this.translate.currentLang === 'ar' ? 'لا يمكنك إرسال رسالة فارغة' : 'You cannot send an empty message',
+        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
 
-    const msgId = this.generateUniqueId();
-
-    // إضافة الرسالة محلياً فوراً
     const chatMsg: ChatMessage = {
-      id: msgId,
-      sender: 'user', // أنا
-      senderId: this.socket.id, // هويتي
+      id: this.generateUniqueId(),
+      sender: 'user',
       senderName: this.myName,
       text,
-      time: this.formatTime(new Date().toISOString()),
-      reactions: {}
+      time: this.formatTime(new Date().toISOString())
     };
 
     this.messages.push(chatMsg);
-    this.socket.emit('sendMessage', { id: msgId, text });
+    this.socket.emit('sendMessage', { id: chatMsg.id, text });
 
+    // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
-    this.showEmoji = false;
+
+    // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0;
-    this.sendSound.play().catch(() => {});
-    this.scrollToBottom();
+    this.sendSound.play().catch(err => console.warn(err));
+  }
+
+  generateUniqueId(): string {
+    return 'msg-' + Math.random().toString(36).substr(2, 9);
+  }
+
+  togglePauseResume() {
+    if (!this.mediaRecorder) return;
+
+    if (this.isRecordingPaused) {
+      // ▶️ Resume
+      this.mediaRecorder.resume();
+      this.isRecordingPaused = false;
+
+      this.startRecordTimer();
+      this.startRecordingPing();
+      this.socket.emit('resumeRecording');
+
+    } else {
+      // ⏸️ Pause
+      this.mediaRecorder.pause();
+      this.isRecordingPaused = true;
+
+      this.stopRecordTimer();
+      this.stopRecordingPing();
+      this.socket.emit('pauseRecording');
+    }
+  }
+
+  reactToMessage(msg: ChatMessage, reaction: string) {
+    if (!msg.id) return;
+    this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName });
   }
 
   toggleReaction(msg: ChatMessage, reaction: string) {
-    if (!msg.id) return;
+    const user = this.myName;
 
     if (!msg.reactions) msg.reactions = {};
+
     if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
 
-    const idx = msg.reactions[reaction].indexOf(this.myName);
+    const idx = msg.reactions[reaction].indexOf(user);
 
     if (idx === -1) {
-      msg.reactions[reaction].push(this.myName);
+      // أضف المستخدم
+      msg.reactions[reaction].push(user);
     } else {
+      // حذف المستخدم (unreact)
       msg.reactions[reaction].splice(idx, 1);
     }
 
-    if (msg.reactions[reaction].length === 0) {
-      delete msg.reactions[reaction];
-    }
-
+    // إرسال للسيرفر
     this.socket.emit('react', {
       messageId: msg.id,
       reaction,
-      sender: this.myName
+      sender: user
     });
 
     this.cd.detectChanges();
   }
 
-  reactToMessage(msg: ChatMessage, reaction: string) {
-    this.toggleReaction(msg, reaction);
+  onTyping() {
+    if (this.connected) {
+      this.socket.emit('typing');
+    }
   }
 
-  get confirmText(): string {
-    return this.isRtl ? 'هل أنت متأكد؟' : 'Are you sure?';
+  toggleEmoji() {
+    this.showEmoji = !this.showEmoji;
+  }
+
+  onEmojiSelect(event: any) {
+    this.message += event.detail.unicode;
+    this.showEmoji = false;
   }
 
   onNextClick() {
     if (!this.confirmNext) {
       this.confirmNext = true;
+
       clearTimeout(this.confirmTimeout);
       this.confirmTimeout = setTimeout(() => {
         this.confirmNext = false;
         this.cd.detectChanges();
-      }, 2000);
+      }, 2000); // يرجع طبيعي بعد ثانيتين
+
       return;
     }
+
     this.confirmNext = false;
+    clearTimeout(this.confirmTimeout);
     this.nextChat();
   }
 
   onExitClick() {
     if (!this.exitConfirm) {
       this.exitConfirm = true;
+
       clearTimeout(this.exitTimeout);
       this.exitTimeout = setTimeout(() => {
         this.exitConfirm = false;
         this.cd.detectChanges();
-      }, 2000);
+      }, 2000); // يرجع طبيعي بعد ثانيتين
+
       return;
     }
+
     this.exitConfirm = false;
+    clearTimeout(this.exitTimeout);
     this.exitChat();
   }
 
   nextChat() {
-    if (this.socket) {
-      this.socket.emit('leave');
-      this.socket.disconnect();
-    }
+    if (!this.socket) return;
+    this.socket.emit('leave');
+    this.socket.disconnect();
     this.messages = [];
     this.connected = false;
     this.waiting = true;
     this.waitingMessageShown = false;
     this.cd.detectChanges();
 
-    fetch(`${environment.SayHello_Server}/start-chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: this.myName })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to get new token');
-        return res.json();
-      })
-      .then(data => {
-        this.token = data.token;
-        setTimeout(() => this.initSocket(this.token), 500);
-      })
-      .catch(err => {
-        console.error(err);
-        Swal.fire({
-          icon: 'error',
-          title: this.isRtl ? 'خطأ' : 'Error',
-          text: this.isRtl ? 'حدث خطأ في السيرفر' : 'Server error occurred',
-          confirmButtonText: this.isRtl ? 'حسناً' : 'OK'
-        });
-        this.router.navigate(['/']);
-      });
+    fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
+      .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
+      .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
+      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK' }); this.router.navigate(['/']); });
   }
 
-  exitChat() {
-    this.socket?.disconnect();
-    this.router.navigate(['/']);
-  }
+  exitChat() { this.socket?.disconnect(); this.router.navigate(['/']); }
 
   private addSystemMessage(key: string) {
     this.messages.push({ sender: 'system', key });
@@ -684,15 +618,7 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   private scrollToBottom() {
-    setTimeout(() => {
-      if (this.chatBox) {
-        this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight;
-      }
-    }, 50);
-  }
-
-  generateUniqueId(): string {
-    return 'msg-' + Math.random().toString(36).substr(2, 9);
+    setTimeout(() => { if (this.chatBox) this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight; }, 50);
   }
 
   private formatTime(isoTime: string): string {
@@ -705,15 +631,7 @@ export class Chat implements OnInit, OnDestroy {
     return `${hours}:${mins} ${ampm}`;
   }
 
-  formatSeconds(sec: number): string {
-    const m = Math.floor(sec / 60);
-    const s = (sec % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  get isDarkMode(): boolean {
-    return document.body.classList.contains('dark-mode');
-  }
+  get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
 
   ngOnDestroy() {
     this.socket?.disconnect();
@@ -724,4 +642,14 @@ export class Chat implements OnInit, OnDestroy {
     clearInterval(this.recordInterval);
     clearInterval(this.recordingPing);
   }
+
+  get isRtl(): boolean {
+    return this.translate.currentLang === 'ar';
+  }
+
+  // private addChatMessage(sender: string, text: string, isoTime: string) {
+  //   this.messages.push({ sender: 'user', text: `${sender}: ${text}`, time: this.formatTime(isoTime) });
+  //   this.scrollToBottom();
+  //   this.cd.detectChanges();
+  // }
 }
