@@ -909,7 +909,7 @@ body.dark-mode {
 @media (max-width: 576px) {
 
   .chat-input {
-    padding: 8px 40px 8px 100px;
+    padding: 8px 40px 8px 95px;
     width: 100%;
   }
 
