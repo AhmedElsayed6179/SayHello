@@ -93,7 +93,7 @@ export class Home {
       localStorage.setItem('deviceId', deviceId);
     }
 
-    // إرسال طلب بدء المحادثة والتحقق من الاسم
+    // إرسال طلب بدء المحادثة والتحقق من الاسم على نفس الجهاز فقط
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -112,7 +112,7 @@ export class Home {
           Swal.fire({
             icon: 'info',
             title: this.translate.instant('HOME.ERROR_TITLE'),
-            text: this.translate.instant('HOME.ERROR_SAME_DEVICE'),
+            text: this.translate.instant('HOME.ERROR_SAME_DEVICE'), // الاسم مستخدم على نفس الجهاز
             confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
           });
           return;
