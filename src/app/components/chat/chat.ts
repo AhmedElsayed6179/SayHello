@@ -135,7 +135,7 @@ export class Chat implements OnInit, OnDestroy {
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: msg.senderName?.trim() === this.myName ? 'me' : 'user',
+          sender: msg.senderName?.trim().toLowerCase() === this.myName ? 'me' : 'user',
           senderName: msg.senderName,
           text: msg.text,
           time: this.formatTime(msg.time)
@@ -159,7 +159,7 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.on('newVoice', msg => this.zone.run(() => {
       const chatMsg: ChatMessage = {
         id: msg.id,
-        sender: msg.senderName === this.myName ? 'me' : 'user',
+        sender: msg.senderName?.trim().toLowerCase() === this.myName ? 'me' : 'user',
         senderName: msg.senderName,
         audioUrl: msg.url,
         duration: msg.duration,
