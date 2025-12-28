@@ -56,13 +56,14 @@ export class Chat implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.myName = params['name'] || '';
+      this.myName = params['name']?.trim() || '';
       if (!this.myName) {
         this.router.navigate(['/']);
         return;
       }
     });
   }
+
 
   startChat() {
     this.showWelcome = false;
@@ -134,7 +135,7 @@ export class Chat implements OnInit, OnDestroy {
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: msg.senderName === this.myName ? 'me' : 'user',
+          sender: msg.senderName?.trim() === this.myName ? 'me' : 'user',
           senderName: msg.senderName,
           text: msg.text,
           time: this.formatTime(msg.time)
@@ -445,14 +446,30 @@ export class Chat implements OnInit, OnDestroy {
     }
 
     const msgId = this.generateUniqueId();
+
+    // إضافة الرسالة مباشرة للواجهة
+    const chatMsg: ChatMessage = {
+      id: msgId,
+      sender: 'me',
+      senderName: this.myName,
+      text,
+      time: new Date().toISOString()
+    };
+    this.messages.push(chatMsg);
+    this.scrollToBottom();
+    this.cd.detectChanges();
+
+    // إرسال للسيرفر
     this.socket.emit('sendMessage', { id: msgId, text });
 
     // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
+
     // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
   }
+
 
   generateUniqueId(): string {
     return 'msg-' + Math.random().toString(36).substr(2, 9);
