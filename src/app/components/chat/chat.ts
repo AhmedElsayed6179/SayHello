@@ -52,15 +52,8 @@ export class Chat implements OnInit, OnDestroy {
   isRecordingPaused = false;
   recordedSeconds = 0;
 
-  constructor(
-    private route: ActivatedRoute,
-    private zone: NgZone,
-    private translate: TranslateService,
-    private cd: ChangeDetectorRef,
-    private router: Router,
-    private chatService: ChatService
-  ) { }
 
+  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.myName = params['name'] || '';
@@ -82,8 +75,14 @@ export class Chat implements OnInit, OnDestroy {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: this.myName })
     })
-      .then(res => res.json())
-      .then(data => this.initSocket(data.token))
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to start chat');
+        return res.json();
+      })
+      .then(data => {
+        const token = data.token;
+        this.initSocket(token); // توصيل مع السيرفر
+      })
       .catch(err => {
         console.error(err);
         Swal.fire('Error', 'Failed to connect', 'error');
@@ -96,7 +95,6 @@ export class Chat implements OnInit, OnDestroy {
       this.socket.emit('leave');
       this.socket.disconnect();
     }
-
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.emit('join', token);
 
@@ -127,18 +125,13 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
     }));
 
-    // رسائل نصية
     this.socket.on('newMessage', msg => this.zone.run(() => {
       const exists = this.messages.find(m => m.id === msg.id);
       if (!exists) {
-        const senderLabel = msg.sender === this.myName
-          ? (this.translate.currentLang === 'ar' ? 'أنت' : 'You')
-          : msg.sender;
-
         this.messages.push({
           id: msg.id,
           sender: 'user',
-          senderName: senderLabel,
+          senderName: msg.sender,
           text: msg.text,
           time: this.formatTime(msg.time)
         });
@@ -147,10 +140,10 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
     }));
 
-    // typing
     this.socket.on('typing', () => this.zone.run(() => {
       this.isTyping = true;
       this.cd.detectChanges();
+
       clearTimeout(this.typingTimeout);
       this.typingTimeout = setTimeout(() => {
         this.isTyping = false;
@@ -158,24 +151,21 @@ export class Chat implements OnInit, OnDestroy {
       }, 1000);
     }));
 
-    // رسائل صوتية
     this.socket.on('newVoice', msg => {
       this.zone.run(() => {
-        const senderLabel = msg.sender === this.myName
-          ? (this.translate.currentLang === 'ar' ? 'أنت' : 'You')
-          : msg.sender;
 
         const chatMsg: ChatMessage = {
           id: msg.id,
           sender: 'user',
-          senderName: senderLabel,
+          senderName: msg.sender,
           audioUrl: msg.url,
           duration: msg.duration,
           remainingTime: this.formatSeconds(msg.duration),
           isPlaying: false,
-          time: this.formatTime(msg.time)
+          time: this.formatTime(msg.time) // لو عندك الوقت
         };
 
+        // 🔴 هنا ضيف push + detectChanges + scroll
         this.messages.push(chatMsg);
         this.cd.detectChanges();
         this.scrollToBottom();
@@ -197,32 +187,50 @@ export class Chat implements OnInit, OnDestroy {
           };
 
           chatMsg.audioRef.ontimeupdate = () => {
-            const remaining = Math.max(chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime), 0);
+            const remaining =
+              Math.max(
+                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
+                0
+              );
+
             this.zone.run(() => {
               chatMsg.remainingTime = this.formatSeconds(remaining);
               this.cd.detectChanges();
             });
           };
-        }, 50);
-      });
-    });
 
-    // partner recording
-    this.socket.on('partnerRecording', (isRecording: boolean) => {
-      this.zone.run(() => {
-        this.partnerRecording = isRecording;
-        if (isRecording) {
-          clearTimeout(this.recordingTimeout);
-          this.recordingTimeout = setTimeout(() => { this.partnerRecording = false; this.cd.detectChanges(); }, 1500);
-        }
+        }, 50);
+
+        this.scrollToBottom();
         this.cd.detectChanges();
       });
     });
 
-    // reactions
+    this.socket.on('partnerRecording', (isRecording: boolean) => {
+      this.zone.run(() => {
+
+        if (isRecording) {
+          this.partnerRecording = true;
+
+          // 🔴 مهم: timeout أطول من ping
+          clearTimeout(this.recordingTimeout);
+          this.recordingTimeout = setTimeout(() => {
+            this.partnerRecording = false;
+            this.cd.detectChanges();
+          }, 1500);
+        } else {
+          this.partnerRecording = false;
+          clearTimeout(this.recordingTimeout);
+        }
+
+        this.cd.detectChanges();
+      });
+    });
+
     this.socket.on('newReaction', data => {
       const msg = this.messages.find(m => m.id === data.messageId);
       if (!msg) return;
+
       msg.reactions = data.reactions;
       this.cd.detectChanges();
     });
@@ -340,6 +348,12 @@ export class Chat implements OnInit, OnDestroy {
     };
   }
 
+  formatSeconds(sec: number): string {
+    const m = Math.floor(sec / 60);
+    const s = (sec % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
   uploadVoice(blob: Blob, duration: number) {
     const formData = new FormData();
     formData.append('voice', blob, 'voice.webm');
@@ -453,18 +467,17 @@ export class Chat implements OnInit, OnDestroy {
     const chatMsg: ChatMessage = {
       id: this.generateUniqueId(),
       sender: 'user',
-      senderName: this.myName,
+      senderName: this.translate.currentLang === 'ar' ? 'أنت' : 'You',
       text,
       time: this.formatTime(new Date().toISOString())
     };
 
     this.messages.push(chatMsg);
-    this.socket.emit('sendMessage', { id: chatMsg.id, text });
 
-    // إعادة تعيين الحقل بعد الإرسال
+    // إرسال الاسم الحقيقي للآخرين عبر السيرفر
+    this.socket.emit('sendMessage', { id: chatMsg.id, text, senderName: this.myName });
+
     this.message = '';
-
-    // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
   }
@@ -617,11 +630,7 @@ export class Chat implements OnInit, OnDestroy {
     return `${hours}:${mins} ${ampm}`;
   }
 
-  formatSeconds(sec: number): string {
-    const m = Math.floor(sec / 60);
-    const s = (sec % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
+  get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
 
   ngOnDestroy() {
     this.socket?.disconnect();
@@ -633,6 +642,13 @@ export class Chat implements OnInit, OnDestroy {
     clearInterval(this.recordingPing);
   }
 
-  get isRtl(): boolean { return this.translate.currentLang === 'ar'; }
-  get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
+  get isRtl(): boolean {
+    return this.translate.currentLang === 'ar';
+  }
+
+  // private addChatMessage(sender: string, text: string, isoTime: string) {
+  //   this.messages.push({ sender: 'user', text: `${sender}: ${text}`, time: this.formatTime(isoTime) });
+  //   this.scrollToBottom();
+  //   this.cd.detectChanges();
+  // }
 }
