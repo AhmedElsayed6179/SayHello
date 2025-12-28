@@ -51,7 +51,7 @@ export class Chat implements OnInit, OnDestroy {
   private recordingPing: any;
   isRecordingPaused = false;
   recordedSeconds = 0;
-
+  mySocketId = '';
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -98,6 +98,10 @@ export class Chat implements OnInit, OnDestroy {
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.emit('join', token);
 
+    this.socket.on('connect', () => {
+      this.mySocketId = this.socket.id!;
+    });
+
     this.socket.on('connected', () => this.zone.run(() => {
       this.connected = true;
       this.waiting = false;
@@ -130,7 +134,7 @@ export class Chat implements OnInit, OnDestroy {
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: 'user',
+          sender: msg.sender === this.myName ? 'me' : 'user',
           senderName: msg.sender,
           text: msg.text,
           time: this.formatTime(msg.time)
@@ -156,7 +160,7 @@ export class Chat implements OnInit, OnDestroy {
 
         const chatMsg: ChatMessage = {
           id: msg.id,
-          sender: 'user',
+          sender: msg.sender === this.myName ? 'me' : 'user',
           senderName: msg.sender,
           audioUrl: msg.url,
           duration: msg.duration,
@@ -318,7 +322,6 @@ export class Chat implements OnInit, OnDestroy {
 
     this.mediaRecorder.stop();
     this.isRecording = false;
-    this.mediaRecorder.stop();
   }
 
   togglePlay(msg: ChatMessage) {
@@ -466,7 +469,7 @@ export class Chat implements OnInit, OnDestroy {
 
     const chatMsg: ChatMessage = {
       id: this.generateUniqueId(),
-      sender: 'user',
+      sender: 'me',
       senderName: this.myName,
       text,
       time: this.formatTime(new Date().toISOString())
