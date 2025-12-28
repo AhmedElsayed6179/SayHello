@@ -907,8 +907,10 @@ body.dark-mode {
 
 /* ------------------ Responsive ------------------ */
 @media (max-width: 576px) {
+
   .chat-input {
-    padding: 10px 44px 10px 90px;
+    padding: 8px 40px 8px 100px;
+    width: 100%;
   }
 
   .emoji-btn,
@@ -927,9 +929,9 @@ body.dark-mode {
   }
 
   .bubble-text {
-    max-width: 75%;
+    max-width: 200px;
     padding: 6px 10px;
-    font-size: 0.9rem;
+    font-size: 14px;
   }
 
   .reaction {
@@ -955,15 +957,6 @@ body.dark-mode {
     bottom: auto !important;
     margin-bottom: 10px !important;
   }
-}
-
-@media (max-width: 576px) {
-  /* تصغير الفقاعات على الموبايل */
-  .bubble-text {
-    max-width: 200px;
-    padding: 6px 10px;
-    font-size: 14px;
-  }
 
   /* تصغير Reaction */
   .bubble-wrapper .reaction,
@@ -973,7 +966,6 @@ body.dark-mode {
     bottom: 2px;
   }
 
-  /* تعديل اتجاه Reaction للنصوص */
   .message-right .bubble-wrapper .reaction {
     left: -31px;
   }
