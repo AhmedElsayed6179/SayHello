@@ -8,21 +8,21 @@ import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
 
-// تعريف الواجهة هنا أو استيرادها
+// تعريف الواجهة محلياً أو استيرادها
 export interface ChatMessage {
   id?: string;
-  sender: 'user' | 'partner' | 'system'; // 'user' = أنا, 'partner' = الشريك
-  senderId?: string; // الـ ID الفريد
+  sender: 'user' | 'partner' | 'system'; // user = أنا، partner = الشريك
+  senderId?: string; // لتخزين معرف المرسل
   senderName?: string;
   text?: string;
-  key?: string; // لرسائل النظام
+  key?: string;
   audioUrl?: string;
   duration?: number;
   remainingTime?: string;
   isPlaying?: boolean;
   audioRef?: HTMLAudioElement;
   time?: string;
-  reactions?: { [reaction: string]: string[] }; // تخزين الأسماء داخل الرياكشن
+  reactions?: { [reaction: string]: string[] };
 }
 
 @Component({
@@ -47,7 +47,7 @@ export class Chat implements OnInit, OnDestroy {
   waitingMessageShown = false;
   private typingTimeout: any;
   public myName = '';
-  public mySocketId = ''; // لتخزين معرفي الخاص
+  public mySocketId = ''; // متغير جديد لحفظ هويتي
   showEmoji = false;
   connectedUsers: number = 0;
   confirmNext = false;
@@ -137,9 +137,9 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
 
-    // عند الاتصال نحفظ الـ ID الخاص بنا
+    // عند نجاح الاتصال، احفظ المعرف الخاص بي
     this.socket.on('connect', () => {
-      this.mySocketId = this.socket.id || '';
+        this.mySocketId = this.socket.id || '';
     });
 
     this.socket.emit('join', token);
@@ -175,13 +175,13 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.on('newMessage', (msg: any) => this.zone.run(() => {
       const exists = this.messages.find(m => m.id === msg.id);
 
-      // هنا المنطق الجديد: نحدد هوية المرسل بناءً على الـ ID
+      // هنا الحل: المقارنة بالـ ID وليس بالاسم
       const isMe = msg.senderId === this.socket.id;
 
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: isMe ? 'user' : 'partner', // 'user' = أنا, 'partner' = هو
+          sender: isMe ? 'user' : 'partner', // إذا كان الـ ID لي، فهو user، وإلا فهو partner
           senderId: msg.senderId,
           senderName: msg.senderName,
           text: msg.text,
@@ -209,6 +209,7 @@ export class Chat implements OnInit, OnDestroy {
         const exists = this.messages.find(m => m.id === msg.id);
         if (exists) return;
 
+        // مقارنة الـ ID
         const isMe = msg.senderId === this.socket.id;
 
         const chatMsg: ChatMessage = {
@@ -232,30 +233,29 @@ export class Chat implements OnInit, OnDestroy {
           const audioList = this.audioEls.toArray();
           if (!audioList.length) return;
 
-          // ربط الصوت بالعنصر الأخير
           const lastAudio = audioList.find((el, index) => index === audioList.length - 1);
-          if (lastAudio) {
-            chatMsg.audioRef = lastAudio.nativeElement;
+          if(lastAudio) {
+             chatMsg.audioRef = lastAudio.nativeElement;
 
-            chatMsg.audioRef.onended = () => {
-              this.zone.run(() => {
-                chatMsg.isPlaying = false;
-                chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
-                chatMsg.audioRef!.currentTime = 0;
-                this.cd.detectChanges();
-              });
-            };
+             chatMsg.audioRef.onended = () => {
+               this.zone.run(() => {
+                 chatMsg.isPlaying = false;
+                 chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
+                 chatMsg.audioRef!.currentTime = 0;
+                 this.cd.detectChanges();
+               });
+             };
 
-            chatMsg.audioRef.ontimeupdate = () => {
-              const remaining = Math.max(
-                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
-                0
-              );
-              this.zone.run(() => {
-                chatMsg.remainingTime = this.formatSeconds(remaining);
-                this.cd.detectChanges();
-              });
-            };
+             chatMsg.audioRef.ontimeupdate = () => {
+               const remaining = Math.max(
+                 chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
+                 0
+               );
+               this.zone.run(() => {
+                 chatMsg.remainingTime = this.formatSeconds(remaining);
+                 this.cd.detectChanges();
+               });
+             };
           }
         }, 100);
       });
@@ -289,7 +289,7 @@ export class Chat implements OnInit, OnDestroy {
     });
   }
 
-  // --- دوال التسجيل والصوت (نفس المنطق السابق) ---
+  // --- دوال التسجيل والصوت ---
 
   async startRecording() {
     if (!this.connected) return;
@@ -373,7 +373,7 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
 
       this.deleteSound.currentTime = 0;
-      this.deleteSound.play().catch(() => { });
+      this.deleteSound.play().catch(() => {});
     }
   }
 
@@ -413,6 +413,7 @@ export class Chat implements OnInit, OnDestroy {
       .then(res => res.json())
       .then(data => {
         const msgId = this.generateUniqueId();
+
         // إرسال للسيرفر
         this.socket.emit('sendVoice', {
           id: msgId,
@@ -436,7 +437,7 @@ export class Chat implements OnInit, OnDestroy {
         this.scrollToBottom();
 
         this.sendSound.currentTime = 0;
-        this.sendSound.play().catch(() => { });
+        this.sendSound.play().catch(() => {});
       })
       .catch(err => console.error('Upload failed', err));
   }
@@ -568,7 +569,7 @@ export class Chat implements OnInit, OnDestroy {
     this.message = '';
     this.showEmoji = false;
     this.sendSound.currentTime = 0;
-    this.sendSound.play().catch(() => { });
+    this.sendSound.play().catch(() => {});
     this.scrollToBottom();
   }
 
@@ -578,7 +579,6 @@ export class Chat implements OnInit, OnDestroy {
     if (!msg.reactions) msg.reactions = {};
     if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
 
-    // نستخدم الاسم للعرض في الرياكشن (يمكن تغييره لـ ID لو أردت دقة أكبر)
     const idx = msg.reactions[reaction].indexOf(this.myName);
 
     if (idx === -1) {
@@ -594,7 +594,7 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.emit('react', {
       messageId: msg.id,
       reaction,
-      sender: this.myName // الاسم يكفي هنا للعرض
+      sender: this.myName
     });
 
     this.cd.detectChanges();
