@@ -134,7 +134,7 @@ export class Chat implements OnInit, OnDestroy {
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: msg.sender === this.myName ? 'me' : 'user',
+          sender: msg.senderName === this.myName ? 'me' : 'user',
           senderName: msg.senderName,
           text: msg.text,
           time: this.formatTime(msg.time)
@@ -160,13 +160,13 @@ export class Chat implements OnInit, OnDestroy {
 
         const chatMsg: ChatMessage = {
           id: msg.id,
-          sender: msg.sender === this.myName ? 'me' : 'user',
+          sender: msg.senderName === this.myName ? 'me' : 'user',
           senderName: msg.senderName,
           audioUrl: msg.url,
           duration: msg.duration,
           remainingTime: this.formatSeconds(msg.duration),
           isPlaying: false,
-          time: this.formatTime(msg.time) // لو عندك الوقت
+          time: this.formatTime(msg.time)
         };
 
         // 🔴 هنا ضيف push + detectChanges + scroll
