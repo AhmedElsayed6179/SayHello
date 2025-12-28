@@ -31,6 +31,7 @@ export class Chat implements OnInit, OnDestroy {
   waitingMessageShown = false;
   private typingTimeout: any;
   public myName = '';
+  public partnerName = '';
   showEmoji = false;
   connectedUsers: number = 0;
   confirmNext = false;
@@ -52,8 +53,8 @@ export class Chat implements OnInit, OnDestroy {
   isRecordingPaused = false;
   recordedSeconds = 0;
 
-
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
+
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.myName = params['name'] || '';
@@ -80,8 +81,9 @@ export class Chat implements OnInit, OnDestroy {
         return res.json();
       })
       .then(data => {
-        const token = data.token;
-        this.initSocket(token); // توصيل مع السيرفر
+        this.partnerName = data.partnerName || 'Partner';
+        this.token = data.token;
+        this.initSocket(this.token);
       })
       .catch(err => {
         console.error(err);
@@ -128,10 +130,11 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.on('newMessage', msg => this.zone.run(() => {
       const exists = this.messages.find(m => m.id === msg.id);
       if (!exists) {
+        const isSelf = msg.sender === this.myName;
         this.messages.push({
           id: msg.id,
-          sender: 'user',
-          senderName: msg.sender,
+          sender: isSelf ? 'user' : 'user',
+          senderName: isSelf ? 'You' : msg.sender,
           text: msg.text,
           time: this.formatTime(msg.time)
         });
@@ -153,19 +156,17 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket.on('newVoice', msg => {
       this.zone.run(() => {
-
+        const isSelf = msg.sender === this.myName;
         const chatMsg: ChatMessage = {
           id: msg.id,
           sender: 'user',
-          senderName: msg.sender,
+          senderName: isSelf ? 'You' : msg.sender,
           audioUrl: msg.url,
           duration: msg.duration,
           remainingTime: this.formatSeconds(msg.duration),
           isPlaying: false,
-          time: this.formatTime(msg.time) // لو عندك الوقت
+          time: this.formatTime(msg.time)
         };
-
-        // 🔴 هنا ضيف push + detectChanges + scroll
         this.messages.push(chatMsg);
         this.cd.detectChanges();
         this.scrollToBottom();
@@ -187,32 +188,20 @@ export class Chat implements OnInit, OnDestroy {
           };
 
           chatMsg.audioRef.ontimeupdate = () => {
-            const remaining =
-              Math.max(
-                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
-                0
-              );
-
+            const remaining = Math.max(chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime), 0);
             this.zone.run(() => {
               chatMsg.remainingTime = this.formatSeconds(remaining);
               this.cd.detectChanges();
             });
           };
-
         }, 50);
-
-        this.scrollToBottom();
-        this.cd.detectChanges();
       });
     });
 
     this.socket.on('partnerRecording', (isRecording: boolean) => {
       this.zone.run(() => {
-
         if (isRecording) {
           this.partnerRecording = true;
-
-          // 🔴 مهم: timeout أطول من ping
           clearTimeout(this.recordingTimeout);
           this.recordingTimeout = setTimeout(() => {
             this.partnerRecording = false;
@@ -222,7 +211,6 @@ export class Chat implements OnInit, OnDestroy {
           this.partnerRecording = false;
           clearTimeout(this.recordingTimeout);
         }
-
         this.cd.detectChanges();
       });
     });
@@ -230,7 +218,6 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.on('newReaction', data => {
       const msg = this.messages.find(m => m.id === data.messageId);
       if (!msg) return;
-
       msg.reactions = data.reactions;
       this.cd.detectChanges();
     });
@@ -239,7 +226,6 @@ export class Chat implements OnInit, OnDestroy {
   async startRecording() {
     if (!this.connected) return;
 
-    // إعادة تهيئة العداد قبل بداية التسجيل
     this.recordedSeconds = 0;
     this.recordTime = '0:00';
     this.cd.detectChanges();
@@ -265,7 +251,6 @@ export class Chat implements OnInit, OnDestroy {
         this.uploadVoice(audioBlob, this.recordedSeconds);
       }
 
-      // تصفير العداد بعد الإرسال
       this.audioChunks = [];
       this.recordedSeconds = 0;
       this.recordTime = '0:00';
@@ -380,8 +365,6 @@ export class Chat implements OnInit, OnDestroy {
     const value = Number(event.target.value);
     if (msg.audioRef) {
       msg.audioRef.currentTime = value;
-
-      // لتحديث العداد مباشرة عند السحب
       msg.remainingTime = this.formatSeconds(Math.max((msg.duration || 0) - value, 0));
       this.cd.detectChanges();
     }
@@ -399,7 +382,7 @@ export class Chat implements OnInit, OnDestroy {
     }
 
     this.startRecording();
-    this.startRecordTimer(); // تشغيل العداد مباشرة
+    this.startRecordTimer();
   }
 
   onOpentoggleEmoji() {
@@ -412,14 +395,13 @@ export class Chat implements OnInit, OnDestroy {
       });
       return;
     }
-
-    this.toggleEmoji()
+    this.toggleEmoji();
   }
 
   startRecordTimer() {
     clearInterval(this.recordInterval);
     this.recordInterval = setInterval(() => {
-      if (!this.isRecordingPaused) { // عد الثواني فقط لو التسجيل شغال
+      if (!this.isRecordingPaused) {
         this.recordedSeconds++;
         const mins = Math.floor(this.recordedSeconds / 60);
         const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
@@ -434,12 +416,7 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   get confirmText(): string {
-    // لو اللغة الحالية عربي
-    if (this.translate.currentLang === 'ar') {
-      return 'هل أنت متأكد؟';
-    }
-    // غير كده (افتراضي إنجليزية)
-    return 'Are you sure?';
+    return this.translate.currentLang === 'ar' ? 'هل أنت متأكد؟' : 'Are you sure?';
   }
 
   sendMessage() {
@@ -467,7 +444,7 @@ export class Chat implements OnInit, OnDestroy {
     const chatMsg: ChatMessage = {
       id: this.generateUniqueId(),
       sender: 'user',
-      senderName: this.myName,
+      senderName: 'You',
       text,
       time: this.formatTime(new Date().toISOString())
     };
@@ -475,10 +452,7 @@ export class Chat implements OnInit, OnDestroy {
     this.messages.push(chatMsg);
     this.socket.emit('sendMessage', { id: chatMsg.id, text });
 
-    // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
-
-    // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
   }
@@ -491,19 +465,14 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.mediaRecorder) return;
 
     if (this.isRecordingPaused) {
-      // ▶️ Resume
       this.mediaRecorder.resume();
       this.isRecordingPaused = false;
-
       this.startRecordTimer();
       this.startRecordingPing();
       this.socket.emit('resumeRecording');
-
     } else {
-      // ⏸️ Pause
       this.mediaRecorder.pause();
       this.isRecordingPaused = true;
-
       this.stopRecordTimer();
       this.stopRecordingPing();
       this.socket.emit('pauseRecording');
@@ -519,38 +488,21 @@ export class Chat implements OnInit, OnDestroy {
     const user = this.myName;
 
     if (!msg.reactions) msg.reactions = {};
-
     if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
 
     const idx = msg.reactions[reaction].indexOf(user);
+    if (idx === -1) msg.reactions[reaction].push(user);
+    else msg.reactions[reaction].splice(idx, 1);
 
-    if (idx === -1) {
-      // أضف المستخدم
-      msg.reactions[reaction].push(user);
-    } else {
-      // حذف المستخدم (unreact)
-      msg.reactions[reaction].splice(idx, 1);
-    }
-
-    // إرسال للسيرفر
-    this.socket.emit('react', {
-      messageId: msg.id,
-      reaction,
-      sender: user
-    });
-
+    this.socket.emit('react', { messageId: msg.id, reaction, sender: user });
     this.cd.detectChanges();
   }
 
   onTyping() {
-    if (this.connected) {
-      this.socket.emit('typing');
-    }
+    if (this.connected) this.socket.emit('typing');
   }
 
-  toggleEmoji() {
-    this.showEmoji = !this.showEmoji;
-  }
+  toggleEmoji() { this.showEmoji = !this.showEmoji; }
 
   onEmojiSelect(event: any) {
     this.message += event.detail.unicode;
@@ -560,16 +512,10 @@ export class Chat implements OnInit, OnDestroy {
   onNextClick() {
     if (!this.confirmNext) {
       this.confirmNext = true;
-
       clearTimeout(this.confirmTimeout);
-      this.confirmTimeout = setTimeout(() => {
-        this.confirmNext = false;
-        this.cd.detectChanges();
-      }, 2000); // يرجع طبيعي بعد ثانيتين
-
+      this.confirmTimeout = setTimeout(() => { this.confirmNext = false; this.cd.detectChanges(); }, 2000);
       return;
     }
-
     this.confirmNext = false;
     clearTimeout(this.confirmTimeout);
     this.nextChat();
@@ -578,16 +524,10 @@ export class Chat implements OnInit, OnDestroy {
   onExitClick() {
     if (!this.exitConfirm) {
       this.exitConfirm = true;
-
       clearTimeout(this.exitTimeout);
-      this.exitTimeout = setTimeout(() => {
-        this.exitConfirm = false;
-        this.cd.detectChanges();
-      }, 2000); // يرجع طبيعي بعد ثانيتين
-
+      this.exitTimeout = setTimeout(() => { this.exitConfirm = false; this.cd.detectChanges(); }, 2000);
       return;
     }
-
     this.exitConfirm = false;
     clearTimeout(this.exitTimeout);
     this.exitChat();
@@ -605,7 +545,7 @@ export class Chat implements OnInit, OnDestroy {
 
     fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
-      .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
+      .then(data => { this.token = data.token; this.partnerName = data.partnerName; setTimeout(() => this.initSocket(this.token), 500); })
       .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK' }); this.router.navigate(['/']); });
   }
 
@@ -643,13 +583,5 @@ export class Chat implements OnInit, OnDestroy {
     clearInterval(this.recordingPing);
   }
 
-  get isRtl(): boolean {
-    return this.translate.currentLang === 'ar';
-  }
-
-  // private addChatMessage(sender: string, text: string, isoTime: string) {
-  //   this.messages.push({ sender: 'user', text: `${sender}: ${text}`, time: this.formatTime(isoTime) });
-  //   this.scrollToBottom();
-  //   this.cd.detectChanges();
-  // }
+  get isRtl(): boolean { return this.translate.currentLang === 'ar'; }
 }
