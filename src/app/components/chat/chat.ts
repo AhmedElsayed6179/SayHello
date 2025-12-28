@@ -51,19 +51,18 @@ export class Chat implements OnInit, OnDestroy {
   private recordingPing: any;
   isRecordingPaused = false;
   recordedSeconds = 0;
-  mySocketId = '';
+
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.myName = params['name']?.trim() || '';
+      this.myName = params['name'] || '';
       if (!this.myName) {
         this.router.navigate(['/']);
         return;
       }
     });
   }
-
 
   startChat() {
     this.showWelcome = false;
@@ -99,10 +98,6 @@ export class Chat implements OnInit, OnDestroy {
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.emit('join', token);
 
-    this.socket.on('connect', () => {
-      this.mySocketId = this.socket.id!;
-    });
-
     this.socket.on('connected', () => this.zone.run(() => {
       this.connected = true;
       this.waiting = false;
@@ -135,8 +130,8 @@ export class Chat implements OnInit, OnDestroy {
       if (!exists) {
         this.messages.push({
           id: msg.id,
-          sender: msg.senderName?.trim().toLowerCase() === this.myName ? 'me' : 'user',
-          senderName: msg.senderName,
+          sender: 'user',
+          senderName: msg.sender,
           text: msg.text,
           time: this.formatTime(msg.time)
         });
@@ -156,41 +151,60 @@ export class Chat implements OnInit, OnDestroy {
       }, 1000);
     }));
 
-    this.socket.on('newVoice', msg => this.zone.run(() => {
-      const chatMsg: ChatMessage = {
-        id: msg.id,
-        sender: msg.senderName?.trim().toLowerCase() === this.myName ? 'me' : 'user',
-        senderName: msg.senderName,
-        audioUrl: msg.url,
-        duration: msg.duration,
-        remainingTime: this.formatSeconds(msg.duration),
-        isPlaying: false,
-        time: this.formatTime(msg.time)
-      };
+    this.socket.on('newVoice', msg => {
+      this.zone.run(() => {
 
-      this.messages.push(chatMsg);
-      this.cd.detectChanges();
-      this.scrollToBottom();
-
-      setTimeout(() => {
-        const audioList = this.audioEls.toArray();
-        if (!audioList.length) return;
-        const lastAudio = audioList[audioList.length - 1];
-        chatMsg.audioRef = lastAudio.nativeElement;
-
-        chatMsg.audioRef.onended = () => {
-          chatMsg.isPlaying = false;
-          chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
-          chatMsg.audioRef!.currentTime = 0;
-          this.cd.detectChanges();
+        const chatMsg: ChatMessage = {
+          id: msg.id,
+          sender: 'user',
+          senderName: msg.sender,
+          audioUrl: msg.url,
+          duration: msg.duration,
+          remainingTime: this.formatSeconds(msg.duration),
+          isPlaying: false,
+          time: this.formatTime(msg.time) // لو عندك الوقت
         };
 
-        chatMsg.audioRef.ontimeupdate = () => {
-          chatMsg.remainingTime = this.formatSeconds(Math.max(chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime), 0));
-          this.cd.detectChanges();
-        };
-      }, 50);
-    }));
+        // 🔴 هنا ضيف push + detectChanges + scroll
+        this.messages.push(chatMsg);
+        this.cd.detectChanges();
+        this.scrollToBottom();
+
+        setTimeout(() => {
+          const audioList = this.audioEls.toArray();
+          if (!audioList.length) return;
+
+          const lastAudio = audioList[audioList.length - 1];
+          chatMsg.audioRef = lastAudio.nativeElement;
+
+          chatMsg.audioRef.onended = () => {
+            this.zone.run(() => {
+              chatMsg.isPlaying = false;
+              chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
+              chatMsg.audioRef!.currentTime = 0;
+              this.cd.detectChanges();
+            });
+          };
+
+          chatMsg.audioRef.ontimeupdate = () => {
+            const remaining =
+              Math.max(
+                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
+                0
+              );
+
+            this.zone.run(() => {
+              chatMsg.remainingTime = this.formatSeconds(remaining);
+              this.cd.detectChanges();
+            });
+          };
+
+        }, 50);
+
+        this.scrollToBottom();
+        this.cd.detectChanges();
+      });
+    });
 
     this.socket.on('partnerRecording', (isRecording: boolean) => {
       this.zone.run(() => {
@@ -304,6 +318,7 @@ export class Chat implements OnInit, OnDestroy {
 
     this.mediaRecorder.stop();
     this.isRecording = false;
+    this.mediaRecorder.stop();
   }
 
   togglePlay(msg: ChatMessage) {
@@ -343,7 +358,10 @@ export class Chat implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append('voice', blob, 'voice.webm');
 
-    fetch(`${environment.SayHello_Server}/upload-voice`, { method: 'POST', body: formData })
+    fetch(`${environment.SayHello_Server}/upload-voice`, {
+      method: 'POST',
+      body: formData
+    })
       .then(res => res.json())
       .then(data => {
         const msgId = this.generateUniqueId();
@@ -352,6 +370,7 @@ export class Chat implements OnInit, OnDestroy {
           url: data.url,
           duration
         });
+
         this.sendSound.currentTime = 0;
         this.sendSound.play().catch(() => { });
       });
@@ -445,22 +464,16 @@ export class Chat implements OnInit, OnDestroy {
       return;
     }
 
-    const msgId = this.generateUniqueId();
-
-    // إضافة الرسالة مباشرة للواجهة
     const chatMsg: ChatMessage = {
-      id: msgId,
-      sender: 'me',
+      id: this.generateUniqueId(),
+      sender: 'user',
       senderName: this.myName,
       text,
-      time: new Date().toISOString()
+      time: this.formatTime(new Date().toISOString())
     };
-    this.messages.push(chatMsg);
-    this.scrollToBottom();
-    this.cd.detectChanges();
 
-    // إرسال للسيرفر
-    this.socket.emit('sendMessage', { id: msgId, text });
+    this.messages.push(chatMsg);
+    this.socket.emit('sendMessage', { id: chatMsg.id, text });
 
     // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
@@ -469,7 +482,6 @@ export class Chat implements OnInit, OnDestroy {
     this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
   }
-
 
   generateUniqueId(): string {
     return 'msg-' + Math.random().toString(36).substr(2, 9);
@@ -505,14 +517,28 @@ export class Chat implements OnInit, OnDestroy {
 
   toggleReaction(msg: ChatMessage, reaction: string) {
     const user = this.myName;
+
     if (!msg.reactions) msg.reactions = {};
+
     if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
+
     const idx = msg.reactions[reaction].indexOf(user);
 
-    if (idx === -1) msg.reactions[reaction].push(user);
-    else msg.reactions[reaction].splice(idx, 1);
+    if (idx === -1) {
+      // أضف المستخدم
+      msg.reactions[reaction].push(user);
+    } else {
+      // حذف المستخدم (unreact)
+      msg.reactions[reaction].splice(idx, 1);
+    }
 
-    this.socket.emit('react', { messageId: msg.id, reaction, sender: user });
+    // إرسال للسيرفر
+    this.socket.emit('react', {
+      messageId: msg.id,
+      reaction,
+      sender: user
+    });
+
     this.cd.detectChanges();
   }
 
