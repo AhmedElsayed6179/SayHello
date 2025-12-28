@@ -783,7 +783,8 @@ body.dark-mode {
   display: inline-block;
   max-width: 250px;
   word-wrap: break-word;
-  position: relative;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 /* Reaction للنص */
@@ -926,7 +927,23 @@ body.dark-mode {
   }
 
   .bubble-text {
-    max-width: 80%;
+    max-width: 75%;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+
+  .reaction {
+    font-size: 12px;
+    padding: 1px 3px;
+    bottom: -4px;
+  }
+
+  .message-right .reaction {
+    left: -24px;
+  }
+
+  .message-left .reaction {
+    right: -24px;
   }
 
   .emoji-picker {
@@ -937,5 +954,55 @@ body.dark-mode {
     max-height: 50vh !important;
     bottom: auto !important;
     margin-bottom: 10px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  /* تصغير الفقاعات على الموبايل */
+  .bubble-text {
+    max-width: 200px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  /* تصغير Reaction */
+  .bubble-wrapper .reaction,
+  .voice-bubble .reaction {
+    font-size: 12px;
+    padding: 1px 3px;
+    bottom: 2px;
+  }
+
+  /* تعديل اتجاه Reaction للنصوص */
+  .message-right .bubble-wrapper .reaction {
+    left: -31px;
+  }
+
+  .message-left .bubble-wrapper .reaction {
+    right: -31px;
+  }
+
+  .rtl .message-left .bubble-wrapper .reaction {
+    left: -31px;
+  }
+
+  .rtl .message-right .bubble-wrapper .reaction {
+    right: -31px;
+  }
+
+  .voice-right .reaction {
+    left: -30px;
+  }
+
+  .voice-left .reaction {
+    right: -30px;
+  }
+
+  .rtl .voice-left .reaction {
+    left: -30px;
+  }
+
+  .rtl .voice-right .reaction {
+    right: -30px;
   }
 }
