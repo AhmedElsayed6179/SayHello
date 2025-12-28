@@ -467,17 +467,18 @@ export class Chat implements OnInit, OnDestroy {
     const chatMsg: ChatMessage = {
       id: this.generateUniqueId(),
       sender: 'user',
-      senderName: this.translate.currentLang === 'ar' ? 'أنت' : 'You',
+      senderName: this.myName,
       text,
       time: this.formatTime(new Date().toISOString())
     };
 
     this.messages.push(chatMsg);
+    this.socket.emit('sendMessage', { id: chatMsg.id, text });
 
-    // إرسال الاسم الحقيقي للآخرين عبر السيرفر
-    this.socket.emit('sendMessage', { id: chatMsg.id, text, senderName: this.myName });
-
+    // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
+
+    // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
   }
