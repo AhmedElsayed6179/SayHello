@@ -92,6 +92,17 @@ export class Home {
     })
       .then(res => res.json())
       .then(data => {
+        if (data.error === 'NAME_TAKEN') {
+          Swal.fire({
+            icon: 'error',
+            title: this.translate.instant('HOME.ERROR_TITLE'),
+            text: this.translate.currentLang === 'ar'
+              ? 'هذا الاسم مستخدم بالفعل. يرجى اختيار اسم آخر.'
+              : 'This name is already taken. Please choose another one.',
+            confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+          });
+          return;
+        }
         this.router.navigate(['/chat'], { queryParams: { token: data.token, name } });
       })
       .catch(err => {
