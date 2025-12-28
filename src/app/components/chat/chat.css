@@ -190,7 +190,7 @@ input[type="range"] {
   height: 6px;
   background: #e0e0e0;
   border-radius: 3px;
-  accent-color: #0b93f6;
+  accent-color: #0069b4;
   outline: none;
   cursor: pointer;
 }
@@ -200,14 +200,14 @@ input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px;
   height: 16px;
-  background: #0b93f6;
+  background: #e0e0e0;
   border-radius: 50%;
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   transition: background 0.3s;
 }
 
 input[type="range"]::-webkit-slider-thumb:hover {
-  background: #0664c1;
+  background: #e0e0e0;
 }
 
 /* Firefox */
