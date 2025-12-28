@@ -51,6 +51,7 @@ export class Chat implements OnInit, OnDestroy {
   private recordingPing: any;
   isRecordingPaused = false;
   recordedSeconds = 0;
+  private messagesMap = new Map<string, ChatMessage>();
 
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
@@ -125,20 +126,23 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
     }));
 
+
     this.socket.on('newMessage', msg => this.zone.run(() => {
-      const exists = this.messages.find(m => m.id === msg.id);
-      if (!exists) {
-        this.messages.push({
+      if (!this.messagesMap.has(msg.id)) {
+        const chatMsg: ChatMessage = {
           id: msg.id,
           sender: msg.senderId === this.socket.id ? 'self' : 'user',
           senderName: msg.sender,
           text: msg.text,
           time: this.formatTime(msg.time)
-        });
+        };
+        this.messages.push(chatMsg);
+        this.messagesMap.set(msg.id, chatMsg);
+        this.scrollToBottom();
+        this.cd.detectChanges();
       }
-      this.scrollToBottom();
-      this.cd.detectChanges();
     }));
+
 
     this.socket.on('typing', () => this.zone.run(() => {
       this.isTyping = true;
@@ -153,56 +157,47 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket.on('newVoice', msg => {
       this.zone.run(() => {
-
-        const chatMsg: ChatMessage = {
-          id: msg.id,
-          sender: msg.senderId === this.socket.id ? 'self' : 'user',
-          senderName: msg.sender,
-          audioUrl: msg.url,
-          duration: msg.duration,
-          remainingTime: this.formatSeconds(msg.duration),
-          isPlaying: false,
-          time: this.formatTime(msg.time) // لو عندك الوقت
-        };
-
-        // 🔴 هنا ضيف push + detectChanges + scroll
-        this.messages.push(chatMsg);
-        this.cd.detectChanges();
-        this.scrollToBottom();
-
-        setTimeout(() => {
-          const audioList = this.audioEls.toArray();
-          if (!audioList.length) return;
-
-          const lastAudio = audioList[audioList.length - 1];
-          chatMsg.audioRef = lastAudio.nativeElement;
-
-          chatMsg.audioRef.onended = () => {
-            this.zone.run(() => {
-              chatMsg.isPlaying = false;
-              chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
-              chatMsg.audioRef!.currentTime = 0;
-              this.cd.detectChanges();
-            });
+        if (!this.messagesMap.has(msg.id)) {
+          const chatMsg: ChatMessage = {
+            id: msg.id,
+            sender: msg.senderId === this.socket.id ? 'self' : 'user',
+            senderName: msg.sender,
+            audioUrl: msg.url,
+            duration: msg.duration,
+            remainingTime: this.formatSeconds(msg.duration),
+            isPlaying: false,
+            time: this.formatTime(msg.time)
           };
+          this.messages.push(chatMsg);
+          this.messagesMap.set(msg.id, chatMsg);
+          this.cd.detectChanges();
+          this.scrollToBottom();
 
-          chatMsg.audioRef.ontimeupdate = () => {
-            const remaining =
-              Math.max(
-                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
-                0
-              );
+          // ربط الـ audioRef كما عندك
+          setTimeout(() => {
+            const audioList = this.audioEls.toArray();
+            if (!audioList.length) return;
+            const lastAudio = audioList[audioList.length - 1];
+            chatMsg.audioRef = lastAudio.nativeElement;
 
-            this.zone.run(() => {
-              chatMsg.remainingTime = this.formatSeconds(remaining);
-              this.cd.detectChanges();
-            });
-          };
-
-        }, 50);
-
-        this.scrollToBottom();
-        this.cd.detectChanges();
+            chatMsg.audioRef.onended = () => {
+              this.zone.run(() => {
+                chatMsg.isPlaying = false;
+                chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
+                chatMsg.audioRef!.currentTime = 0;
+                this.cd.detectChanges();
+              });
+            };
+            chatMsg.audioRef.ontimeupdate = () => {
+              const remaining =
+                Math.max(chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime), 0);
+              this.zone.run(() => {
+                chatMsg.remainingTime = this.formatSeconds(remaining);
+                this.cd.detectChanges();
+              });
+            };
+          }, 50);
+        }
       });
     });
 
@@ -367,6 +362,7 @@ export class Chat implements OnInit, OnDestroy {
         const msgId = this.generateUniqueId();
         this.socket.emit('sendVoice', {
           id: msgId,
+          senderId: this.socket.id, // ✅
           url: data.url,
           duration
         });
@@ -468,6 +464,7 @@ export class Chat implements OnInit, OnDestroy {
       id: this.generateUniqueId(),
       sender: 'user',
       senderName: this.myName,
+      senderId: this.socket.id, // ✅
       text,
       time: this.formatTime(new Date().toISOString())
     };
