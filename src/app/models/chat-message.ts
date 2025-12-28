@@ -1,3 +1,5 @@
+import { Socket } from "socket.io-client";
+
 export interface ChatMessage {
   id?: string;
   sender: 'me' | 'user' | 'system';
@@ -21,5 +23,11 @@ export interface ChatMessage {
   reactions?: {
     [reaction: string]: string[];
   };
+}
+
+export interface MySocket extends Socket {
+  userName: string;
+  deviceId?: string;
+  room?: string;
 }
 

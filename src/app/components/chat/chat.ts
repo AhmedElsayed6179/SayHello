@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
-import { ChatMessage } from '../../models/chat-message';
+import { ChatMessage, MySocket } from '../../models/chat-message';
 
 @Component({
   selector: 'app-chat',
@@ -56,11 +56,12 @@ export class Chat implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.myName = params['name'] || '';
-      if (!this.myName) {
+      this.token = params['token'] || '';
+      if (!this.token) {
         this.router.navigate(['/']);
         return;
       }
+      this.connectToServer();
     });
   }
 
@@ -73,7 +74,7 @@ export class Chat implements OnInit, OnDestroy {
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: this.myName })
+      body: JSON.stringify({ token: this.token })
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to start chat');
@@ -95,12 +96,13 @@ export class Chat implements OnInit, OnDestroy {
       this.socket.emit('leave');
       this.socket.disconnect();
     }
-    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
+    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] }) as MySocket;
     this.socket.emit('join', token);
 
     this.socket.on('connected', () => this.zone.run(() => {
       this.connected = true;
       this.waiting = false;
+      this.myName = (this.socket as MySocket).userName ?? '';
       this.addSystemMessage('CHAT.CONNECTED');
     }));
 
