@@ -101,9 +101,11 @@ export class Chat implements OnInit, OnDestroy {
       this.connected = true;
       this.waiting = false;
 
+      // شيل رسالة الانتظار لو موجودة
       const waitingIndex = this.messages.findIndex(msg => msg.key === 'CHAT.WAITING');
       if (waitingIndex !== -1) {
         this.messages.splice(waitingIndex, 1);
+        this.waitingMessageShown = false;
       }
 
       // إضافة رسالة الاتصال
