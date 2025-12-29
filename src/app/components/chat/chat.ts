@@ -51,7 +51,6 @@ export class Chat implements OnInit, OnDestroy {
   private recordingPing: any;
   isRecordingPaused = false;
   recordedSeconds = 0;
-  isDragging = false;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -340,33 +339,25 @@ export class Chat implements OnInit, OnDestroy {
     const audio = msg.audioRef!;
     if (!audio) return;
 
-    // إذا كان الصوت قيد التشغيل، أوقفه
     if (msg.isPlaying) {
       audio.pause();
       msg.isPlaying = false;
       return;
     }
 
-    // تشغيل الصوت
     audio.play();
     msg.isPlaying = true;
 
-    // تحديث الوقت المتبقي أثناء التشغيل
     audio.ontimeupdate = () => {
       const remaining = Math.max((msg.duration || 0) - Math.floor(audio.currentTime), 0);
       msg.remainingTime = this.formatSeconds(remaining);
       this.cd.detectChanges();
     };
 
-    // عند انتهاء الصوت
     audio.onended = () => {
       msg.isPlaying = false;
       msg.remainingTime = this.formatSeconds(msg.duration || 0);
-
-      // إزالة إعادة ضبط currentTime لتجنب توقف الصوت عند تحريك الـ range
-      // إذا أردت إعادة التشغيل من البداية، يمكن تفعيل السطر التالي:
-      // audio.currentTime = 0;
-
+      audio.currentTime = 0;
       this.cd.detectChanges();
     };
   }
@@ -402,12 +393,25 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   seekAudio(msg: ChatMessage, event: any) {
+    const audio = msg.audioRef;
+    if (!audio) return;
+
     const value = Number(event.target.value);
-    if (msg.audioRef) {
-      msg.audioRef.currentTime = value; // ضبط الوقت فقط
-      msg.remainingTime = this.formatSeconds(Math.max((msg.duration || 0) - value, 0));
-      this.cd.detectChanges();
+
+    const wasPlaying = msg.isPlaying;
+
+    audio.currentTime = value;
+
+    msg.remainingTime = this.formatSeconds(
+      Math.max((msg.duration || 0) - value, 0)
+    );
+
+    // لو كان شغال قبل السحب → يفضل شغال
+    if (wasPlaying && audio.paused) {
+      audio.play();
     }
+
+    this.cd.detectChanges();
   }
 
   onStartVoiceClick() {
