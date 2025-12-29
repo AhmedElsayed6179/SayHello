@@ -52,7 +52,6 @@ export class Chat implements OnInit, OnDestroy {
   isRecordingPaused = false;
   recordedSeconds = 0;
 
-
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -101,6 +100,13 @@ export class Chat implements OnInit, OnDestroy {
     this.socket.on('connected', () => this.zone.run(() => {
       this.connected = true;
       this.waiting = false;
+
+      const waitingIndex = this.messages.findIndex(msg => msg.key === 'CHAT.WAITING');
+      if (waitingIndex !== -1) {
+        this.messages.splice(waitingIndex, 1);
+      }
+
+      // إضافة رسالة الاتصال
       this.addSystemMessage('CHAT.CONNECTED');
     }));
 
