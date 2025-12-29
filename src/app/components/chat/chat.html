@@ -76,7 +76,8 @@
 
             <!-- Slider للتحكم في الوقت -->
             <input type="range" min="0" [max]="msg.duration || 0" [value]="msg.audioRef?.currentTime || 0"
-              (input)="seekAudio(msg, $event)" (click)="togglePlay(msg); $event.stopPropagation()" />
+              (input)="seekAudio(msg, $event)" (click)="!isDragging && togglePlay(msg); $event.stopPropagation()"
+              (mousedown)="isDragging = true" (mouseup)="isDragging = false" />
 
             <div class="wave" [class.active]="msg.isPlaying">
               <span></span><span></span><span></span><span></span>

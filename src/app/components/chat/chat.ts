@@ -51,6 +51,7 @@ export class Chat implements OnInit, OnDestroy {
   private recordingPing: any;
   isRecordingPaused = false;
   recordedSeconds = 0;
+  isDragging = false;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -393,9 +394,7 @@ export class Chat implements OnInit, OnDestroy {
   seekAudio(msg: ChatMessage, event: any) {
     const value = Number(event.target.value);
     if (msg.audioRef) {
-      msg.audioRef.currentTime = value;
-
-      // لتحديث العداد مباشرة عند السحب
+      msg.audioRef.currentTime = value; // ضبط الوقت فقط
       msg.remainingTime = this.formatSeconds(Math.max((msg.duration || 0) - value, 0));
       this.cd.detectChanges();
     }
