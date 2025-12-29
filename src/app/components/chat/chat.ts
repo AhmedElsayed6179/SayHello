@@ -340,25 +340,33 @@ export class Chat implements OnInit, OnDestroy {
     const audio = msg.audioRef!;
     if (!audio) return;
 
+    // إذا كان الصوت قيد التشغيل، أوقفه
     if (msg.isPlaying) {
       audio.pause();
       msg.isPlaying = false;
       return;
     }
 
+    // تشغيل الصوت
     audio.play();
     msg.isPlaying = true;
 
+    // تحديث الوقت المتبقي أثناء التشغيل
     audio.ontimeupdate = () => {
       const remaining = Math.max((msg.duration || 0) - Math.floor(audio.currentTime), 0);
       msg.remainingTime = this.formatSeconds(remaining);
       this.cd.detectChanges();
     };
 
+    // عند انتهاء الصوت
     audio.onended = () => {
       msg.isPlaying = false;
       msg.remainingTime = this.formatSeconds(msg.duration || 0);
-      audio.currentTime = 0;
+
+      // إزالة إعادة ضبط currentTime لتجنب توقف الصوت عند تحريك الـ range
+      // إذا أردت إعادة التشغيل من البداية، يمكن تفعيل السطر التالي:
+      // audio.currentTime = 0;
+
       this.cd.detectChanges();
     };
   }
