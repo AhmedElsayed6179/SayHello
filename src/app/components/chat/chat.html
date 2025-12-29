@@ -11,7 +11,7 @@
     <div *ngIf="showWelcome" class="welcome-wrapper text-center">
       <div class="welcome-msg system-msg">
         <div class="system-text">
-          {{ 'CHAT.WELCOME1' | translate }} {{ myName }}!
+          {{ 'CHAT.WELCOME1' | translate }} {{ getDisplayName(myName) }}!
         </div>
       </div>
 
@@ -43,7 +43,9 @@
       <!-- User messages -->
       <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
-          <span class="sender-name">{{ msg.senderName === myName ? ('CHAT.YOU' | translate) : msg.senderName }}</span>
+          <span class="sender-name">
+            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(myName) }}
+          </span>
           <div class="bubble-wrapper">
             <span class="bubble-text" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
             <!-- الريأكشن يظهر فوق الفقاعة -->
@@ -59,7 +61,7 @@
         <div class="voice-message" [ngClass]="msg.senderName === myName ? 'voice-right' : 'voice-left'">
 
           <span class="sender-name">
-            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : msg.senderName }}
+            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(myName) }}
           </span>
 
           <div class="voice-bubble" style="cursor: pointer; position: relative;"
@@ -76,7 +78,7 @@
             <input type="range" min="0" [max]="msg.duration || 0" [value]="msg.audioRef?.currentTime || 0"
               (input)="seekAudio(msg, $event)" (click)="togglePlay(msg); $event.stopPropagation()" />
 
-            <div class="wave" [class.active]="isRecording || msg.isPlaying">
+            <div class="wave" [class.active]="msg.isPlaying">
               <span></span><span></span><span></span><span></span>
             </div>
 

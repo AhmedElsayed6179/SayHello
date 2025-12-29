@@ -87,10 +87,14 @@ export class Home {
     const name = this.usernameForm.value.username.trim();
     if (!name) return;
 
+    // إضافة رقم عشوائي للاسم لضمان التمييز
+    const randomSuffix = Math.floor(100000 + Math.random() * 900000);
+    const uniqueName = `${name}-${randomSuffix}`;
+
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name: uniqueName })
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to start chat');
@@ -98,7 +102,8 @@ export class Home {
       })
       .then(data => {
         const token = data.token;
-        this.router.navigate(['/chat'], { queryParams: { token, name } });
+        // إرسال الاسم الفريد مع التوكن للصفحة التالية
+        this.router.navigate(['/chat'], { queryParams: { token, name: uniqueName } });
       })
       .catch(err => {
         console.error(err);

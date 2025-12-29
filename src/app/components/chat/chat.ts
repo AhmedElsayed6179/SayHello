@@ -310,6 +310,12 @@ export class Chat implements OnInit, OnDestroy {
     }
   }
 
+  getDisplayName(fullName: string | undefined): string {
+    if (!fullName) return '';
+    // افصل عند "-" وخذ الجزء الأول فقط (الاسم الحقيقي)
+    return fullName.split('-')[0];
+  }
+
   stopRecording() {
     if (!this.mediaRecorder || !this.isRecording) return;
 
