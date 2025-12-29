@@ -372,6 +372,7 @@ export class Chat implements OnInit, OnDestroy {
   uploadVoice(blob: Blob, duration: number) {
     const formData = new FormData();
     formData.append('voice', blob, 'voice.webm');
+    formData.append('room', (this.socket as any).room);
 
     fetch(`${environment.SayHello_Server}/upload-voice`, {
       method: 'POST',
@@ -383,7 +384,8 @@ export class Chat implements OnInit, OnDestroy {
         this.socket.emit('sendVoice', {
           id: msgId,
           url: data.url,
-          duration
+          duration,
+          room: (this.socket as any).room
         });
 
         this.sendSound.currentTime = 0;
