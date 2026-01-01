@@ -383,10 +383,17 @@ input[type="range"]::-moz-range-track {
 
 .chat-input {
   flex: 1;
-  padding: 10px 50px 10px 90px;
   border-radius: 25px;
   border: 1px solid #ccc;
   font-size: 0.95rem;
+}
+
+.chat-input[dir="rtl"] {
+  padding: 10px 50px 10px 90px;
+}
+
+.chat-input[dir="ltr"] {
+  padding: 10px 90px 10px 50px;
 }
 
 .chat-input:disabled {
@@ -916,8 +923,15 @@ body.dark-mode {
 @media (max-width: 576px) {
 
   .chat-input {
-    padding: 8px 40px 8px 95px;
     width: 100%;
+  }
+
+  .chat-input[dir="rtl"] {
+    padding: 8px 40px 8px 95px;
+  }
+
+  .chat-input[dir="ltr"] {
+    padding: 8px 95px 8px 40px;
   }
 
   .emoji-btn,
