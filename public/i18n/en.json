@@ -51,8 +51,7 @@
     "WELCOME3": "You can send text or voice messages",
     "START": "Start Chat",
     "PARTNER_RECORDING": "Partner is recording...",
-    "WELCOME_PLACEHOLDER": "Press (Start Chat) to begin",
-    "CONNECTING_PARTNER": "You will be connected to a partner once available"
+    "WELCOME_PLACEHOLDER": "Press (Start Chat) to begin"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
