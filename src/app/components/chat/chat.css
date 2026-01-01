@@ -388,11 +388,11 @@ input[type="range"]::-moz-range-track {
   font-size: 0.95rem;
 }
 
-.chat-input[dir="rtl"] {
+.rtl .chat-input {
   padding: 10px 50px 10px 90px;
 }
 
-.chat-input[dir="ltr"] {
+.ltr .chat-input {
   padding: 10px 90px 10px 50px;
 }
 
@@ -926,12 +926,12 @@ body.dark-mode {
     width: 100%;
   }
 
-  .chat-input[dir="rtl"] {
+  .rtl .chat-input {
     padding: 8px 40px 8px 95px;
   }
 
-  .chat-input[dir="ltr"] {
-    padding: 8px 95px 8px 40px;
+  .ltr .chat-input {
+    padding: 10px 95px 10px 40px;
   }
 
   .emoji-btn,
