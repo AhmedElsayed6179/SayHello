@@ -44,7 +44,7 @@
       <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
           <span class="sender-name">
-            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(myName) }}
+            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
           <div class="bubble-wrapper">
             <span class="bubble-text" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
@@ -61,7 +61,7 @@
         <div class="voice-message" [ngClass]="msg.senderName === myName ? 'voice-right' : 'voice-left'">
 
           <span class="sender-name">
-            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(myName) }}
+            {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
 
           <div class="voice-bubble" style="cursor: pointer; position: relative;"
