@@ -48,6 +48,16 @@
   background-color: #0972c0;
 }
 
+body.dark-mode .btn-lang {
+  background-color: #717171;
+  color: #fff;
+  border: none;
+}
+
+body.dark-mode .btn-lang:hover {
+  background-color: #666;
+}
+
 .btn-like {
   padding: 6px 14px;
   border-radius: 12px;

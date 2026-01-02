@@ -1,4 +1,12 @@
-<div class="d-flex flex-column min-vh-100 scroll-wrapper">
+<div class="d-flex flex-column min-vh-100 scroll-wrapper page-wrapper">
+  <div class="bg-shapes">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
   <!-- Navbar ثابت -->
   <app-navbar></app-navbar>
 
@@ -10,5 +18,3 @@
   <!-- Footer دائمًا في الأسفل -->
   <app-footer id="page-footer" [attr.dir]="currentLang === 'ar' ? 'rtl' : 'ltr'"></app-footer>
 </div>
-
-
