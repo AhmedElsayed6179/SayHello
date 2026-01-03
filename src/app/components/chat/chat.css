@@ -949,11 +949,6 @@ body.dark-mode {
     min-height: 300px;
   }
 
-  .chat-container {
-    margin: 10px;
-    box-sizing: border-box;
-  }
-
   .bubble-text {
     max-width: 200px;
     padding: 6px 10px;
