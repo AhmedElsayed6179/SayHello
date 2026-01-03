@@ -105,7 +105,6 @@ body.dark-mode .scroll-wrapper::-webkit-scrollbar-thumb:hover {
 @media (max-width: 768px) {
 
   .scroll-wrapper {
-    height: 100dvh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
