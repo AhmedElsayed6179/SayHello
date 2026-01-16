@@ -4,8 +4,8 @@ import { Chat } from './components/chat/chat';
 import { Notfound } from './components/notfound/notfound';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'Home', pathMatch: 'full' },
-  { path: "Home", component: Home },
+  { path: '', component: Home },
   { path: 'chat', component: Chat },
-  { path: "**", component: Notfound },
+  { path: '**', component: Notfound },
+  { path: 'Home', redirectTo: '', pathMatch: 'full' }
 ];
