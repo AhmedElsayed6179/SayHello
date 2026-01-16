@@ -5,7 +5,7 @@ import { Notfound } from './components/notfound/notfound';
 
 export const routes: Routes = [
   { path: '', component: Home },
-  { path: 'chat', component: Chat },
   { path: 'Home', redirectTo: '', pathMatch: 'full' },
+  { path: 'chat', component: Chat },
   { path: '**', component: Notfound }
 ];
