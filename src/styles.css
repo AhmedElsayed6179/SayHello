@@ -101,6 +101,26 @@ body.dark-mode .scroll-wrapper::-webkit-scrollbar-thumb:hover {
   background-color: #0a7cd5;
 }
 
+/* Media Queries - Mobile adjustments */
+@media (max-width: 768px) {
+  .scroll-wrapper::-webkit-scrollbar {
+    width: 5px; /* أصغر حجم على الموبايل */
+  }
+
+  .scroll-wrapper::-webkit-scrollbar-thumb {
+    border: 1px solid #e0e0e0; /* أقل سماكة للـ thumb */
+  }
+
+  body.dark-mode .scroll-wrapper::-webkit-scrollbar-thumb {
+    border: 1px solid #2c2c2c;
+  }
+
+  /* Firefox */
+  .scroll-wrapper {
+    scrollbar-width: thin;
+  }
+}
+
 /* =========================
    Page Wrapper
 ========================= */
