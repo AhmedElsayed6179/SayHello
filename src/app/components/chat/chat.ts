@@ -281,6 +281,7 @@ export class Chat implements OnInit, OnDestroy {
       this.recordedSeconds = 0;
       this.recordTime = '0:00';
       this.audioChunks = [];
+      this.stopMicStream();
       this.cd.detectChanges();
     };
 
@@ -317,6 +318,7 @@ export class Chat implements OnInit, OnDestroy {
       clearInterval(this.recordingPing);
       this.socket.emit('stopRecording');
       this.mediaRecorder?.stop();
+      this.stopMicStream();
       this.isRecording = false;
       this.cd.detectChanges();
 
@@ -373,6 +375,13 @@ export class Chat implements OnInit, OnDestroy {
     const m = Math.floor(sec / 60);
     const s = (sec % 60).toString().padStart(2, '0');
     return `${m}:${s}`;
+  }
+
+  private stopMicStream() {
+    if (this.micStream) {
+      this.micStream.getTracks().forEach(track => track.stop());
+      this.micStream = null;
+    }
   }
 
   uploadVoice(blob: Blob, duration: number) {
@@ -680,15 +689,10 @@ export class Chat implements OnInit, OnDestroy {
     clearTimeout(this.recordingTimeout);
     clearInterval(this.recordInterval);
     clearInterval(this.recordingPing);
+    this.stopMicStream();
   }
 
   get isRtl(): boolean {
     return this.translate.currentLang === 'ar';
   }
-
-  // private addChatMessage(sender: string, text: string, isoTime: string) {
-  //   this.messages.push({ sender: 'user', text: `${sender}: ${text}`, time: this.formatTime(isoTime) });
-  //   this.scrollToBottom();
-  //   this.cd.detectChanges();
-  // }
 }
