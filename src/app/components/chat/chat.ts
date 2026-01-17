@@ -51,6 +51,8 @@ export class Chat implements OnInit, OnDestroy {
   private recordingPing: any;
   isRecordingPaused = false;
   recordedSeconds = 0;
+  private micStream: MediaStream | null = null;
+  private recordStartTime = 0;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -247,24 +249,27 @@ export class Chat implements OnInit, OnDestroy {
   async startRecording() {
     if (!this.connected) return;
 
-    // إعادة تهيئة العداد قبل بداية التسجيل
+    // ✅ تصفير كامل
     this.recordedSeconds = 0;
     this.recordTime = '0:00';
-    this.cd.detectChanges();
-
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    this.mediaRecorder = new MediaRecorder(stream);
-
     this.audioChunks = [];
     this.isCanceled = false;
     this.isRecordingPaused = false;
+    this.cd.detectChanges();
+
+    // 🟡 اطلب الإذن مرة واحدة فقط
+    if (!this.micStream) {
+      this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+
+    this.mediaRecorder = new MediaRecorder(this.micStream);
 
     this.mediaRecorder.ondataavailable = e => {
       if (e.data.size > 0) this.audioChunks.push(e.data);
     };
 
     this.mediaRecorder.onstop = () => {
-      stream.getTracks().forEach(track => track.stop());
+      this.stopRecordTimer();
       this.stopRecordingPing();
       this.socket.emit('stopRecording');
 
@@ -273,16 +278,18 @@ export class Chat implements OnInit, OnDestroy {
         this.uploadVoice(audioBlob, this.recordedSeconds);
       }
 
-      // تصفير العداد بعد الإرسال
-      this.audioChunks = [];
       this.recordedSeconds = 0;
       this.recordTime = '0:00';
+      this.audioChunks = [];
       this.cd.detectChanges();
     };
 
+    // ✅ ابدأ التسجيل أولًا
     this.mediaRecorder.start();
     this.isRecording = true;
+    this.recordStartTime = Date.now();
 
+    // ⏱️ شغّل العداد بعد التسجيل الحقيقي
     this.startRecordTimer();
     this.startRecordingPing();
   }
@@ -419,14 +426,15 @@ export class Chat implements OnInit, OnDestroy {
       Swal.fire({
         icon: 'info',
         title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
-        text: this.translate.currentLang === 'ar' ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك' : 'You cannot record a voice message without a partner',
+        text: this.translate.currentLang === 'ar'
+          ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك'
+          : 'You cannot record a voice message without a partner',
         confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
       });
       return;
     }
 
     this.startRecording();
-    this.startRecordTimer(); // تشغيل العداد مباشرة
   }
 
   onOpentoggleEmoji() {
@@ -445,15 +453,19 @@ export class Chat implements OnInit, OnDestroy {
 
   startRecordTimer() {
     clearInterval(this.recordInterval);
+
     this.recordInterval = setInterval(() => {
-      if (!this.isRecordingPaused) { // عد الثواني فقط لو التسجيل شغال
-        this.recordedSeconds++;
-        const mins = Math.floor(this.recordedSeconds / 60);
-        const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
-        this.recordTime = `${mins}:${secs}`;
-        this.cd.detectChanges();
-      }
-    }, 1000);
+      if (this.isRecordingPaused) return;
+
+      const elapsedMs = Date.now() - this.recordStartTime;
+      this.recordedSeconds = Math.floor(elapsedMs / 1000);
+
+      const mins = Math.floor(this.recordedSeconds / 60);
+      const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
+
+      this.recordTime = `${mins}:${secs}`;
+      this.cd.detectChanges();
+    }, 200); // تحديث سلس
   }
 
   stopRecordTimer() {
