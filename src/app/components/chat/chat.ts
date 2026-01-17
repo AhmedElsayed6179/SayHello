@@ -249,6 +249,22 @@ export class Chat implements OnInit, OnDestroy {
   async startRecording() {
     if (!this.connected) return;
 
+    if (!this.isMediaRecorderSupported()) {
+      const isArabic = this.translate.currentLang === 'ar';
+      
+      Swal.fire({
+        icon: 'warning',
+        title: isArabic ? 'غير مدعوم' : 'Unsupported',
+        text: isArabic
+          ? 'تسجيل الصوت غير مدعوم على هذا المتصفح'
+          : 'Voice recording is not supported on this browser',
+        showCancelButton: true,
+        confirmButtonText: isArabic ? 'تم' : 'OK',
+        cancelButtonText: isArabic ? 'إلغاء' : 'Cancel'
+      });
+      return;
+    }
+
     // ✅ تصفير كامل
     this.recordedSeconds = 0;
     this.recordTime = '0:00';
@@ -444,6 +460,10 @@ export class Chat implements OnInit, OnDestroy {
     }
 
     this.startRecording();
+  }
+
+  private isMediaRecorderSupported(): boolean {
+    return typeof MediaRecorder !== 'undefined';
   }
 
   onOpentoggleEmoji() {
