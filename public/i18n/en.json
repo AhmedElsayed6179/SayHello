@@ -1,7 +1,7 @@
 {
   "HOME": {
     "TITLE": "Welcome to SayHello",
-    "DESC": "A simple text-based chat platform. Enter without registration, just write your name and start chatting!",
+    "DESC": "A simple text-based chat platform. Enter without registration, just type your name and start chatting!",
     "START": "Start Chatting",
     "NAME_PLACEHOLDER": "Enter your name",
     "ERROR_TITLE": "Invalid Name",
