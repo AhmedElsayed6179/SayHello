@@ -9,18 +9,18 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrl: './footer.css',
 })
 export class Footer {
+today = new Date();
+
   private translate = inject(TranslateService);
 
   get isDarkMode(): boolean {
     return document.body.classList.contains('dark-mode');
   }
 
-  // هذا يوضح اتجاه النص
   get currentDir(): 'rtl' | 'ltr' {
     return this.translate.currentLang === 'ar' ? 'rtl' : 'ltr';
   }
 
-  // إذا احتجت اللغة نفسها
   get currentLanguage(): string {
     return this.translate.currentLang;
   }
