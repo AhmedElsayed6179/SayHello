@@ -79,7 +79,7 @@ export class Home {
         icon: 'error',
         title: this.translate.instant('HOME.ERROR_TITLE'),
         text: message,
-        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
       });
       return;
     }
@@ -112,7 +112,7 @@ export class Home {
           icon: 'error',
           title: this.translate.instant('HOME.ERROR_INTERNET'),
           text: this.translate.instant('HOME.ERROR_SERVER'),
-          confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+          confirmButtonText: this.translate.instant('HOME.ERROR_OK')
         });
       });
   }

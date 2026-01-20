@@ -6,10 +6,11 @@ import { Observable } from 'rxjs';
 import { ChatService } from '../../service/chat-service';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../environments/environment.development';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule, RouterLink, AsyncPipe],
+  imports: [CommonModule, RouterLink, AsyncPipe, FormsModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -28,7 +29,6 @@ export class Navbar {
   }
 
   ngOnInit() {
-    // فتح Socket لمتابعة عدد المستخدمين فورًا
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.on('user_count', (count: number) => this.zone.run(() => {
       this.chatService.connectedUsers$.next(count);
@@ -36,24 +36,25 @@ export class Navbar {
     }));
   }
 
-  toggleLang() {
-    this.currentLang = this.currentLang === 'en' ? 'ar' : 'en';
-    localStorage.setItem('lang', this.currentLang);
-    this.translate.use(this.currentLang);
+  changeLang(lang: string) {
+    this.currentLang = lang;
+    localStorage.setItem('lang', lang);
+    this.translate.use(lang);
 
-    // غير اتجاه المحتوى فقط، Footer يتحرك مع main تلقائي
+    const dir = lang === 'ar' ? 'rtl' : 'ltr';
+
     const pageContent = document.querySelector('#page-content');
     if (pageContent) {
-      pageContent.setAttribute('dir', this.currentLang === 'ar' ? 'rtl' : 'ltr');
+      pageContent.setAttribute('dir', dir);
     }
 
-    // ممكن تضيف Footer مع main لو حابب
     const pageFooter = document.querySelector('#page-footer');
     if (pageFooter) {
-      pageFooter.setAttribute('dir', this.currentLang === 'ar' ? 'rtl' : 'ltr');
+      pageFooter.setAttribute('dir', dir);
     }
 
-    document.documentElement.lang = this.currentLang;
+    document.documentElement.dir = dir;
+    document.documentElement.lang = lang;
   }
 
   toggleTheme() {

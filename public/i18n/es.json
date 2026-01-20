@@ -1,0 +1,78 @@
+{
+  "HOME": {
+    "TITLE": "Bienvenido a SayHello",
+    "DESC": "Una plataforma de chat sencilla basada en texto. Entra sin registro, solo escribe tu nombre y comienza a chatear.",
+    "START": "Comenzar a chatear",
+    "NAME_PLACEHOLDER": "Ingresa tu nombre",
+    "ERROR_TITLE": "Nombre no válido",
+    "ERROR_REQUIRED": "El nombre es obligatorio",
+    "ERROR_MINLENGTH": "El nombre debe tener al menos 3 caracteres",
+    "ERROR_MAXLENGTH": "El nombre debe tener como máximo 20 caracteres",
+    "ERROR_PATTERN": "El nombre solo puede contener letras, con un solo espacio entre palabras",
+    "ERROR_SERVER": "No se pudo iniciar el chat. Inténtalo de nuevo más tarde",
+    "ERROR_INTERNET": "Sin conexión a internet",
+    "ERROR_OK": "Aceptar"
+  },
+  "SECTIONS": {
+    "ONE": {
+      "TITLE": "Comunicación rápida",
+      "DESC": "Inicia conversaciones instantáneas con otros usuarios.",
+      "DETAIL1": "Conexión instantánea sin largas esperas.",
+      "DETAIL2": "Chat de texto de forma sencilla.",
+      "DETAIL3": "Comparte tus intereses con otros."
+    },
+    "TWO": {
+      "TITLE": "Conoce a otros",
+      "DESC": "Descubre intereses comunes y comunícate fácilmente.",
+      "DETAIL1": "Usuarios de todo el mundo.",
+      "DETAIL2": "Oportunidades para hacer nuevos amigos.",
+      "DETAIL3": "Conversaciones divertidas y seguras."
+    },
+    "THREE": {
+      "TITLE": "Seguridad y privacidad",
+      "DESC": "Disfruta de una experiencia de chat segura y protegida.",
+      "DETAIL1": "Tu información personal no se comparte.",
+      "DETAIL2": "Tu comunicación con el compañero está cifrada para mayor confidencialidad.",
+      "DETAIL3": "Chatea libremente con total tranquilidad."
+    }
+  },
+  "CHAT": {
+    "TITLE": "Sala de chat",
+    "PLACEHOLDER": "Escribe un mensaje...",
+    "STOP": "Salir",
+    "WAITING": "Aún no hay ningún compañero conectado. Por favor espera...",
+    "CONNECTED": "¡Ahora estás conectado!",
+    "NO_PARTNER": "Aún no hay ningún compañero conectado.",
+    "PARTNER_LEFT": "Tu compañero ha salido del chat.",
+    "SYSTEM": "Sistema",
+    "TYPING": "está escribiendo...",
+    "NEXT": "Siguiente",
+    "YOU": "Tú",
+    "WELCOME1": "Bienvenido",
+    "WELCOME2": "¡Prepárate para conocer nuevos amigos!",
+    "WELCOME3": "Puedes enviar mensajes de texto o de voz",
+    "START": "Iniciar chat",
+    "PARTNER_RECORDING": "El compañero está grabando...",
+    "WELCOME_PLACEHOLDER": "Pulsa (Iniciar chat) para comenzar",
+    "Unsupported": "No compatible",
+    "browser": "La grabación de voz no es compatible con este navegador",
+    "Cancel": "Cancelar",
+    "PARTNER": "Sin pareja",
+    "VOICE_NO_PARTNER": "No puedes grabar un mensaje de voz sin pareja",
+    "EMOJI_NO_PARTNER": "No puedes usar emojis sin pareja",
+    "message_NO_PARTNER": "No puedes enviar un mensaje sin un compañero",
+    "Empty_text": "Texto vacío",
+    "empty_message": "No puedes enviar un mensaje vacío",
+    "CONFIRM": "¿Estás seguro?"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "Todos los derechos reservados",
+    "Website_by": "Sitio web por",
+    "My_Name": "Ahmed Elsayed"
+  },
+  "ERROR": {
+    "PAGE_NOT_FOUND": "Página no encontrada",
+    "DESCRIPTION": "Lo sentimos, la página que buscas no existe. Por favor vuelve a la página de inicio.",
+    "GO_HOME": "Ir a inicio"
+  }
+}

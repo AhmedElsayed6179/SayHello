@@ -250,17 +250,13 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.connected) return;
 
     if (!this.isMediaRecorderSupported()) {
-      const isArabic = this.translate.currentLang === 'ar';
-
       Swal.fire({
         icon: 'warning',
-        title: isArabic ? 'غير مدعوم' : 'Unsupported',
-        text: isArabic
-          ? 'تسجيل الصوت غير مدعوم على هذا المتصفح'
-          : 'Voice recording is not supported on this browser',
+        title: this.translate.instant('CHAT.Unsupported'),
+        text: this.translate.instant('CHAT.browser'),
         showCancelButton: true,
-        confirmButtonText: isArabic ? 'تم' : 'OK',
-        cancelButtonText: isArabic ? 'إلغاء' : 'Cancel'
+        confirmButtonText: this.translate.instant('HOME.ERROR_OK'),
+        cancelButtonText: this.translate.instant('CHAT.Cancel'),
       });
       return;
     }
@@ -444,11 +440,9 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
-        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
-        text: this.translate.currentLang === 'ar'
-          ? 'لا يمكنك تسجيل رسالة صوتية قبل الاتصال بشريك'
-          : 'You cannot record a voice message without a partner',
-        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+        title: this.translate.instant('CHAT.PARTNER'),
+        text: this.translate.instant('CHAT.VOICE_NO_PARTNER'),
+        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
       });
       return;
     }
@@ -464,9 +458,9 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
-        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
-        text: this.translate.currentLang === 'ar' ? 'لا يمكنك استخدام الإيموجي بدون شريك' : 'You cannot use emojis without a partner',
-        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+        title: this.translate.instant('CHAT.PARTNER'),
+        text: this.translate.instant('CHAT.EMOJI_NO_PARTNER'),
+        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
       });
       return;
     }
@@ -496,19 +490,16 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   get confirmText(): string {
-    if (this.translate.currentLang === 'ar') {
-      return 'هل أنت متأكد؟';
-    }
-    return 'Are you sure?';
+    return this.translate.instant('CHAT.CONFIRM');
   }
 
   sendMessage() {
     if (!this.connected) {
       Swal.fire({
         icon: 'info',
-        title: this.translate.currentLang === 'ar' ? 'لا يوجد شريك' : 'No partner',
-        text: this.translate.currentLang === 'ar' ? 'لا يمكنك إرسال رسالة بدون شريك' : 'You cannot send a message without a partner',
-        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+        title: this.translate.instant('CHAT.PARTNER'),
+        text: this.translate.instant('CHAT.message_NO_PARTNER'),
+        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
       });
       return;
     }
@@ -517,9 +508,9 @@ export class Chat implements OnInit, OnDestroy {
     if (!text) {
       Swal.fire({
         icon: 'info',
-        title: this.translate.currentLang === 'ar' ? 'نص فارغ' : 'Empty text',
-        text: this.translate.currentLang === 'ar' ? 'لا يمكنك إرسال رسالة فارغة' : 'You cannot send an empty message',
-        confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
+        title: this.translate.instant('CHAT.Empty_text'),
+        text: this.translate.instant('CHAT.empty_message'),
+        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
       });
       return;
     }
@@ -661,7 +652,7 @@ export class Chat implements OnInit, OnDestroy {
     fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
       .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
-      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_TITLE'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK' }); this.router.navigate(['/']); });
+      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_INTERNET'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') }); this.router.navigate(['/']); });
   }
 
   exitChat() { this.socket?.disconnect(); this.router.navigate(['/']); }
