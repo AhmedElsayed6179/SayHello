@@ -6,12 +6,14 @@
 
   <div class="d-flex navbar-actions">
     <div class="btn-group-custom">
-      <select class="btn btn-lang" [ngClass]="isDarkMode ? 'dark' : 'light'" [(ngModel)]="currentLang"
-        (ngModelChange)="changeLang($event)">
-        <option value="en">EN</option>
-        <option value="ar">عربي</option>
-        <option value="es">ES</option>
-      </select>
+      <div class="select-wrapper" [ngClass]="isDarkMode ? 'dark' : 'light'">
+        <select class="btn-lang" [(ngModel)]="currentLang" (ngModelChange)="changeLang($event)">
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+          <option value="es">Español</option>
+        </select>
+        <span class="select-arrow">▼</span>
+      </div>
 
       <button class="btn btn-theme" (click)="toggleTheme()" [ngStyle]="{
           'background-color': isDarkMode ? '#f1f1f1' : '#212529',
