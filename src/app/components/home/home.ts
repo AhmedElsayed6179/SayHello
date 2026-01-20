@@ -87,7 +87,6 @@ export class Home {
     const name = this.usernameForm.value.username.trim();
     if (!name) return;
 
-    // إضافة رقم عشوائي للاسم لضمان التمييز
     const randomSuffix = Math.floor(100000 + Math.random() * 900000);
     const uniqueName = `${name}-${randomSuffix}`;
 
@@ -102,14 +101,13 @@ export class Home {
       })
       .then(data => {
         const token = data.token;
-        // إرسال الاسم الفريد مع التوكن للصفحة التالية
         this.router.navigate(['/chat'], { queryParams: { token, name: uniqueName } });
       })
       .catch(err => {
         console.error(err);
         Swal.fire({
           icon: 'error',
-          title: this.translate.instant('HOME.ERROR_TITLE'),
+          title: this.translate.instant('HOME.ERROR_INTERNET'),
           text: this.translate.instant('HOME.ERROR_SERVER'),
           confirmButtonText: this.translate.currentLang === 'ar' ? 'تم' : 'OK'
         });

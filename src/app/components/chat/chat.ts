@@ -82,7 +82,7 @@ export class Chat implements OnInit, OnDestroy {
       })
       .then(data => {
         const token = data.token;
-        this.initSocket(token); // توصيل مع السيرفر
+        this.initSocket(token);
       })
       .catch(err => {
         console.error(err);
@@ -103,14 +103,12 @@ export class Chat implements OnInit, OnDestroy {
       this.connected = true;
       this.waiting = false;
 
-      // شيل رسالة الانتظار لو موجودة
       const waitingIndex = this.messages.findIndex(msg => msg.key === 'CHAT.WAITING');
       if (waitingIndex !== -1) {
         this.messages.splice(waitingIndex, 1);
         this.waitingMessageShown = false;
       }
 
-      // إضافة رسالة الاتصال
       this.addSystemMessage('CHAT.CONNECTED');
     }));
 
@@ -172,10 +170,10 @@ export class Chat implements OnInit, OnDestroy {
           duration: msg.duration,
           remainingTime: this.formatSeconds(msg.duration),
           isPlaying: false,
-          time: this.formatTime(msg.time) // لو عندك الوقت
+          time: this.formatTime(msg.time)
         };
 
-        // 🔴 هنا ضيف push + detectChanges + scroll
+        // 🔴 push + detectChanges + scroll
         this.messages.push(chatMsg);
         this.cd.detectChanges();
         this.scrollToBottom();
@@ -222,7 +220,6 @@ export class Chat implements OnInit, OnDestroy {
         if (isRecording) {
           this.partnerRecording = true;
 
-          // 🔴 مهم: timeout أطول من ping
           clearTimeout(this.recordingTimeout);
           this.recordingTimeout = setTimeout(() => {
             this.partnerRecording = false;
@@ -251,7 +248,7 @@ export class Chat implements OnInit, OnDestroy {
 
     if (!this.isMediaRecorderSupported()) {
       const isArabic = this.translate.currentLang === 'ar';
-      
+
       Swal.fire({
         icon: 'warning',
         title: isArabic ? 'غير مدعوم' : 'Unsupported',
@@ -265,7 +262,6 @@ export class Chat implements OnInit, OnDestroy {
       return;
     }
 
-    // ✅ تصفير كامل
     this.recordedSeconds = 0;
     this.recordTime = '0:00';
     this.audioChunks = [];
@@ -273,7 +269,6 @@ export class Chat implements OnInit, OnDestroy {
     this.isRecordingPaused = false;
     this.cd.detectChanges();
 
-    // 🟡 اطلب الإذن مرة واحدة فقط
     if (!this.micStream) {
       this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     }
@@ -301,12 +296,10 @@ export class Chat implements OnInit, OnDestroy {
       this.cd.detectChanges();
     };
 
-    // ✅ ابدأ التسجيل أولًا
     this.mediaRecorder.start();
     this.isRecording = true;
     this.recordStartTime = Date.now();
 
-    // ⏱️ شغّل العداد بعد التسجيل الحقيقي
     this.startRecordTimer();
     this.startRecordingPing();
   }
@@ -345,7 +338,6 @@ export class Chat implements OnInit, OnDestroy {
 
   getDisplayName(fullName: string | undefined): string {
     if (!fullName) return '';
-    // افصل عند "-" وخذ الجزء الأول فقط (الاسم الحقيقي)
     return fullName.split('-')[0];
   }
 
@@ -438,7 +430,6 @@ export class Chat implements OnInit, OnDestroy {
       Math.max((msg.duration || 0) - value, 0)
     );
 
-    // لو كان شغال قبل السحب → يفضل شغال
     if (wasPlaying && audio.paused) {
       audio.play();
     }
@@ -494,7 +485,7 @@ export class Chat implements OnInit, OnDestroy {
 
       this.recordTime = `${mins}:${secs}`;
       this.cd.detectChanges();
-    }, 200); // تحديث سلس
+    }, 200);
   }
 
   stopRecordTimer() {
@@ -502,11 +493,9 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   get confirmText(): string {
-    // لو اللغة الحالية عربي
     if (this.translate.currentLang === 'ar') {
       return 'هل أنت متأكد؟';
     }
-    // غير كده (افتراضي إنجليزية)
     return 'Are you sure?';
   }
 
@@ -543,10 +532,8 @@ export class Chat implements OnInit, OnDestroy {
     this.messages.push(chatMsg);
     this.socket.emit('sendMessage', { id: chatMsg.id, text });
 
-    // إعادة تعيين الحقل بعد الإرسال
     this.message = '';
 
-    // تشغيل صوت الإرسال
     this.sendSound.currentTime = 0;
     this.sendSound.play().catch(err => console.warn(err));
   }
@@ -593,14 +580,11 @@ export class Chat implements OnInit, OnDestroy {
     const idx = msg.reactions[reaction].indexOf(user);
 
     if (idx === -1) {
-      // أضف المستخدم
       msg.reactions[reaction].push(user);
     } else {
-      // حذف المستخدم (unreact)
       msg.reactions[reaction].splice(idx, 1);
     }
 
-    // إرسال للسيرفر
     this.socket.emit('react', {
       messageId: msg.id,
       reaction,
@@ -633,7 +617,7 @@ export class Chat implements OnInit, OnDestroy {
       this.confirmTimeout = setTimeout(() => {
         this.confirmNext = false;
         this.cd.detectChanges();
-      }, 2000); // يرجع طبيعي بعد ثانيتين
+      }, 2000);
 
       return;
     }
@@ -651,7 +635,7 @@ export class Chat implements OnInit, OnDestroy {
       this.exitTimeout = setTimeout(() => {
         this.exitConfirm = false;
         this.cd.detectChanges();
-      }, 2000); // يرجع طبيعي بعد ثانيتين
+      }, 2000);
 
       return;
     }

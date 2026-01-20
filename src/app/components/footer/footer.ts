@@ -9,7 +9,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrl: './footer.css',
 })
 export class Footer {
-today = new Date();
+  today = new Date();
 
   private translate = inject(TranslateService);
 

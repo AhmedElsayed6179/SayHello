@@ -195,7 +195,6 @@ input[type="range"] {
   cursor: pointer;
 }
 
-/* مؤشر السلايدر */
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px;
@@ -523,13 +522,11 @@ input[type="range"]::-moz-range-track {
   text-align: center;
 }
 
-/* 🔴 نكسر position:absolute من voice-btn */
 .cancel-container .voice-btn {
   position: static !important;
   transform: none !important;
 }
 
-/* الوضع الداكن */
 .dark-mode .chat-input {
   background-color: #2c2c2c;
   color: #f1f1f1;
@@ -702,7 +699,6 @@ input[type="range"]::-moz-range-track {
   transform: translateY(-2px);
 }
 
-/* تأثير دخول الرسائل */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -801,7 +797,6 @@ body.dark-mode {
   white-space: normal;
 }
 
-/* Reaction للنص */
 .reaction {
   position: absolute;
   bottom: 0;
@@ -829,7 +824,6 @@ body.dark-mode {
   left: auto;
 }
 
-/* RTL دعم */
 .rtl .message-left .bubble-wrapper .reaction {
   left: -36px;
   right: auto;
@@ -840,7 +834,6 @@ body.dark-mode {
   left: auto;
 }
 
-/* وضع داكن وفاتح */
 .dark-mode .bubble-wrapper .reaction {
   background-color: #333;
   color: white;
@@ -862,13 +855,11 @@ body.dark-mode {
   z-index: 1;
 }
 
-/* زرار التشغيل */
 .play-btn {
   cursor: pointer;
   margin-right: 8px;
 }
 
-/* Reaction للرسائل الصوتية */
 .voice-bubble .reaction {
   position: absolute;
   bottom: 0;
@@ -886,7 +877,6 @@ body.dark-mode {
   color: black;
 }
 
-/* اتجاه Reaction حسب الصوت */
 .voice-right .reaction {
   left: -36px;
   right: auto;
@@ -897,7 +887,6 @@ body.dark-mode {
   left: auto;
 }
 
-/* RTL دعم */
 .rtl .voice-left .reaction {
   left: -36px;
   right: auto;
@@ -908,7 +897,6 @@ body.dark-mode {
   left: auto;
 }
 
-/* وضع داكن وفاتح للـVoice */
 .dark-mode .voice-bubble .reaction {
   background-color: #333;
   color: white;
@@ -979,7 +967,7 @@ body.dark-mode {
     margin-bottom: 10px !important;
   }
 
-  /* تصغير Reaction */
+  /* Reaction */
   .bubble-wrapper .reaction,
   .voice-bubble .reaction {
     font-size: 12px;
