@@ -57,12 +57,15 @@ export class Chat implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.myName = params['name'] || '';
-      if (!this.myName) {
-        this.router.navigate(['/']);
-        return;
-      }
+      this.token = params['token'];
     });
+
+    this.myName = history.state?.name;
+
+    if (!this.token || !this.myName) {
+      this.router.navigate(['/']);
+      return;
+    }
   }
 
   startChat() {

@@ -101,7 +101,10 @@ export class Home {
       })
       .then(data => {
         const token = data.token;
-        this.router.navigate(['/chat'], { queryParams: { token, name: uniqueName } });
+        this.router.navigate(['/chat'], {
+          queryParams: { token },
+          state: { name: uniqueName }
+        });
       })
       .catch(err => {
         console.error(err);
