@@ -1,3 +1,3 @@
 export const environment = {
-  SayHello_Server: "https://sayhelloserver-production.up.railway.app"
+  SayHello_Server: "https://sayhello-server.up.railway.app"
 };
