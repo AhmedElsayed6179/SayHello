@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from "@angular/router";
 import { Observable } from 'rxjs';
@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
   currentLang = localStorage.getItem('lang') || 'en';
   private translate = inject(TranslateService);
   connectedUsers$: Observable<number>;
