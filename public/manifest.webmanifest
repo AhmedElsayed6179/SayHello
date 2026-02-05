@@ -1,0 +1,54 @@
+{
+  "name": "SayHello",
+  "short_name": "SayHello",
+  "display": "standalone",
+  "description": "SayHello is a fast and secure random chat platform that lets you connect with new people from around the world instantly, without registration and with full privacy.",
+  "theme_color": "#0b93f6",
+  "background_color": "#0f0f12",
+  "scope": "./",
+  "start_url": "./",
+  "icons": [
+    {
+      "src": "SayHello.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/24x24.png",
+      "sizes": "24x24",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/64x64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/256x256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}
