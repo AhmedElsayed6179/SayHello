@@ -47,7 +47,7 @@
   "devDependencies": {
     "@angular/build": "21.0.4",
     "@angular/cli": "21.0.3",
-    "@angular/compiler-cli": "21.0.0",
+    "@angular/compiler-cli": "21.0.6",
     "@angular/pwa": "21.0.3",
     "jsdom": "^27.1.0",
     "typescript": "~5.9.2",
