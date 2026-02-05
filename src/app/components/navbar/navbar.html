@@ -11,7 +11,7 @@
 
   <div class="collapse navbar-collapse" id="navbarContent">
     <div class="d-flex ms-auto align-items-center gap-2 flex-wrap">
-      <a style="display: none;" *ngIf="!isFromApk" routerLink="/App-Download" class="btn btn-download"
+      <a *ngIf="!isFromApk" routerLink="/App-Download" class="btn btn-download"
         [ngClass]="isDarkMode ? 'dark' : 'light'">
         {{ 'NAVBAR.DOWNLOAD' | translate }}
         <i class="bi bi-download ms-1"></i>
