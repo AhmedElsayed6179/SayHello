@@ -74,5 +74,17 @@
     "PAGE_NOT_FOUND": "Página no encontrada",
     "DESCRIPTION": "Lo sentimos, la página que buscas no existe. Por favor vuelve a la página de inicio.",
     "GO_HOME": "Ir a inicio"
+  },
+  "DOWNLOAD": {
+    "TITLE": "Descarga Nuestra App",
+    "DESCRIPTION": "Obtén la mejor experiencia instalando nuestra app.",
+    "ANDROID_TITLE": "Android",
+    "ANDROID_BUTTON": "Descargar APK",
+    "IOS_TITLE": "iOS",
+    "IOS_COMING": "¡Próximamente!",
+    "IOS_ADD_HOME": "Si tienes problemas descargando la app, puedes usar la función Agregar a la pantalla de inicio."
+  },
+  "NAVBAR": {
+    "DOWNLOAD": "Descargar App"
   }
 }

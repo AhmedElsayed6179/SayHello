@@ -5,7 +5,6 @@
     <h1 class="display-4">{{ 'HOME.TITLE' | translate }}</h1>
     <p class="lead">{{ 'HOME.DESC' | translate }}</p>
 
-    <!-- إدخال الاسم وزر البداية -->
     <form [formGroup]="usernameForm" (ngSubmit)="startChat()">
       <div class="d-flex justify-content-center gap-2 mt-3 flex-column flex-sm-row align-items-center">
         <input type="text" formControlName="username" class="form-control w-auto hero-input"

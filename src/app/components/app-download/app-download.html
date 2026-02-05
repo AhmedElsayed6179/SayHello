@@ -1,0 +1,36 @@
+<section class="app-download-section py-5" [ngClass]="{'dark-mode': isDarkMode, 'light-mode': !isDarkMode}">
+  <div class="container text-center">
+
+    <h2 class="section-title mb-4 d-flex align-items-center justify-content-center gap-2">
+      {{ 'DOWNLOAD.TITLE' | translate }}
+      <i class="bi bi-cloud-arrow-down"></i>
+    </h2>
+    <p class="section-desc mb-5">{{ 'DOWNLOAD.DESCRIPTION' | translate }}</p>
+
+    <div class="d-flex justify-content-center gap-4 flex-wrap">
+
+      <!-- Android Card -->
+      <div class="app-card rounded shadow-lg text-center p-4">
+        <i class="bi bi-android mb-3"></i>
+        <h5>{{ 'DOWNLOAD.ANDROID_TITLE' | translate }}</h5>
+        <a href="https://www.dropbox.com/scl/fi/r72ifgdsyrjs4z2vvu57l/SayHello.apk?rlkey=grb84lpj97i1hw7gckliw6ntv&st=gsikxka7&dl=1"
+          class="btn btn-success btn-lg mt-3">
+          {{ 'DOWNLOAD.ANDROID_BUTTON' | translate }}
+        </a>
+      </div>
+
+      <!-- iOS Card -->
+      <div class="app-card rounded shadow-lg text-center p-4">
+        <i class="bi bi-apple mb-3"></i>
+        <h5>{{ 'DOWNLOAD.IOS_TITLE' | translate }}</h5>
+        <p class="ios-coming">{{ 'DOWNLOAD.IOS_COMING' | translate }}</p>
+      </div>
+
+    </div>
+
+    <div class="ios-instructions mt-4 p-3 rounded shadow-sm">
+      <p class="mb-0">{{ 'DOWNLOAD.IOS_ADD_HOME' | translate }}</p>
+    </div>
+
+  </div>
+</section>

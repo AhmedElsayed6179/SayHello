@@ -1,0 +1,155 @@
+.app-download-section {
+  max-width: 1000px;
+  margin: 2rem auto;
+  border-radius: 20px;
+  padding: 3rem 1rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.app-download-section.light-mode {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+}
+
+.app-download-section.dark-mode {
+  background: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.section-desc {
+  font-size: 1rem;
+}
+
+.app-card {
+  width: 220px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem 1rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.app-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+}
+
+.app-card i {
+  font-size: 3.5rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.ios-coming {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+  color: #fff;
+}
+
+/* زر Android */
+.app-card .btn-success {
+  border-radius: 40px;
+  padding: 0.7rem 2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-card .btn-success:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ios-instructions {
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 1rem 1.5rem;
+  border-radius: 15px;
+  max-width: 600px;
+  margin: 2rem auto 0 auto;
+  font-size: 0.9rem;
+  color: #f0f0f0;
+  text-align: center;
+}
+
+@media (max-width: 992px) {
+  .app-card {
+    width: 180px;
+    padding: 1.5rem 1rem;
+  }
+
+  .app-card i {
+    font-size: 3rem;
+  }
+
+  .app-card .btn-success {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-download-section {
+    max-width: 90%;
+    margin: 2rem auto;
+    padding: 2rem 1rem;
+    border-radius: 20px;
+  }
+
+  .app-download-section .d-flex {
+    flex-direction: column !important;
+    align-items: center;
+  }
+
+  .app-card {
+    width: 90%;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.7rem;
+  }
+
+  .section-desc {
+    font-size: 0.95rem;
+  }
+
+  .ios-coming {
+    font-size: 1.1rem;
+  }
+
+  .app-card .btn-success {
+    width: 100%;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .section-desc {
+    font-size: 0.9rem;
+  }
+
+  .ios-coming {
+    font-size: 1rem;
+  }
+
+  .ios-instructions {
+    font-size: 0.85rem;
+    padding: 0.8rem 1rem;
+  }
+}

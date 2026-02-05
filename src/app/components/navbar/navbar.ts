@@ -1,6 +1,6 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from "@angular/router";
 import { Observable } from 'rxjs';
 import { ChatService } from '../../service/chat-service';
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule, RouterLink, AsyncPipe, FormsModule],
+  imports: [CommonModule, RouterLink, AsyncPipe, FormsModule, TranslatePipe],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
@@ -19,6 +19,7 @@ export class Navbar {
   private translate = inject(TranslateService);
   connectedUsers$: Observable<number>;
   private socket!: Socket;
+  isFromApk = false;
 
   constructor(private chatService: ChatService, private zone: NgZone, private cd: ChangeDetectorRef) {
     const darkMode = localStorage.getItem('darkMode');
@@ -34,6 +35,15 @@ export class Navbar {
       this.chatService.connectedUsers$.next(count);
       this.cd.detectChanges();
     }));
+
+    const ua = navigator.userAgent || navigator.vendor || '';
+
+    this.isFromApk =
+      /wv/i.test(ua) ||
+      /Version\/[\d.]+.*Chrome/i.test(ua) ||
+      /Median/i.test(ua) ||
+      (window as any).cordova !== undefined ||
+      (window as any).Capacitor !== undefined;
   }
 
   changeLang(lang: string) {

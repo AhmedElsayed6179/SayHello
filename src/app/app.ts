@@ -14,7 +14,7 @@ export class App implements OnInit {
   protected readonly title = signal('SayHello');
   currentLang = localStorage.getItem('lang') || 'en';
   private translate = inject(TranslateService);
-  
+
   ngOnInit() {
     const lang = localStorage.getItem('lang') || 'en';
     document.documentElement.lang = lang;
@@ -26,13 +26,11 @@ export class App implements OnInit {
     localStorage.setItem('lang', this.currentLang);
     this.translate.use(this.currentLang);
 
-    // غير اتجاه المحتوى فقط، Footer يتحرك مع main تلقائي
     const pageContent = document.querySelector('#page-content');
     if (pageContent) {
       pageContent.setAttribute('dir', this.currentLang === 'ar' ? 'rtl' : 'ltr');
     }
 
-    // ممكن تضيف Footer مع main لو حابب
     const pageFooter = document.querySelector('#page-footer');
     if (pageFooter) {
       pageFooter.setAttribute('dir', this.currentLang === 'ar' ? 'rtl' : 'ltr');

@@ -4,8 +4,19 @@
     <img src="SayHello.png" alt="Logo" width="30" height="30" class="ms-2">
   </a>
 
-  <div class="d-flex navbar-actions">
-    <div class="btn-group-custom">
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+    aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarContent">
+    <div class="d-flex ms-auto align-items-center gap-2 flex-wrap">
+      <a style="display: none;" *ngIf="!isFromApk" routerLink="/App-Download" class="btn btn-download"
+        [ngClass]="isDarkMode ? 'dark' : 'light'">
+        {{ 'NAVBAR.DOWNLOAD' | translate }}
+        <i class="bi bi-download ms-1"></i>
+      </a>
+
       <div class="select-wrapper" [ngClass]="isDarkMode ? 'dark' : 'light'">
         <select class="btn-lang" [(ngModel)]="currentLang" (ngModelChange)="changeLang($event)">
           <option value="en">English</option>
@@ -16,16 +27,16 @@
       </div>
 
       <button class="btn btn-theme" (click)="toggleTheme()" [ngStyle]="{
-          'background-color': isDarkMode ? '#f1f1f1' : '#212529',
-          'color': isDarkMode ? '#212529' : '#fff'
-        }">
+        'background-color': isDarkMode ? '#f1f1f1' : '#212529',
+        'color': isDarkMode ? '#212529' : '#fff'
+      }">
         {{ isDarkMode ? '☀️' : '🌙' }}
       </button>
 
       <div class="btn btn-like" [ngStyle]="{
-     'background-color': isDarkMode ? '#2c2f33' : '#f1f1f1',
-     'color': isDarkMode ? '#f1f1f1' : '#212529'
-   }" style="font-size: 0.95rem;">
+        'background-color': isDarkMode ? '#2c2f33' : '#f1f1f1',
+        'color': isDarkMode ? '#f1f1f1' : '#212529'
+      }" style="font-size: 0.95rem;">
         <span class="me-1">👤</span>
         <strong>{{ connectedUsers$ | async }}</strong>
       </div>

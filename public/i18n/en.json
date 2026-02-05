@@ -74,5 +74,17 @@
     "PAGE_NOT_FOUND": "Page Not Found",
     "DESCRIPTION": "Sorry, the page you are looking for does not exist. Please return to the Home Page.",
     "GO_HOME": "Go to Home"
+  },
+  "DOWNLOAD": {
+    "TITLE": "Download Our App",
+    "DESCRIPTION": "Get the best experience by installing our app.",
+    "ANDROID_TITLE": "Android",
+    "ANDROID_BUTTON": "Download APK",
+    "IOS_TITLE": "iOS",
+    "IOS_COMING": "Coming Soon!",
+    "IOS_ADD_HOME": "If you face any issues downloading the app, you can use the Add to Home Screen feature."
+  },
+  "NAVBAR": {
+    "DOWNLOAD": "Download App"
   }
 }
