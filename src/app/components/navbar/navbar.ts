@@ -19,7 +19,7 @@ export class Navbar {
   private translate = inject(TranslateService);
   connectedUsers$: Observable<number>;
   private socket!: Socket;
-  isFromApk = false;
+  showDownloadLink = false;
 
   constructor(private chatService: ChatService, private zone: NgZone, private cd: ChangeDetectorRef) {
     const darkMode = localStorage.getItem('darkMode');
@@ -38,12 +38,16 @@ export class Navbar {
 
     const ua = navigator.userAgent || navigator.vendor || '';
 
-    this.isFromApk =
+    const isApk =
       /wv/i.test(ua) ||
       /Version\/[\d.]+.*Chrome/i.test(ua) ||
       /Median/i.test(ua) ||
       (window as any).cordova !== undefined ||
       (window as any).Capacitor !== undefined;
+
+    const isMobile = /Android|iPhone|iPad|iPod|IEMobile|BlackBerry|Opera Mini/i.test(ua);
+
+    this.showDownloadLink = isMobile && !isApk;
   }
 
   changeLang(lang: string) {

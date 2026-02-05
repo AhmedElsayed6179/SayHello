@@ -18,7 +18,9 @@ export class WebOnlyGuard implements CanActivate {
       (window as any).cordova !== undefined ||
       (window as any).Capacitor !== undefined;
 
-    if (isFromApk) {
+    const isMobile = /Android|iPhone|iPad|iPod|IEMobile|BlackBerry|Opera Mini/i.test(ua);
+
+    if (!isMobile || isFromApk) {
       this.router.navigate(['/Home']);
       return false;
     }
