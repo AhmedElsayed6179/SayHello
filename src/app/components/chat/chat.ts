@@ -147,7 +147,7 @@ export class Chat implements OnInit, OnDestroy {
   icon: 'info',
   title: this.translate.instant('CHAT.INFO'),
   text: this.translate.instant('CHAT.RECORD_CANCELED'),
-  confirmButtonText: this.translate.instant('CHAT.OK')
+  confirmButtonText: this.translate.instant('HOME.ERROR_OK')
 });
       }
 
