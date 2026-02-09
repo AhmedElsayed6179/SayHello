@@ -63,7 +63,9 @@
     "message_NO_PARTNER": "No puedes enviar un mensaje sin un compañero",
     "Empty_text": "Texto vacío",
     "empty_message": "No puedes enviar un mensaje vacío",
-    "CONFIRM": "¿Estás seguro?"
+    "CONFIRM": "¿Estás seguro?",
+     "INFO": "Información",
+    "RECORD_CANCELED": "La grabación se canceló porque el otro usuario salió del chat"
   },
   "FOOTER": {
     "COPYRIGHT": "Todos los derechos reservados",
