@@ -7,6 +7,7 @@ import { ChatService } from '../../service/chat-service';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../environments/environment.development';
 import { FormsModule } from '@angular/forms';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-navbar',
@@ -80,4 +81,13 @@ export class Navbar implements OnInit {
   get isDarkMode(): boolean {
     return document.body.classList.contains('dark-mode');
   }
+
+closeNavbar() {
+  const navbarCollapse = document.getElementById('navbarContent');
+  if (navbarCollapse) {
+    const bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse)
+                       || new bootstrap.Collapse(navbarCollapse, { toggle: false });
+    bsCollapse.hide();
+  }
+}
 }
