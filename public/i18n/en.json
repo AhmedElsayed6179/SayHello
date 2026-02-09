@@ -63,7 +63,9 @@
     "message_NO_PARTNER": "You cannot send a message without a partner",
     "Empty_text": "Empty text",
     "empty_message": "You cannot send an empty message",
-    "CONFIRM": "Are you sure?"
+    "CONFIRM": "Are you sure?",
+    "INFO": "Info",
+    "RECORD_CANCELED": "Recording was canceled because the other user left the chat",
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
