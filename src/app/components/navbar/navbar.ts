@@ -7,7 +7,6 @@ import { ChatService } from '../../service/chat-service';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../environments/environment.development';
 import { FormsModule } from '@angular/forms';
-declare var bootstrap: any;
 
 @Component({
   selector: 'app-navbar',
