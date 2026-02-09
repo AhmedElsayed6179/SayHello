@@ -1,7 +1,7 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, OnInit } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { RouterLink, Router, NavigationEnd } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { Observable } from 'rxjs';
 import { ChatService } from '../../service/chat-service';
 import { io, Socket } from 'socket.io-client';
@@ -22,7 +22,7 @@ export class Navbar implements OnInit {
   private socket!: Socket;
   showDownloadLink = false;
 
-  constructor(private chatService: ChatService, private zone: NgZone, private cd: ChangeDetectorRef, private router: Router) {
+  constructor(private chatService: ChatService, private zone: NgZone, private cd: ChangeDetectorRef) {
     const darkMode = localStorage.getItem('darkMode');
     if (darkMode === 'true') {
       document.body.classList.add('dark-mode');
@@ -49,12 +49,6 @@ export class Navbar implements OnInit {
     const isMobile = /Android|iPhone|iPad|iPod|IEMobile|BlackBerry|Opera Mini/i.test(ua);
 
     this.showDownloadLink = isMobile && !isApk;
-
-this.router.events.subscribe(event => {
-    if (event instanceof NavigationEnd) {
-      this.closeNavbar();
-    }
-  });
   }
 
   changeLang(lang: string) {
@@ -87,15 +81,4 @@ this.router.events.subscribe(event => {
   get isDarkMode(): boolean {
     return document.body.classList.contains('dark-mode');
   }
-
-closeNavbar() {
-  const navbarCollapse = document.getElementById('navbarContent');
-  if (navbarCollapse) {
-    let bsCollapse = bootstrap.Collapse.getInstance(navbarCollapse);
-    if (!bsCollapse) {
-      bsCollapse = new bootstrap.Collapse(navbarCollapse, { toggle: false });
-    }
-    bsCollapse.hide();
-  }
-}
 }
