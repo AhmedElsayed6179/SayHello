@@ -53,6 +53,7 @@ export class Chat implements OnInit, OnDestroy {
   recordedSeconds = 0;
   private micStream: MediaStream | null = null;
   private recordStartTime = 0;
+  partnerDisconnected = false;
 
   constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
   ngOnInit() {
@@ -132,6 +133,17 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket.on('partner_left', () => this.zone.run(() => {
       this.connected = false;
+      this.partnerDisconnected = true;
+
+      if (this.isRecording) {
+        this.isCanceled = true;
+        this.mediaRecorder?.stop();
+        this.stopRecordTimer();
+        this.stopRecordingPing();
+        this.stopMicStream();
+        this.isRecording = false;
+      }
+
       this.addSystemMessage('CHAT.PARTNER_LEFT');
       this.cd.detectChanges();
     }));
@@ -282,6 +294,16 @@ export class Chat implements OnInit, OnDestroy {
       this.stopRecordTimer();
       this.stopRecordingPing();
       this.socket.emit('stopRecording');
+
+        if (
+    this.partnerDisconnected ||
+    this.isCanceled ||
+    this.audioChunks.length === 0
+  ) {
+    this.audioChunks = [];
+    this.stopMicStream();
+    return;
+        }
 
       if (!this.isCanceled && this.audioChunks.length > 0) {
         const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
@@ -648,6 +670,7 @@ export class Chat implements OnInit, OnDestroy {
     this.waiting = true;
     this.waitingMessageShown = false;
     this.cd.detectChanges();
+    this.partnerDisconnected = false;
 
     fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
       .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
