@@ -142,6 +142,13 @@ export class Chat implements OnInit, OnDestroy {
         this.stopRecordingPing();
         this.stopMicStream();
         this.isRecording = false;
+
+        Swal.fire({
+  icon: 'info',
+  title: this.translate.instant('CHAT.INFO'),
+  text: this.translate.instant('CHAT.RECORD_CANCELED'),
+  confirmButtonText: this.translate.instant('CHAT.OK')
+});
       }
 
       this.addSystemMessage('CHAT.PARTNER_LEFT');
@@ -516,7 +523,7 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   sendMessage() {
-    if (!this.connected) {
+    if (!this.connected || this.partnerDisconnected) {
       Swal.fire({
         icon: 'info',
         title: this.translate.instant('CHAT.PARTNER'),
