@@ -144,11 +144,11 @@ export class Chat implements OnInit, OnDestroy {
         this.isRecording = false;
 
         Swal.fire({
-  icon: 'info',
-  title: this.translate.instant('CHAT.INFO'),
-  text: this.translate.instant('CHAT.RECORD_CANCELED'),
-  confirmButtonText: this.translate.instant('HOME.ERROR_OK')
-});
+          icon: 'info',
+          title: this.translate.instant('CHAT.INFO'),
+          text: this.translate.instant('CHAT.RECORD_CANCELED'),
+          confirmButtonText: this.translate.instant('HOME.ERROR_OK')
+        });
       }
 
       this.addSystemMessage('CHAT.PARTNER_LEFT');
@@ -302,15 +302,15 @@ export class Chat implements OnInit, OnDestroy {
       this.stopRecordingPing();
       this.socket.emit('stopRecording');
 
-        if (
-    this.partnerDisconnected ||
-    this.isCanceled ||
-    this.audioChunks.length === 0
-  ) {
-    this.audioChunks = [];
-    this.stopMicStream();
-    return;
-        }
+      if (
+        this.partnerDisconnected ||
+        this.isCanceled ||
+        this.audioChunks.length === 0
+      ) {
+        this.audioChunks = [];
+        this.stopMicStream();
+        return;
+      }
 
       if (!this.isCanceled && this.audioChunks.length > 0) {
         const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
