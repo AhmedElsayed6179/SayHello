@@ -228,19 +228,69 @@ input[type='range'] {
   padding: 2px;
 }
 
-.dark-mode .chat-box {
-  background-color: $dark-bg-card;
-  color: $dark-text;
-  scrollbar-width: thin;
-  scrollbar-color: $primary $dark-bg-light;
-
-  &::-webkit-scrollbar-track {
-    background: $dark-bg-light;
+.dark-mode {
+  .chat-container {
+    background-color: $dark-bg-card;
+    color: $dark-text;
   }
 
-  &::-webkit-scrollbar-thumb {
+  .chat-box {
+    background-color: $dark-bg-card;
+    color: $dark-text;
+    scrollbar-width: thin;
+    scrollbar-color: $primary $dark-bg-light;
+
+    &::-webkit-scrollbar-track {
+      background: $dark-bg-light;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $primary;
+      border: 2px solid $dark-bg-light;
+    }
+  }
+
+  .chat-input {
+    background-color: $dark-bg-light;
+    color: $dark-text;
+    border-color: $dark-border;
+  }
+
+  .emoji-btn {
+    background-color: $dark-bg-lighter;
+    color: $dark-text;
+  }
+
+  .send-btn {
     background-color: $primary;
-    border: 2px solid $dark-bg-light;
+  }
+
+  .cancel-btn {
+    color: $dark-text;
+  }
+
+  .record-timer {
+    background-color: $danger;
+    color: $dark-text;
+  }
+
+  .next-btn {
+    background-color: #6c757d;
+  }
+
+  .exit-btn {
+    background-color: $danger;
+  }
+
+  .bubble-wrapper .reaction,
+  .voice-bubble .reaction {
+    background-color: $dark-bg-lighter;
+    color: $dark-text;
+  }
+
+  .voice-left .voice-bubble {
+    background: $dark-bg-light;
+    color: $dark-text;
   }
 }
 
@@ -292,6 +342,16 @@ input[type='range'] {
     background-color: $primary;
     color: $light-bg;
     border-top-right-radius: 0;
+  }
+
+  .dark-mode .message-left & {
+    background-color: $dark-bg-light;
+    color: $dark-text;
+  }
+
+  .dark-mode .message-right & {
+    background-color: $primary;
+    color: $dark-text;
   }
 }
 
@@ -427,26 +487,6 @@ input[type='range'] {
   &.rtl .voice-btn {
     left: 50px;
   }
-
-  &.ltr .send-btn {
-    left: $spacing-1;
-    right: auto;
-  }
-
-  &.ltr .emoji-btn {
-    right: $spacing-1;
-    left: auto;
-  }
-
-  &.rtl .send-btn {
-    right: $spacing-1;
-    left: auto;
-  }
-
-  &.rtl .emoji-btn {
-    left: $spacing-1;
-    right: auto;
-  }
 }
 
 .cancel-container {
@@ -494,32 +534,6 @@ input[type='range'] {
   padding: 2px $spacing-2;
   border-radius: $border-radius-md;
   text-align: center;
-}
-
-.dark-mode {
-  .chat-input {
-    background-color: $dark-bg-light;
-    color: $dark-text;
-    border-color: $dark-border;
-  }
-
-  .emoji-btn {
-    background-color: $dark-bg-lighter;
-    color: $dark-text;
-  }
-
-  .send-btn {
-    background-color: $primary;
-  }
-
-  .cancel-btn {
-    color: $dark-text;
-  }
-
-  .record-timer {
-    background-color: $danger;
-    color: $dark-text;
-  }
 }
 
 .action-buttons {
@@ -603,6 +617,10 @@ input[type='range'] {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
   transition: transform $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .system-text {
@@ -710,11 +728,6 @@ body.dark-mode {
   }
 }
 
-.dark-mode .bubble-wrapper .reaction {
-  background-color: $dark-bg-lighter;
-  color: $dark-text;
-}
-
 .voice-bubble {
   position: relative;
   padding: $spacing-2 $spacing-3;
@@ -760,11 +773,6 @@ body.dark-mode {
       left: auto;
     }
   }
-}
-
-.dark-mode .voice-bubble .reaction {
-  background-color: $dark-bg-lighter;
-  color: $dark-text;
 }
 
 @media (max-width: $mobile) {
