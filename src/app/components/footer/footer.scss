@@ -1,0 +1,105 @@
+@use '../../variables/index' as *;
+
+.footer {
+  background-color: $primary;
+  color: $light-bg;
+  font-family: 'Segoe UI', sans-serif;
+  transition: all $transition-normal;
+
+  a {
+    color: $light-bg;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color $transition-normal, transform $transition-normal;
+
+    &:hover {
+      color: $warning;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.footer-brand {
+  direction: ltr !important;
+
+  h5 {
+    font-weight: 600;
+    margin-bottom: $spacing-1;
+  }
+
+  p {
+    font-weight: 300;
+    margin-bottom: 0;
+  }
+}
+
+.social-icons .social-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-circle;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: $light-bg;
+  font-size: 0.95rem;
+  transition: all $transition-normal;
+
+  &:hover {
+    background-color: $light-bg;
+    color: $primary;
+    transform: scale(1.15);
+  }
+
+  &.fb:hover {
+    color: #3b5998;
+  }
+
+  &.tw:hover {
+    color: #1da1f2;
+  }
+
+  &.ig:hover {
+    color: #c32aa3;
+  }
+
+  &.li:hover {
+    color: #0077b5;
+  }
+}
+
+.footer.dark-mode {
+  background-color: $dark-bg;
+  color: $dark-text;
+
+  a {
+    color: $dark-text;
+
+    &:hover {
+      color: $warning;
+    }
+  }
+
+  .social-btn {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: $dark-text;
+
+    &:hover {
+      color: $warning;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+@media (max-width: $mobile) {
+  .footer {
+    font-size: 0.8rem;
+    padding: $spacing-4 $spacing-3;
+  }
+
+  .social-icons .social-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+}

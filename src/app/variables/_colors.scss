@@ -1,0 +1,36 @@
+// variables/_colors.scss
+$primary: #0b93f6;
+$primary-dark: #0972c0;
+$primary-light: #6a11cb;
+$secondary: #2575fc;
+$success: #00b894;
+$success-dark: #019875;
+$danger: #dc3545;
+$danger-dark: #c82333;
+$warning: #ffcc33;
+$info: #17a2b8;
+
+$dark-bg: #1f1f1f;
+$dark-bg-light: #2c2c2c;
+$dark-bg-lighter: #333;
+$dark-bg-card: #1e1e1e;
+$dark-text: #f1f1f1;
+$dark-text-muted: #ccc;
+$dark-border: #555;
+
+$light-bg: #ffffff;
+$light-bg-gray: #fafafa;
+$light-bg-dark: #f1f1f1;
+$light-text: #212529;
+$light-text-muted: #555;
+$light-border: #ccc;
+
+$shape-1: #6366f1;
+$shape-2: #22d3ee;
+$shape-3: #a855f7;
+$shape-4: #f472b6;
+$shape-5: #38bdf8;
+
+$gradient-primary: linear-gradient(135deg, $primary-light, $secondary);
+$gradient-light: linear-gradient(120deg, #eef2ff, #fdf2f8, #ecfeff);
+$gradient-dark: linear-gradient(135deg, #08080c, #0e0e14, #16161d);

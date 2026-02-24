@@ -113,7 +113,8 @@
       <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()"><i
           class="far fa-smile-wink"></i></button>
       @if(!showWelcome){
-      <button class="voice-btn" *ngIf="!isRecording" (click)="onStartVoiceClick()">🎤</button>
+      <button class="voice-btn" *ngIf="!isRecording" (click)="onStartVoiceClick()"><i class="fas fa-microphone"></i>
+      </button>
       }
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">

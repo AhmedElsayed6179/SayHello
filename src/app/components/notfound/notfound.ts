@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-notfound',
   imports: [RouterLink, TranslateModule],
   templateUrl: './notfound.html',
-  styleUrl: './notfound.css',
+  styleUrl: './notfound.scss',
 })
 export class Notfound {
 }

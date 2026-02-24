@@ -1,19 +1,21 @@
+@use '../../variables/index' as *;
+
 .app-download-section {
   max-width: 1000px;
-  margin: 2rem auto;
-  border-radius: 20px;
+  margin: $spacing-7 auto;
+  border-radius: $border-radius-xl;
   padding: 3rem 1rem;
-  transition: background 0.3s, color 0.3s;
-}
+  transition: all $transition-normal;
 
-.app-download-section.light-mode {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  color: #fff;
-}
+  &.light-mode {
+    background: $gradient-primary;
+    color: $light-bg;
+  }
 
-.app-download-section.dark-mode {
-  background: #1e1e1e;
-  color: #e0e0e0;
+  &.dark-mode {
+    background: $dark-bg;
+    color: $dark-text;
+  }
 }
 
 .section-title {
@@ -29,87 +31,86 @@
   width: 220px;
   background: rgba(255, 255, 255, 0.05);
   padding: 2rem 1rem;
-  transition: transform 0.3s, box-shadow 0.3s;
-  border-radius: 20px;
+  transition: transform $transition-normal, box-shadow $transition-normal;
+  border-radius: $border-radius-xl;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-}
 
-.app-card:hover {
-  transform: translateY(-7px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
-}
+  &:hover {
+    transform: translateY(-$spacing-2);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+  }
 
-.app-card i {
-  font-size: 3.5rem;
-  color: #fff;
-  margin-bottom: 1rem;
+  i {
+    font-size: 3.5rem;
+    color: $light-bg;
+    margin-bottom: 1rem;
+  }
 }
 
 .ios-coming {
   font-weight: 700;
   font-size: 1.2rem;
-  margin-top: 0.5rem;
-  color: #fff;
+  margin-top: $spacing-2;
+  color: $light-bg;
 }
 
-/* زر Android */
 .app-card .btn-success {
-  border-radius: 40px;
+  border-radius: $border-radius-pill;
   padding: 0.7rem 2rem;
   font-weight: 700;
   font-size: 1rem;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+  transition: all $transition-fast;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-}
 
-.app-card .btn-success:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .ios-instructions {
   background-color: rgba(255, 255, 255, 0.08);
   padding: 1rem 1.5rem;
-  border-radius: 15px;
+  border-radius: $border-radius-xl;
   max-width: 600px;
   margin: 2rem auto 0 auto;
   font-size: 0.9rem;
-  color: #f0f0f0;
+  color: $dark-text-muted;
   text-align: center;
 }
 
-@media (max-width: 992px) {
+@media (max-width: $desktop) {
   .app-card {
     width: 180px;
     padding: 1.5rem 1rem;
-  }
 
-  .app-card i {
-    font-size: 3rem;
-  }
+    i {
+      font-size: 3rem;
+    }
 
-  .app-card .btn-success {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.95rem;
+    .btn-success {
+      padding: 0.6rem 1.5rem;
+      font-size: 0.95rem;
+    }
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $tablet) {
   .app-download-section {
     max-width: 90%;
-    margin: 2rem auto;
+    margin: $spacing-7 auto;
     padding: 2rem 1rem;
-    border-radius: 20px;
-  }
+    border-radius: $border-radius-xl;
 
-  .app-download-section .d-flex {
-    flex-direction: column !important;
-    align-items: center;
+    .d-flex {
+      flex-direction: column !important;
+      align-items: center;
+    }
   }
 
   .app-card {
@@ -135,7 +136,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: $mobile-plus2) {
   .section-title {
     font-size: 1.5rem;
   }

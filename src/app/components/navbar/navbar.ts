@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-navbar',
   imports: [CommonModule, RouterLink, AsyncPipe, FormsModule, TranslatePipe],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrl: './navbar.scss',
 })
 export class Navbar implements OnInit {
   currentLang = localStorage.getItem('lang') || 'en';

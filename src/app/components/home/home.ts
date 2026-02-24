@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment.development';
   selector: 'app-home',
   imports: [TranslatePipe, CommonModule, ReactiveFormsModule],
   templateUrl: './home.html',
-  styleUrls: ['./home.css'],
+  styleUrls: ['./home.scss'],
 })
 export class Home {
   usernameForm: FormGroup;

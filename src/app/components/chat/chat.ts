@@ -15,7 +15,7 @@ import { ChatMessage } from '../../models/chat-message';
   imports: [CommonModule, FormsModule, TranslateModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './chat.html',
-  styleUrls: ['./chat.css']
+  styleUrls: ['./chat.scss']
 })
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('chatBox') chatBox!: ElementRef;

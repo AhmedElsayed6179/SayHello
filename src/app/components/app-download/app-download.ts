@@ -6,7 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   selector: 'app-app-download',
   imports: [TranslatePipe, CommonModule],
   templateUrl: './app-download.html',
-  styleUrl: './app-download.css',
+  styleUrl: './app-download.scss',
 })
 export class AppDownload {
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }

@@ -1,0 +1,6 @@
+$mobile: 576px;
+$tablet: 768px;
+$desktop: 992px;
+$large: 1200px;
+$mobile-plus1: calc(#{$mobile} + 1px);
+$mobile-plus2: calc(#{$mobile} - 1px);
