@@ -882,6 +882,117 @@ body.dark-mode {
   color: black;
 }
 
+.voice-btn {
+  transition: all $transition-normal;
+
+  body:not(.dark-mode) & {
+    color: $light-text-muted;
+    background: rgba($light-text, 0.05);
+
+    &:hover {
+      color: $primary;
+      background: rgba($primary, 0.1);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+  }
+
+  .dark-mode & {
+    color: $dark-text;
+    background: rgba($dark-text, 0.1);
+
+    &:hover {
+      color: $primary;
+      background: rgba($primary, 0.2);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+  }
+}
+
+.pause-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-circle;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all $transition-normal;
+
+  body:not(.dark-mode) & {
+    color: $light-text-muted;
+    background: rgba($light-text, 0.05);
+
+    &:hover {
+      transform: scale(1.1);
+      background: rgba($light-text, 0.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.play-state {
+      color: $success;
+
+      &:hover {
+        color: $success-dark;
+        background: rgba($success, 0.1);
+      }
+    }
+
+    &.pause-state {
+      color: $warning;
+
+      &:hover {
+        color: darken($warning, 10%);
+        background: rgba($warning, 0.1);
+      }
+    }
+  }
+
+  .dark-mode & {
+    color: $dark-text;
+    background: rgba($dark-text, 0.1);
+
+    &:hover {
+      transform: scale(1.1);
+      background: rgba($dark-text, 0.2);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.play-state {
+      color: lighten($success, 10%);
+
+      &:hover {
+        color: $success;
+        background: rgba($success, 0.1);
+      }
+    }
+
+    &.pause-state {
+      color: lighten($warning, 10%);
+
+      &:hover {
+        color: $warning;
+        background: rgba($warning, 0.1);
+      }
+    }
+  }
+}
+
 /* ------------------ Responsive ------------------ */
 @media (max-width: 576px) {
   .chat-input {
