@@ -113,16 +113,14 @@
       <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()"><i
           class="far fa-smile-wink"></i></button>
       @if(!showWelcome){
-      <button class="voice-btn" [class.dark-mode]="isDarkMode" [class.light-mode]="!isDarkMode" *ngIf="!isRecording"
-        (click)="onStartVoiceClick()"><i class="fas fa-microphone"></i>
+      <button class="voice-btn" *ngIf="!isRecording" (click)="onStartVoiceClick()"><i class="fas fa-microphone"></i>
       </button>
       }
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">
           <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()"><i
               class="fas fa-times"></i></button>
-          <button class="voice-btn pause-btn" [class.dark-mode]="isDarkMode" [class.light-mode]="!isDarkMode"
-            *ngIf="!showWelcome" (click)="togglePauseResume()">
+          <button class="voice-btn pause-btn" *ngIf="!showWelcome" (click)="togglePauseResume()">
             <i [class]="isRecordingPaused ? 'fas fa-play' : 'fas fa-pause'"></i>
           </button>
           <span *ngIf="!showWelcome" class="record-timer">{{ recordTime }}</span>
