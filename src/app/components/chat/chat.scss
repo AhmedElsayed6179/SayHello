@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../../variables/index' as *;
 
 /* ------------------ Container ------------------ */
@@ -882,78 +883,7 @@ body.dark-mode {
   color: black;
 }
 
-.voice-btn {
-  i,
-  .fa,
-  .fas {
-    transition: all $transition-normal;
-  }
-}
-
-.light-mode .voice-btn,
-body:not(.dark-mode) .voice-btn {
-  color: #333;
-  background: rgba(0, 0, 0, 0.05);
-
-  &:hover {
-    color: $primary;
-    background: rgba($primary, 0.1);
-  }
-}
-
-.dark-mode .voice-btn {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-
-  &:hover {
-    color: $primary;
-    background: rgba($primary, 0.2);
-  }
-}
-
-/* ===== زرار الإيقاف المؤقت ===== */
-.pause-btn {
-  transition: all $transition-normal;
-
-  i, .fa, .fas {
-    transition: transform $transition-fast;
-  }
-}
-
-/* الوضع النهاري (أبيض) */
-.light-mode .pause-btn,
-body:not(.dark-mode) .pause-btn {
-  color: #333;
-  background: rgba(0, 0, 0, 0.05);
-
-  &:hover {
-    color: $primary;
-    background: rgba($primary, 0.1);
-    transform: scale(1.1);
-
-    i {
-      transform: rotate(90deg);
-    }
-  }
-}
-
-/* الوضع الليلي (أسود) */
-.dark-mode .pause-btn {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-
-  &:hover {
-    color: $primary;
-    background: rgba($primary, 0.2);
-    transform: scale(1.1);
-
-    i {
-      transform: rotate(90deg);
-    }
-  }
-}
-
-/* ===== حالة التشغيل (Play) ===== */
+/* ===== دوال الألوان المحدثة ===== */
 .play-btn-state {
   .light-mode &,
   body:not(.dark-mode) & {
@@ -962,7 +892,7 @@ body:not(.dark-mode) .pause-btn {
 
     &:hover {
       background: rgba($success, 0.2);
-      color: $success-dark;
+      color: color.scale($success, $lightness: -15%);
     }
   }
 
@@ -972,7 +902,7 @@ body:not(.dark-mode) .pause-btn {
 
     &:hover {
       background: rgba($success, 0.25);
-      color: lighten($success, 10%);
+      color: color.scale($success, $lightness: 15%);
     }
   }
 }
@@ -985,7 +915,7 @@ body:not(.dark-mode) .pause-btn {
 
     &:hover {
       background: rgba($warning, 0.2);
-      color: darken($warning, 10%);
+      color: color.scale($warning, $lightness: -15%);
     }
   }
 
@@ -995,7 +925,7 @@ body:not(.dark-mode) .pause-btn {
 
     &:hover {
       background: rgba($warning, 0.25);
-      color: lighten($warning, 10%);
+      color: color.scale($warning, $lightness: 15%);
     }
   }
 }
