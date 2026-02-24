@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-root',
   imports: [RouterOutlet, Navbar, Footer],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.scss'
 })
 export class App implements OnInit {
   protected readonly title = signal('SayHello');
