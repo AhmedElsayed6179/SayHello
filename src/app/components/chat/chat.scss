@@ -142,6 +142,35 @@
   animation: none;
 }
 
+.voice-btn {
+  i,
+  .fa,
+  .fas {
+    transition: all $transition-normal;
+  }
+}
+
+.light-mode .voice-btn,
+body:not(.dark-mode) .voice-btn {
+  color: #333;
+  background: rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    color: $primary;
+    background: rgba($primary, 0.1);
+  }
+}
+
+.dark-mode .voice-btn {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    color: $primary;
+    background: rgba($primary, 0.2);
+  }
+}
+
 .wave.active span {
   animation: wave 1s infinite ease-in-out;
 }
@@ -506,6 +535,97 @@ input[type='range']::-moz-range-track {
 .cancel-container .voice-btn {
   position: static !important;
   transform: none !important;
+}
+
+/* ===== زرار الإيقاف المؤقت ===== */
+.pause-btn {
+  transition: all $transition-normal;
+
+  i,
+  .fa,
+  .fas {
+    transition: transform $transition-fast;
+  }
+}
+
+/* الوضع النهاري (أبيض) */
+.light-mode .pause-btn,
+body:not(.dark-mode) .pause-btn {
+  color: #333;
+  background: rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    color: $primary;
+    background: rgba($primary, 0.1);
+    transform: scale(1.1);
+
+    i {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* الوضع الليلي (أسود) */
+.dark-mode .pause-btn {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    color: $primary;
+    background: rgba($primary, 0.2);
+    transform: scale(1.1);
+
+    i {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* ===== حالة التشغيل (Play) ===== */
+.play-btn-state {
+  .light-mode &,
+  body:not(.dark-mode) & {
+    color: $success;
+    background: rgba($success, 0.1);
+
+    &:hover {
+      background: rgba($success, 0.2);
+      color: $success-dark;
+    }
+  }
+
+  .dark-mode & {
+    color: $success;
+    background: rgba($success, 0.15);
+
+    &:hover {
+      background: rgba($success, 0.25);
+      color: lighten($success, 10%);
+    }
+  }
+}
+
+.pause-btn-state {
+  .light-mode &,
+  body:not(.dark-mode) & {
+    color: $warning;
+    background: rgba($warning, 0.1);
+
+    &:hover {
+      background: rgba($warning, 0.2);
+      color: darken($warning, 10%);
+    }
+  }
+
+  .dark-mode & {
+    color: $warning;
+    background: rgba($warning, 0.15);
+
+    &:hover {
+      background: rgba($warning, 0.25);
+      color: lighten($warning, 10%);
+    }
+  }
 }
 
 /* ------------------ Dark Mode Input ------------------ */
