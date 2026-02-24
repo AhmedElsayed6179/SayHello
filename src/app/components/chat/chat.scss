@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use '../../variables/index' as *;
 
 /* ------------------ Container ------------------ */
@@ -881,53 +880,6 @@ body.dark-mode {
 .light-mode .voice-bubble .reaction {
   background-color: #fff;
   color: black;
-}
-
-/* ===== دوال الألوان المحدثة ===== */
-.play-btn-state {
-  .light-mode &,
-  body:not(.dark-mode) & {
-    color: $success;
-    background: rgba($success, 0.1);
-
-    &:hover {
-      background: rgba($success, 0.2);
-      color: color.scale($success, $lightness: -15%);
-    }
-  }
-
-  .dark-mode & {
-    color: $success;
-    background: rgba($success, 0.15);
-
-    &:hover {
-      background: rgba($success, 0.25);
-      color: color.scale($success, $lightness: 15%);
-    }
-  }
-}
-
-.pause-btn-state {
-  .light-mode &,
-  body:not(.dark-mode) & {
-    color: $warning;
-    background: rgba($warning, 0.1);
-
-    &:hover {
-      background: rgba($warning, 0.2);
-      color: color.scale($warning, $lightness: -15%);
-    }
-  }
-
-  .dark-mode & {
-    color: $warning;
-    background: rgba($warning, 0.15);
-
-    &:hover {
-      background: rgba($warning, 0.25);
-      color: color.scale($warning, $lightness: 15%);
-    }
-  }
 }
 
 /* ------------------ Responsive ------------------ */
