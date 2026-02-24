@@ -1,6 +1,5 @@
 <div class="chat-container" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" [class.rtl]="isRtl">
 
-  <!-- عنوان الشات -->
   <h2 class="chat-title">
     {{ 'CHAT.TITLE' | translate }}
     <img src="SayHello.png" alt="Chat Icon" class="chat-icon">
@@ -40,7 +39,6 @@
         <div class="system-text">{{ msg.key | translate }}</div>
       </ng-container>
 
-      <!-- User messages -->
       <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
           <span class="sender-name">
@@ -48,7 +46,6 @@
           </span>
           <div class="bubble-wrapper">
             <span class="bubble-text" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
-            <!-- الريأكشن يظهر فوق الفقاعة -->
             <div class="reaction" *ngIf="msg.reactions && msg.reactions['❤️'] && msg.reactions['❤️'].length">
               ❤️ {{ msg.reactions['❤️'].length }}
             </div>
@@ -66,15 +63,12 @@
 
           <div class="voice-bubble" style="cursor: pointer; position: relative;"
             (click)="$event.stopPropagation(); reactToMessage(msg, '❤️')">
-            <!-- زرار التشغيل -->
             <button class="play-btn" (click)="togglePlay(msg); $event.stopPropagation()">
               <i class="fa" [ngClass]="msg.isPlaying ? 'fa-pause' : 'fa-play'"></i>
             </button>
 
-            <!-- العنصر الصوتي -->
             <audio #audio [src]="msg.audioUrl"></audio>
 
-            <!-- Slider للتحكم في الوقت -->
             <input type="range" min="0" [max]="msg.duration || 0" [value]="msg.audioRef?.currentTime || 0"
               (input)="seekAudio(msg, $event)" (click)="$event.stopPropagation()" />
 
@@ -82,7 +76,6 @@
               <span></span><span></span><span></span><span></span>
             </div>
 
-            <!-- عداد الوقت -->
             <span class="voice-counter">{{ msg.remainingTime }}</span>
 
             <div class="reaction" *ngIf="msg.reactions && msg.reactions['❤️'] && msg.reactions['❤️'].length">
@@ -117,33 +110,28 @@
                ? ('CHAT.WELCOME_PLACEHOLDER' | translate)
                : ('CHAT.PLACEHOLDER' | translate))
        " />
-      <!-- زر الإيموجي -->
-      <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">😊</button>
-      <!-- زر التسجيل -->
+      <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()"><i
+          class="far fa-smile-wink"></i></button>
       @if(!showWelcome){
       <button class="voice-btn" *ngIf="!isRecording" (click)="onStartVoiceClick()">🎤</button>
       }
-      <!-- زر الإيقاف + الإلغاء + العداد -->
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">
-          <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()">✖️</button>
+          <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()"><i
+              class="fas fa-times"></i></button>
           <button class="voice-btn pause-btn" *ngIf="!showWelcome" (click)="togglePauseResume()">
-            {{ isRecordingPaused ? '▶️' : '⏸️' }}
+            <i [class]="isRecordingPaused ? 'fas fa-play' : 'fas fa-pause'"></i>
           </button>
           <span *ngIf="!showWelcome" class="record-timer">{{ recordTime }}</span>
         </div>
       </ng-container>
-      <!-- زر الإرسال -->
-      @if(!isRecording){
-      <button *ngIf="!showWelcome" class="send-btn" (click)="sendMessage()">
+      <button *ngIf="!showWelcome && !isRecording" class="send-btn" (click)="sendMessage()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
-      }
-      @if(isRecording){
-      <button *ngIf="!showWelcome" class="send-btn" (click)="stopRecording()">
+
+      <button *ngIf="isRecording && !showWelcome" class="send-btn" (click)="stopRecording()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
-      }
     </div>
 
     <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" [ngStyle]="{

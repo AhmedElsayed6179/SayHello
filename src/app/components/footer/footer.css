@@ -23,6 +23,10 @@
   margin-bottom: 0.25rem;
 }
 
+.footer-brand {
+  direction: ltr !important;
+}
+
 .footer-brand p {
   font-weight: 300;
   margin-bottom: 0;
@@ -35,7 +39,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
   font-size: 0.95rem;
   transition: all 0.3s;
@@ -48,10 +52,21 @@
 }
 
 /* ألوان لكل منصة (اختياري) */
-.social-btn.fb:hover { color: #3b5998; }
-.social-btn.tw:hover { color: #1da1f2; }
-.social-btn.ig:hover { color: #c32aa3; }
-.social-btn.li:hover { color: #0077b5; }
+.social-btn.fb:hover {
+  color: #3b5998;
+}
+
+.social-btn.tw:hover {
+  color: #1da1f2;
+}
+
+.social-btn.ig:hover {
+  color: #c32aa3;
+}
+
+.social-btn.li:hover {
+  color: #0077b5;
+}
 
 /* الوضع الليلي */
 .footer.dark-mode {
@@ -68,13 +83,13 @@
 }
 
 .footer.dark-mode .social-btn {
-  background-color: rgba(255,255,255,0.05);
+  background-color: rgba(255, 255, 255, 0.05);
   color: #fff;
 }
 
 .footer.dark-mode .social-btn:hover {
   color: #ffcc33;
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Responsive */
