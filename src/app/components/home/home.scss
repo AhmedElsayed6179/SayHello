@@ -15,6 +15,10 @@
   }
 }
 
+.container {
+  background: transparent !important;
+}
+
 @keyframes heroFade {
   from {
     opacity: 0;
@@ -43,7 +47,9 @@
   margin-top: $spacing-8;
 
   .section-card {
-    transition: transform $transition-fast, box-shadow $transition-fast;
+    transition:
+      transform $transition-fast,
+      box-shadow $transition-fast;
     border-radius: $border-radius-xl;
     text-align: center;
     background-color: $light-bg;
@@ -149,15 +155,15 @@
 }
 
 .sections-wrapper {
-  &[dir="rtl"] {
+  &[dir='rtl'] {
     text-align: right;
   }
 
-  &[dir="ltr"] {
+  &[dir='ltr'] {
     text-align: left;
   }
 
-  &[dir="rtl"] .card-detail-list {
+  &[dir='rtl'] .card-detail-list {
     text-align: right;
     padding-right: $spacing-5;
     padding-left: 0;
@@ -165,7 +171,7 @@
     list-style-type: disc;
   }
 
-  &[dir="ltr"] .card-detail-list {
+  &[dir='ltr'] .card-detail-list {
     text-align: left;
     padding-left: $spacing-5;
     padding-right: 0;
@@ -198,8 +204,8 @@
     padding: $spacing-5 $spacing-4;
   }
 
-  body[dir="ltr"] .card-detail-list,
-  body[dir="rtl"] .card-detail-list {
+  body[dir='ltr'] .card-detail-list,
+  body[dir='rtl'] .card-detail-list {
     padding-left: $spacing-4;
     padding-right: $spacing-4;
   }
