@@ -11,6 +11,5 @@ export const routes: Routes = [
   { path: 'Home', redirectTo: '', pathMatch: 'full' },
   { path: 'chat', component: Chat },
   { path: 'App-Download', component: AppDownload, canActivate: [WebOnlyGuard] },
-  { path: 'videocall', component: Videocall },
   { path: '**', component: Notfound }
 ];

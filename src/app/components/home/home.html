@@ -16,29 +16,6 @@
     </form>
   </section>
 
-  <!-- Mode Selector Modal Overlay -->
-  <div class="mode-overlay" *ngIf="showModeSelector" (click)="cancelModeSelector()">
-    <div class="mode-modal" [attr.dir]="currentDir" (click)="$event.stopPropagation()">
-      <h3 class="mode-modal-title">{{ 'HOME.MODE_TITLE' | translate }}</h3>
-      <p class="mode-modal-desc">{{ 'HOME.MODE_DESC' | translate }}</p>
-
-      <div class="mode-buttons">
-        <button class="mode-btn mode-btn-chat" (click)="selectMode('chat')">
-          <i class="fas fa-comment-dots"></i>
-          <span>{{ 'HOME.MODE_CHAT' | translate }}</span>
-        </button>
-        <button class="mode-btn mode-btn-video" (click)="selectMode('videocall')">
-          <i class="fas fa-video"></i>
-          <span>{{ 'HOME.MODE_VIDEO' | translate }}</span>
-        </button>
-      </div>
-
-      <button class="mode-cancel-btn" (click)="cancelModeSelector()">
-        {{ 'HOME.MODE_CANCEL' | translate }}
-      </button>
-    </div>
-  </div>
-
   <!-- Sections -->
   <section class="sections-wrapper row g-4" [attr.dir]="currentDir">
     <div class="col-lg-4 col-md-6" *ngFor="let section of sections">

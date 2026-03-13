@@ -11,12 +11,7 @@
     "ERROR_PATTERN": "Name can contain letters only, with a single space between words",
     "ERROR_SERVER": "Failed to start chat. Try again later",
     "ERROR_INTERNET": "No internet connection",
-    "ERROR_OK": "OK",
-    "MODE_TITLE": "Choose Your Mode",
-    "MODE_DESC": "How would you like to connect?",
-    "MODE_CHAT": "Text Chat",
-    "MODE_VIDEO": "Video Call",
-    "MODE_CANCEL": "Cancel"
+    "ERROR_OK": "OK"
   },
   "SECTIONS": {
     "ONE": {
@@ -71,17 +66,6 @@
     "CONFIRM": "Are you sure?",
     "INFO": "Info",
     "RECORD_CANCELED": "Recording was canceled because the other user left the chat"
-  },
-  "VIDEOCALL": {
-    "TITLE": "Video Call",
-    "DESC": "Connect face-to-face with a random stranger. You can also chat by text during the call.",
-    "START_BTN": "Start Video Call",
-    "MUTE": "Mute microphone",
-    "UNMUTE": "Unmute microphone",
-    "CAM_OFF": "Turn off camera",
-    "CAM_ON": "Turn on camera",
-    "CAM_ERROR_TITLE": "Camera / Microphone Error",
-    "CAM_ERROR_DESC": "Could not access your camera or microphone. Please check your browser permissions."
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
