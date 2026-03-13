@@ -11,7 +11,12 @@
     "ERROR_PATTERN": "El nombre solo puede contener letras, con un solo espacio entre palabras",
     "ERROR_SERVER": "No se pudo iniciar el chat. Inténtalo de nuevo más tarde",
     "ERROR_INTERNET": "Sin conexión a internet",
-    "ERROR_OK": "Aceptar"
+    "ERROR_OK": "Aceptar",
+    "MODE_TITLE": "Elige tu modo",
+    "MODE_DESC": "¿Cómo quieres conectarte?",
+    "MODE_CHAT": "Chat de texto",
+    "MODE_VIDEO": "Videollamada",
+    "MODE_CANCEL": "Cancelar"
   },
   "SECTIONS": {
     "ONE": {
@@ -64,8 +69,19 @@
     "Empty_text": "Texto vacío",
     "empty_message": "No puedes enviar un mensaje vacío",
     "CONFIRM": "¿Estás seguro?",
-     "INFO": "Información",
+    "INFO": "Información",
     "RECORD_CANCELED": "La grabación se canceló porque el otro usuario salió del chat"
+  },
+  "VIDEOCALL": {
+    "TITLE": "Videollamada",
+    "DESC": "Conéctate cara a cara con un desconocido. También puedes chatear por texto durante la llamada.",
+    "START_BTN": "Iniciar videollamada",
+    "MUTE": "Silenciar micrófono",
+    "UNMUTE": "Activar micrófono",
+    "CAM_OFF": "Apagar cámara",
+    "CAM_ON": "Encender cámara",
+    "CAM_ERROR_TITLE": "Error de cámara / micrófono",
+    "CAM_ERROR_DESC": "No se pudo acceder a tu cámara o micrófono. Por favor revisa los permisos del navegador."
   },
   "FOOTER": {
     "COPYRIGHT": "Todos los derechos reservados",

@@ -15,6 +15,8 @@ import { environment } from '../../environments/environment.development';
 export class Home {
   usernameForm: FormGroup;
   sections: any[] = [];
+  showModeSelector = false;
+  pendingName = '';
 
   constructor(private router: Router, private translate: TranslateService) {
     this.usernameForm = new FormGroup({
@@ -88,7 +90,13 @@ export class Home {
     if (!name) return;
 
     const randomSuffix = Math.floor(100000 + Math.random() * 900000);
-    const uniqueName = `${name}-${randomSuffix}`;
+    this.pendingName = `${name}-${randomSuffix}`;
+    this.showModeSelector = true;
+  }
+
+  selectMode(mode: 'chat' | 'videocall') {
+    this.showModeSelector = false;
+    const uniqueName = this.pendingName;
 
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
@@ -101,7 +109,8 @@ export class Home {
       })
       .then(data => {
         const token = data.token;
-        this.router.navigate(['/chat'], {
+        const route = mode === 'videocall' ? '/videocall' : '/chat';
+        this.router.navigate([route], {
           queryParams: { token },
           state: { name: uniqueName }
         });
@@ -115,6 +124,11 @@ export class Home {
           confirmButtonText: this.translate.instant('HOME.ERROR_OK')
         });
       });
+  }
+
+  cancelModeSelector() {
+    this.showModeSelector = false;
+    this.pendingName = '';
   }
 
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }

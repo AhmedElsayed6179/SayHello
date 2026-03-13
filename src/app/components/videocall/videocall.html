@@ -1,0 +1,105 @@
+<div class="vc-page" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" [class.rtl]="isRtl">
+
+  <!-- ═══ WELCOME SCREEN ═══ -->
+  <div *ngIf="showWelcome" class="vc-welcome">
+    <div class="vc-welcome-card">
+      <i class="fas fa-video vc-welcome-icon"></i>
+      <h2>{{ 'VIDEOCALL.TITLE' | translate }}</h2>
+      <p>{{ 'VIDEOCALL.DESC' | translate }}</p>
+      <button class="btn-start-call" (click)="startCall()">
+        <i class="fas fa-video"></i>
+        {{ 'VIDEOCALL.START_BTN' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN CALL UI ═══ -->
+  <div *ngIf="!showWelcome" class="vc-layout">
+
+    <!-- Left: Video Area -->
+    <div class="vc-video-area">
+
+      <!-- Remote Video -->
+      <div class="vc-remote-wrapper">
+        <video #remoteVideo class="vc-remote-video" autoplay playsinline></video>
+        <div class="vc-remote-placeholder" *ngIf="!connected">
+          <i class="fas fa-user-circle"></i>
+          <span>{{ waiting ? ('CHAT.WAITING' | translate) : ('CHAT.NO_PARTNER' | translate) }}</span>
+        </div>
+      </div>
+
+      <!-- Local Video (PiP) -->
+      <div class="vc-local-wrapper">
+        <video #localVideo class="vc-local-video" autoplay muted playsinline></video>
+        <div class="vc-cam-off-badge" *ngIf="isCamOff">
+          <i class="fas fa-video-slash"></i>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="vc-controls">
+        <button class="vc-ctrl-btn" [class.active]="isMicMuted" (click)="toggleMic()"
+          [title]="isMicMuted ? ('VIDEOCALL.UNMUTE' | translate) : ('VIDEOCALL.MUTE' | translate)">
+          <i class="fas" [ngClass]="isMicMuted ? 'fa-microphone-slash' : 'fa-microphone'"></i>
+        </button>
+        <button class="vc-ctrl-btn" [class.active]="isCamOff" (click)="toggleCam()"
+          [title]="isCamOff ? ('VIDEOCALL.CAM_ON' | translate) : ('VIDEOCALL.CAM_OFF' | translate)">
+          <i class="fas" [ngClass]="isCamOff ? 'fa-video-slash' : 'fa-video'"></i>
+        </button>
+        <button class="vc-ctrl-btn next-ctrl" (click)="nextCall()" [title]="'CHAT.NEXT' | translate">
+          <i class="fas fa-forward"></i>
+        </button>
+        <button class="vc-ctrl-btn end-ctrl" (click)="exitCall()" [title]="'CHAT.STOP' | translate">
+          <i class="fas fa-phone-slash"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Chat Panel -->
+    <div class="vc-chat-panel">
+      <div class="vc-chat-header">
+        <i class="fas fa-comment-dots"></i>
+        {{ 'CHAT.TITLE' | translate }}
+      </div>
+
+      <!-- Messages -->
+      <div #chatBox class="vc-chat-box">
+        <div *ngFor="let msg of messages" class="vc-msg-wrapper" [ngClass]="{
+            'vc-system': msg.sender === 'system',
+            'vc-msg-right': msg.sender === 'user' && msg.senderName === myName,
+            'vc-msg-left':  msg.sender === 'user' && msg.senderName !== myName
+          }">
+
+          <ng-container *ngIf="msg.sender === 'system'">
+            <div class="vc-system-text">{{ msg.key | translate }}</div>
+          </ng-container>
+
+          <ng-container *ngIf="msg.sender === 'user'">
+            <div class="vc-msg-content">
+              <span class="vc-sender-name">
+                {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
+              </span>
+              <div class="vc-bubble">{{ msg.text }}</div>
+              <small class="vc-time" style="direction:ltr">{{ msg.time }}</small>
+            </div>
+          </ng-container>
+        </div>
+
+        <div *ngIf="isTyping" class="vc-typing">
+          {{ 'CHAT.TYPING' | translate }}
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="vc-chat-input-row" [ngClass]="isRtl ? 'rtl' : 'ltr'">
+        <input type="text" class="vc-chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()"
+          (input)="onTyping()" [disabled]="!connected"
+          [placeholder]="connected ? ('CHAT.PLACEHOLDER' | translate) : ('CHAT.WAITING' | translate)" />
+        <button class="vc-send-btn" (click)="sendMessage()" [disabled]="!connected">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
