@@ -130,22 +130,25 @@ export class Videocall implements OnInit, OnDestroy {
 
   private attachRemoteStream(stream: MediaStream) {
     this.pendingRemoteStream = stream;
+
+    // ✅ Step 1: أظهر الـ video element أولاً عبر Angular
+    if (!this.remoteStreamActive) {
+      this.remoteStreamActive = true;
+      this.cd.detectChanges();
+    }
+
+    // ✅ Step 2: بعد ما Angular يرسم العنصر، اربط الـ stream
     const tryAttach = (attempts = 0) => {
       const video = this.remoteVideoRef?.nativeElement;
       if (video) {
-        // Set srcObject always (even if hidden — opacity trick handles visibility)
-        if (video.srcObject !== stream) {
-          video.srcObject = stream;
-        }
-        // Force play after a tick to ensure element is visible
-        setTimeout(() => {
-          video.play().catch(e => console.warn('Remote video play error:', e));
-        }, 100);
+        video.srcObject = stream;
+        video.play().catch(e => console.warn('Remote video play error:', e));
         this.pendingRemoteStream = null;
       } else if (attempts < 20) {
-        setTimeout(() => tryAttach(attempts + 1), 100);
+        setTimeout(() => tryAttach(attempts + 1), 50);
       }
     };
+    // نعطي Angular وقت كافي يرسم العنصر بعد detectChanges
     setTimeout(() => tryAttach(), 50);
   }
 
@@ -324,19 +327,8 @@ export class Videocall implements OnInit, OnDestroy {
       if (!stream) return;
 
       this.zone.run(() => {
+        // attachRemoteStream تتكفل بكل شيء: set remoteStreamActive + attach
         this.attachRemoteStream(stream);
-        if (!this.remoteStreamActive) {
-          this.remoteStreamActive = true;
-          this.cd.detectChanges();
-          // Force play after Angular renders the visible video element
-          setTimeout(() => {
-            const video = this.remoteVideoRef?.nativeElement;
-            if (video) {
-              video.srcObject = stream;
-              video.play().catch(e => console.warn('play after visible:', e));
-            }
-          }, 150);
-        }
       });
     };
 
