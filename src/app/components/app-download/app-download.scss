@@ -1,156 +1,168 @@
 @use '../../variables/index' as *;
 
+// ══════════════════════════════════════
+// APP DOWNLOAD — Premium Card Layout
+// ══════════════════════════════════════
+
 .app-download-section {
-  max-width: 1000px;
-  margin: $spacing-7 auto;
-  border-radius: $border-radius-xl;
-  padding: 3rem 1rem;
-  transition: all $transition-normal;
+  padding: 4rem 1rem !important;
+  animation: fadeSlideUp 0.7s ease;
 
-  &.light-mode {
-    background: $gradient-primary;
-    color: $light-bg;
-  }
-
-  &.dark-mode {
-    background: $dark-bg;
-    color: $dark-text;
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 }
 
 .section-title {
-  font-size: 2rem;
-  font-weight: 700;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: -0.5px;
+  background: $gradient-primary;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem !important;
+
+  .bi {
+    -webkit-text-fill-color: initial;
+    background: none;
+    color: $primary;
+    font-size: 1.3em;
+  }
 }
 
 .section-desc {
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: $light-text-muted;
+  max-width: 480px;
+  margin: 0 auto 2.5rem !important;
+  line-height: 1.7;
+
+  .dark-mode & { color: $dark-text-muted; }
 }
 
+// ── App Cards ─────────────────────────
 .app-card {
-  width: 220px;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 2rem 1rem;
-  transition: transform $transition-normal, box-shadow $transition-normal;
-  border-radius: $border-radius-xl;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+  width: 260px;
+  border-radius: 28px !important;
+  padding: 2.5rem 1.8rem !important;
+  border: 1px solid $light-border;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(79, 142, 247, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: $gradient-brand;
+    opacity: 0.06;
+    transition: opacity 0.3s;
+  }
 
   &:hover {
-    transform: translateY(-$spacing-2);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(79, 142, 247, 0.16) !important;
+    border-color: $light-border-accent;
+
+    &::before { opacity: 0.12; }
   }
 
-  i {
-    font-size: 3.5rem;
-    color: $light-bg;
-    margin-bottom: 1rem;
+  .dark-mode & {
+    background: rgba(22, 26, 36, 0.9);
+    border-color: $dark-border;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+
+    &:hover {
+      border-color: $dark-border-accent;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+    }
+  }
+
+  .bi {
+    font-size: 3.2rem;
+    background: $gradient-brand;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    margin-bottom: 1.2rem;
+    filter: drop-shadow(0 4px 12px $primary-glow);
+  }
+
+  h5 {
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0;
+    color: $light-text;
+
+    .dark-mode & { color: $dark-text; }
   }
 }
 
-.ios-coming {
-  font-weight: 700;
-  font-size: 1.2rem;
-  margin-top: $spacing-2;
-  color: $light-bg;
-}
-
+// ── Android Download Button ───────────
 .app-card .btn-success {
-  border-radius: $border-radius-pill;
-  padding: 0.7rem 2rem;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 12px 24px !important;
   font-weight: 700;
-  font-size: 1rem;
-  transition: all $transition-fast;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+  transition: all 0.25s ease;
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.45);
+  }
+
+  &:active { transform: translateY(0); }
+}
+
+// ── iOS Coming Soon ───────────────────
+.ios-coming {
+  font-size: 0.85rem;
+  color: $light-text-muted;
+  margin-top: 1rem;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(79, 142, 247, 0.08);
+  border: 1px solid rgba(79, 142, 247, 0.12);
+  display: inline-block;
+
+  .dark-mode & {
+    color: $dark-text-muted;
+    background: rgba(79, 142, 247, 0.1);
   }
 }
 
+// ── iOS Instruction Banner ────────────
 .ios-instructions {
-  background-color: rgba(255, 255, 255, 0.08);
-  padding: 1rem 1.5rem;
-  border-radius: $border-radius-xl;
-  max-width: 600px;
-  margin: 2rem auto 0 auto;
-  font-size: 0.9rem;
-  color: $dark-text-muted;
-  text-align: center;
-}
+  max-width: 480px;
+  margin: 1.5rem auto 0 !important;
+  border-radius: 16px !important;
+  border: 1px solid $light-border;
+  background: rgba(79, 142, 247, 0.05);
+  padding: 14px 20px !important;
+  font-size: 0.85rem;
+  color: $light-text-muted;
+  line-height: 1.6;
 
-@media (max-width: $desktop) {
-  .app-card {
-    width: 180px;
-    padding: 1.5rem 1rem;
-
-    i {
-      font-size: 3rem;
-    }
-
-    .btn-success {
-      padding: 0.6rem 1.5rem;
-      font-size: 0.95rem;
-    }
+  .dark-mode & {
+    background: rgba(79, 142, 247, 0.08);
+    border-color: $dark-border;
+    color: $dark-text-muted;
   }
 }
 
-@media (max-width: $tablet) {
-  .app-download-section {
-    max-width: 90%;
-    margin: $spacing-7 auto;
-    padding: 2rem 1rem;
-    border-radius: $border-radius-xl;
-
-    .d-flex {
-      flex-direction: column !important;
-      align-items: center;
-    }
-  }
-
-  .app-card {
-    width: 90%;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-title {
-    font-size: 1.7rem;
-  }
-
-  .section-desc {
-    font-size: 0.95rem;
-  }
-
-  .ios-coming {
-    font-size: 1.1rem;
-  }
-
-  .app-card .btn-success {
-    width: 100%;
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: $mobile-plus2) {
-  .section-title {
-    font-size: 1.5rem;
-  }
-
-  .section-desc {
-    font-size: 0.9rem;
-  }
-
-  .ios-coming {
-    font-size: 1rem;
-  }
-
-  .ios-instructions {
-    font-size: 0.85rem;
-    padding: 0.8rem 1rem;
-  }
+@media (max-width: $mobile) {
+  .app-card { width: 100%; max-width: 320px; }
 }

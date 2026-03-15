@@ -1,6 +1,6 @@
 import {
   Component, NgZone, OnInit, OnDestroy,
-  ViewChild, ElementRef, ChangeDetectorRef
+  ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -59,6 +59,9 @@ export class Videocall implements OnInit, OnDestroy {
   remoteStreamActive = false;
   localVideoReady = false;
 
+  // Stores the remote stream so we can attach it whenever the view is ready
+  private pendingRemoteStream: MediaStream | null = null;
+
   // UI
   isChatOpen = true;
 
@@ -84,6 +87,7 @@ export class Videocall implements OnInit, OnDestroy {
 
   async startCall() {
     this.showWelcome = false;
+
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -91,11 +95,9 @@ export class Videocall implements OnInit, OnDestroy {
       });
       this.localVideoReady = true;
       this.cd.detectChanges();
-      setTimeout(() => {
-        if (this.localVideoRef?.nativeElement) {
-          this.localVideoRef.nativeElement.srcObject = this.localStream;
-        }
-      }, 100);
+
+      // Attach local stream after view renders
+      this.attachLocalStream();
     } catch (err) {
       console.error('Camera error:', err);
       Swal.fire({
@@ -104,9 +106,37 @@ export class Videocall implements OnInit, OnDestroy {
         text: 'Could not access camera/microphone. Please check permissions.',
         confirmButtonText: 'OK'
       });
-      this.showWelcome = false;
     }
+
     this.connectToServer();
+  }
+
+  private attachLocalStream() {
+    const tryAttach = (attempts = 0) => {
+      if (this.localVideoRef?.nativeElement && this.localStream) {
+        const video = this.localVideoRef.nativeElement;
+        video.srcObject = this.localStream;
+        video.play().catch(() => {});
+      } else if (attempts < 10) {
+        setTimeout(() => tryAttach(attempts + 1), 100);
+      }
+    };
+    setTimeout(() => tryAttach(), 50);
+  }
+
+  private attachRemoteStream(stream: MediaStream) {
+    this.pendingRemoteStream = stream;
+    const tryAttach = (attempts = 0) => {
+      if (this.remoteVideoRef?.nativeElement) {
+        const video = this.remoteVideoRef.nativeElement;
+        video.srcObject = stream;
+        video.play().catch(e => console.warn('Remote video play error:', e));
+        this.pendingRemoteStream = null;
+      } else if (attempts < 20) {
+        setTimeout(() => tryAttach(attempts + 1), 100);
+      }
+    };
+    setTimeout(() => tryAttach(), 50);
   }
 
   connectToServer() {
@@ -158,7 +188,12 @@ export class Videocall implements OnInit, OnDestroy {
       this.connected = false;
       this.partnerDisconnected = true;
       this.remoteStreamActive = false;
+      this.pendingRemoteStream = null;
       this.closePC();
+      // Clear remote video
+      if (this.remoteVideoRef?.nativeElement) {
+        this.remoteVideoRef.nativeElement.srcObject = null;
+      }
       this.addSystemMessage('CHAT.PARTNER_LEFT');
       this.cd.detectChanges();
     }));
@@ -179,12 +214,16 @@ export class Videocall implements OnInit, OnDestroy {
     });
 
     this.socket.on('webrtc-answer', async (data: { sdp: RTCSessionDescriptionInit }) => {
-      await this.pc?.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      if (this.pc) {
+        await this.pc.setRemoteDescription(new RTCSessionDescription(data.sdp));
+      }
     });
 
     this.socket.on('webrtc-ice', async (data: { candidate: RTCIceCandidateInit }) => {
       try {
-        await this.pc?.addIceCandidate(new RTCIceCandidate(data.candidate));
+        if (this.pc && data.candidate) {
+          await this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        }
       } catch (e) {}
     });
 
@@ -209,7 +248,7 @@ export class Videocall implements OnInit, OnDestroy {
       this.typingTimeout = setTimeout(() => {
         this.isTyping = false;
         this.cd.detectChanges();
-      }, 1000);
+      }, 1500);
     }));
 
     this.socket.on('newReaction', (data: any) => this.zone.run(() => {
@@ -225,7 +264,8 @@ export class Videocall implements OnInit, OnDestroy {
     const config: RTCConfiguration = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' }
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' }
       ]
     };
 
@@ -238,16 +278,24 @@ export class Videocall implements OnInit, OnDestroy {
       });
     }
 
-    // Remote stream
+    // ── Remote stream handler — KEY FIX ──
+    // We use a single MediaStream and collect all incoming tracks
+    const remoteStream = new MediaStream();
+
     this.pc.ontrack = (event) => {
+      event.streams[0]?.getTracks().forEach(track => {
+        remoteStream.addTrack(track);
+      });
+
       this.zone.run(() => {
-        this.remoteStreamActive = true;
-        this.cd.detectChanges();
-        setTimeout(() => {
-          if (this.remoteVideoRef?.nativeElement && event.streams[0]) {
-            this.remoteVideoRef.nativeElement.srcObject = event.streams[0];
-          }
-        }, 100);
+        // Attach the stream to the video element
+        this.attachRemoteStream(event.streams[0] || remoteStream);
+
+        // Mark as active only when we actually have video or audio
+        if (!this.remoteStreamActive) {
+          this.remoteStreamActive = true;
+          this.cd.detectChanges();
+        }
       });
     };
 
@@ -261,17 +309,28 @@ export class Videocall implements OnInit, OnDestroy {
     this.pc.onconnectionstatechange = () => {
       this.zone.run(() => {
         const state = this.pc?.connectionState;
+        console.log('WebRTC connection state:', state);
+
         if (state === 'connected') {
-          this.remoteStreamActive = true;
-        } else if (state === 'disconnected' || state === 'failed') {
+          // Stream should already be active from ontrack
+          this.cd.detectChanges();
+        } else if (state === 'disconnected' || state === 'failed' || state === 'closed') {
           this.remoteStreamActive = false;
+          this.cd.detectChanges();
         }
-        this.cd.detectChanges();
       });
     };
 
+    this.pc.oniceconnectionstatechange = () => {
+      const state = this.pc?.iceConnectionState;
+      console.log('ICE connection state:', state);
+    };
+
     if (isInitiator) {
-      const offer = await this.pc.createOffer();
+      const offer = await this.pc.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      });
       await this.pc.setLocalDescription(offer);
       this.socket.emit('webrtc-offer', { sdp: offer });
     }
@@ -279,6 +338,9 @@ export class Videocall implements OnInit, OnDestroy {
 
   private closePC() {
     if (this.pc) {
+      this.pc.ontrack = null;
+      this.pc.onicecandidate = null;
+      this.pc.onconnectionstatechange = null;
       this.pc.close();
       this.pc = null;
     }
@@ -322,6 +384,7 @@ export class Videocall implements OnInit, OnDestroy {
     this.socket.emit('sendMessage', { id: chatMsg.id, text });
     this.message = '';
     this.scrollToBottom();
+    this.cd.detectChanges();
   }
 
   onTyping() {
@@ -361,7 +424,15 @@ export class Videocall implements OnInit, OnDestroy {
   nextCall() {
     this.closePC();
     this.remoteStreamActive = false;
+    this.pendingRemoteStream = null;
+
+    // Clear remote video
+    if (this.remoteVideoRef?.nativeElement) {
+      this.remoteVideoRef.nativeElement.srcObject = null;
+    }
+
     if (this.socket) { this.socket.emit('leave'); this.socket.disconnect(); }
+
     this.messages = [];
     this.connected = false;
     this.waiting = true;
@@ -390,6 +461,7 @@ export class Videocall implements OnInit, OnDestroy {
       this.localStream.getTracks().forEach(t => t.stop());
       this.localStream = null;
     }
+    this.localVideoReady = false;
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────
@@ -401,7 +473,7 @@ export class Videocall implements OnInit, OnDestroy {
 
   private scrollToBottom() {
     setTimeout(() => {
-      if (this.chatBoxRef) {
+      if (this.chatBoxRef?.nativeElement) {
         this.chatBoxRef.nativeElement.scrollTop = this.chatBoxRef.nativeElement.scrollHeight;
       }
     }, 50);

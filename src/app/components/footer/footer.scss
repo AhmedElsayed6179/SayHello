@@ -1,105 +1,91 @@
 @use '../../variables/index' as *;
 
+// ══════════════════════════════════════
+// FOOTER — Refined Minimal
+// ══════════════════════════════════════
+
 .footer {
-  background-color: $primary;
-  color: $light-bg;
-  font-family: 'Segoe UI', sans-serif;
-  transition: all $transition-normal;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px);
+  border-top: 1px solid $light-border;
+  padding: 2.5rem 1rem !important;
+  transition: background 0.3s, border-color 0.3s;
 
-  a {
-    color: $light-bg;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color $transition-normal, transform $transition-normal;
-
-    &:hover {
-      color: $warning;
-      transform: scale(1.1);
-    }
+  &.dark-mode {
+    background: rgba(13, 15, 20, 0.85) !important;
+    border-top-color: $dark-border;
   }
 }
 
 .footer-brand {
-  direction: ltr !important;
-
   h5 {
-    font-weight: 600;
-    margin-bottom: $spacing-1;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    background: $gradient-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
   }
 
   p {
-    font-weight: 300;
-    margin-bottom: 0;
+    font-size: 0.82rem;
+    color: $light-text-muted;
+
+    .dark-mode & { color: $dark-text-muted; }
+
+    a {
+      color: $primary;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover { color: $secondary; }
+    }
   }
 }
 
-.social-icons .social-btn {
-  width: 36px;
-  height: 36px;
+// ── Social Icons ──────────────────────
+.social-icons {
+  gap: 10px !important;
+}
+
+.social-btn {
+  width: 40px; height: 40px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: $border-radius-circle;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: $light-bg;
-  font-size: 0.95rem;
-  transition: all $transition-normal;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  border: 1px solid $light-border;
+  color: $light-text;
+  background: rgba(255,255,255,0.6);
 
-  &:hover {
-    background-color: $light-bg;
-    color: $primary;
-    transform: scale(1.15);
+  .dark-mode & {
+    border-color: $dark-border;
+    color: $dark-text-muted;
+    background: rgba(255,255,255,0.04);
   }
 
-  &.fb:hover {
-    color: #3b5998;
-  }
+  &:hover { transform: translateY(-3px); }
 
-  &.tw:hover {
-    color: #1da1f2;
-  }
-
+  &.fb:hover { background: #1877f2; color: #fff; border-color: #1877f2; }
+  &.tw:hover { background: #1da1f2; color: #fff; border-color: #1da1f2; }
   &.ig:hover {
-    color: #c32aa3;
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: #fff;
+    border-color: transparent;
   }
-
-  &.li:hover {
-    color: #0077b5;
-  }
+  &.li:hover { background: #010101; color: #fff; border-color: #010101; }
 }
 
-.footer.dark-mode {
-  background-color: $dark-bg;
-  color: $dark-text;
+// ── Copyright Text ────────────────────
+.footer .text {
+  color: $light-text-muted;
+  font-size: 0.78rem;
 
-  a {
-    color: $dark-text;
-
-    &:hover {
-      color: $warning;
-    }
-  }
-
-  .social-btn {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: $dark-text;
-
-    &:hover {
-      color: $warning;
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-  }
-}
-
-@media (max-width: $mobile) {
-  .footer {
-    font-size: 0.8rem;
-    padding: $spacing-4 $spacing-3;
-  }
-
-  .social-icons .social-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 0.85rem;
-  }
+  .dark-mode & { color: $dark-text-muted; }
 }

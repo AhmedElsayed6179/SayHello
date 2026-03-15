@@ -1,0 +1,49 @@
+@use '../../variables/index' as *;
+
+// ══════════════════════════════════════
+// 404 PAGE
+// ══════════════════════════════════════
+
+.text-danger {
+  background: linear-gradient(135deg, $danger, $accent) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-size: clamp(4rem, 12vw, 7rem) !important;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.notfound-wrapper {
+  h2 {
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: $light-text;
+
+    .dark-mode & { color: $dark-text; }
+  }
+
+  .lead {
+    color: $light-text-muted;
+    font-size: 1rem;
+
+    .dark-mode & { color: $dark-text-muted; }
+  }
+
+  .btn-primary {
+    background: $gradient-brand !important;
+    border: none !important;
+    border-radius: 16px !important;
+    padding: 14px 32px !important;
+    font-weight: 700;
+    box-shadow: 0 4px 18px $primary-glow;
+    transition: all 0.25s;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px $primary-glow;
+    }
+  }
+}

@@ -1,240 +1,222 @@
 @use '../../variables/index' as *;
 
+// ══════════════════════════════════════
+// NAVBAR — Glass-morphism + Blur
+// ══════════════════════════════════════
+
 .navbar {
   direction: ltr !important;
-}
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(13, 15, 20, 0.85) !important;
+  border-bottom: 1px solid $dark-border;
+  padding: 0.6rem 1.5rem;
+  transition:
+    background 0.4s ease,
+    box-shadow 0.4s ease;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 32px rgba(0, 0, 0, 0.25);
 
-#page-content {
-  &[dir="rtl"] {
-    text-align: right;
+  &.light-nav {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border-bottom: 1px solid $light-border;
+    box-shadow: 0 2px 24px rgba(79, 142, 247, 0.08);
   }
-
-  &[dir="ltr"] {
-    text-align: left;
-  }
 }
 
-.btn-group-custom {
-  display: flex;
-  gap: $spacing-2;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.navbar-actions {
-  display: flex;
-  gap: 2px;
-}
-
-.btn-group-custom .btn {
-  min-width: 60px;
-  padding: $spacing-2 $spacing-4;
-  border-radius: $border-radius-md;
-  font-size: 0.95rem;
-  font-weight: 500;
-  transition: all $transition-fast;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+.navbar-brand {
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: -0.5px;
+  background: $gradient-primary;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: opacity 0.2s;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0.85;
+  }
+
+  img {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    filter: drop-shadow(0 2px 6px $primary-glow);
   }
 }
 
+.navbar-toggler {
+  border: 1px solid $dark-border !important;
+  border-radius: 10px !important;
+  padding: 6px 10px;
+
+  &:focus {
+    box-shadow: 0 0 0 3px $primary-glow;
+  }
+}
+
+// ── Language Selector ──────────────────
 .select-wrapper {
   position: relative;
   display: inline-block;
-  width: 120px;
+  width: 130px;
+
+  &.light {
+    .btn-lang {
+      background: $light-bg-dark;
+      color: $light-text;
+      &:hover {
+        background: darken(#eef1f8, 5%);
+      }
+    }
+    .select-arrow {
+      color: $light-text-muted;
+    }
+  }
+
+  &.dark {
+    .btn-lang {
+      background: $dark-bg-lighter;
+      color: $dark-text;
+      &:hover {
+        background: lighten(#1e2535, 5%);
+      }
+    }
+    .select-arrow {
+      color: $dark-text-muted;
+    }
+  }
 }
 
 .btn-lang {
   width: 100%;
-  border: none;
-  border-radius: $border-radius-xl;
-  padding: $spacing-2 $spacing-6 $spacing-2 $spacing-4;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 8px 36px 8px 14px;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
-  text-align: left;
   font-weight: 500;
-  transition: background-color $transition-normal;
-  font-family: Arial, sans-serif;
-  background-color: $primary;
-  color: $light-bg;
+  font-size: 0.88rem;
+  transition: all 0.2s;
+  outline: none;
 
-  &:hover {
-    background-color: $primary-dark;
-  }
-}
-
-.select-wrapper {
-  &.light .btn-lang {
-    background-color: $light-bg-dark;
-    color: $light-text;
-
-    &:hover {
-      background-color: $light-border;
-    }
-  }
-
-  &.dark .btn-lang {
-    background-color: $dark-bg-light;
-    color: $dark-text;
-
-    &:hover {
-      background-color: $dark-bg;
-    }
+  &:focus {
+    box-shadow: 0 0 0 3px $primary-glow;
+    border-color: $primary;
   }
 }
 
 .select-arrow {
   position: absolute;
-  right: $spacing-3;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  font-size: 12px;
-  color: inherit;
+  font-size: 10px;
 }
 
-.btn-lang {
-  option {
-    padding: $spacing-2 $spacing-3;
-  }
+// ── Theme Toggle ──────────────────────
+.btn-theme {
+  border: none;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 44px;
 
-  &.dark option {
-    background-color: $dark-bg-light;
-    color: $dark-text;
+  &:hover {
+    transform: scale(1.08);
+  }
+  &:active {
+    transform: scale(0.96);
   }
 }
 
+// ── Online Users Badge ─────────────────
 .btn-like {
-  padding: $spacing-2 $spacing-4;
-  border-radius: $border-radius-md;
-  font-weight: 500;
-  min-width: 60px;
+  border-radius: 12px !important;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: $spacing-1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: all $transition-fast;
+  gap: 6px;
+  transition: all 0.25s;
+  box-shadow: none !important;
+
+  strong {
+    color: $primary;
+    font-size: 1rem;
+  }
 
   &:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   }
 }
 
-.btn-theme {
-  background-color: $light-text;
-  color: $light-bg;
-  border: none;
-  transition: all $transition-normal;
-  border-radius: $border-radius-sm;
-
-  &:hover {
-    background-color: $dark-bg-light;
-  }
-}
-
-body.dark-mode .btn-theme {
-  background-color: $dark-text;
-  color: $light-text;
-
-  &:hover {
-    background-color: $light-border;
-  }
-}
-
+// ── Download Button ───────────────────
 .btn-download {
-  border-radius: $border-radius-pill;
-  padding: 0.5rem 1.2rem;
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   display: inline-flex;
   align-items: center;
-  transition: all $transition-normal;
-
-  &.light {
-    background-color: $light-bg;
-    color: $secondary;
-  }
-
-  &.dark {
-    background-color: $secondary;
-    color: $light-bg;
-  }
+  gap: 6px;
+  transition: all 0.3s ease;
+  background: $gradient-brand !important;
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 4px 14px rgba(79, 142, 247, 0.35);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 8px 20px rgba(79, 142, 247, 0.45);
+    color: #fff !important;
   }
-
-  i {
-    font-size: 1rem;
-  }
-}
-
-@media (min-width: $mobile-plus1) {
-  .navbar-actions {
-    margin-left: auto;
+  &:active {
+    transform: translateY(0);
   }
 }
 
+#navbarContent {
+  &[dir='rtl'] {
+    text-align: right;
+  }
+  &[dir='ltr'] {
+    text-align: left;
+  }
+}
+
+// ── Responsive ────────────────────────
 @media (max-width: $mobile) {
   .navbar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
     padding: 0.5rem 1rem;
-    position: relative;
-    min-height: 56px;
-  }
-
-  .navbar-brand {
-    order: 1;
-    margin-right: auto;
-    z-index: 1030;
-    position: relative;
-  }
-
-  .navbar-toggler {
-    order: 2;
-    margin-left: auto;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: $border-radius-sm;
-    padding: 0.25rem 0.5rem;
-    z-index: 1030;
-    position: relative;
   }
 
   .navbar-collapse {
-    position: static;
-    top: 56px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background-color: inherit;
-    border-radius: none;
+    margin-top: 0.5rem;
     padding: 1rem;
-    display: none;
-    flex-direction: column;
-    gap: $spacing-3;
-    z-index: 1029;
-    box-shadow: none;
+    border-radius: 16px;
+    background: rgba(13, 15, 20, 0.96);
+    border: 1px solid $dark-border;
 
-    &.show {
-      display: flex;
+    &.light-nav-collapse {
+      background: rgba(255, 255, 255, 0.97);
+      border-color: $light-border;
     }
 
     > div {
       display: flex;
       flex-direction: column;
-      gap: $spacing-3;
+      gap: 10px;
       width: 100%;
     }
   }
@@ -244,30 +226,21 @@ body.dark-mode .btn-theme {
   .btn-like,
   .select-wrapper {
     width: 100%;
-    margin: 0;
-  }
-
-  .select-wrapper select.btn-lang {
-    width: 100%;
-    text-align: center;
-    text-align-last: center;
   }
 
   .btn {
     justify-content: center;
     text-align: center;
-    padding: $spacing-3 1rem;
-    border-radius: $border-radius-sm;
-  }
-
-  .navbar-toggler.position-absolute {
-    position: static !important;
-    transform: none !important;
+    border-radius: 12px !important;
   }
 
   .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-    width: 1.5em;
-    height: 1.5em;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+}
+
+@media (min-width: $mobile-plus1) {
+  .navbar-actions {
+    margin-left: auto;
   }
 }

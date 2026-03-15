@@ -1,37 +1,196 @@
-<div class="container text-center my-5" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
+<div class="home-wrapper" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
 
-  <!-- Hero Section -->
-  <section class="hero-section mb-5">
-    <h1 class="display-4">{{ 'HOME.TITLE' | translate }}</h1>
+  <!-- ═══════════════ HERO SECTION ═══════════════ -->
+  <section class="hero-section">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-pill">
+        <span class="eyebrow-dot"></span>
+        {{ 'HOME.EYEBROW' | translate }}
+      </span>
+    </div>
+
+    <h1>{{ 'HOME.TITLE' | translate }}</h1>
     <p class="lead">{{ 'HOME.DESC' | translate }}</p>
 
-    <form [formGroup]="usernameForm" (ngSubmit)="startChat()">
-      <div class="d-flex justify-content-center gap-2 mt-3 flex-column flex-sm-row align-items-center">
-        <input type="text" formControlName="username" class="form-control w-auto hero-input"
+    <form [formGroup]="usernameForm" (ngSubmit)="startChat()" class="hero-form">
+      <div class="hero-input-wrap">
+        <i class="fas fa-user hero-input-icon"></i>
+        <input type="text" formControlName="username" class="hero-input"
           placeholder="{{ 'HOME.NAME_PLACEHOLDER' | translate }}">
-        <button type="submit" class="btn btn-primary btn-lg hero-btn">
-          {{ 'HOME.START' | translate }}
-        </button>
       </div>
+      <button type="submit" class="hero-btn">
+        {{ 'HOME.START' | translate }}
+        <i class="fas fa-arrow-right"></i>
+      </button>
     </form>
-  </section>
 
-  <!-- Sections -->
-  <section class="sections-wrapper row g-4" [attr.dir]="currentDir">
-    <div class="col-lg-4 col-md-6" *ngFor="let section of sections">
-      <div class="card h-100 shadow-sm p-4 section-card text-center">
-        <i [class]="section.icon + ' fa-2x mb-3 section-icon'"></i>
-        <h3 class="card-title">{{ section.title | translate }}</h3>
-        <p class="card-text">{{ section.desc | translate }}</p>
-        <ul class="card-detail-list">
-          <li *ngFor="let detail of section.details">{{ detail | translate }}</li>
-        </ul>
+    <div class="hero-stats">
+      <div class="stat-item" *ngFor="let stat of heroStats">
+        <strong>{{ stat.value }}</strong>
+        <span>{{ stat.label | translate }}</span>
       </div>
     </div>
   </section>
+
+  <!-- ═══════════════ FEATURES SECTION ═══════════════ -->
+  <section class="features-section" [attr.dir]="currentDir">
+    <div class="section-header">
+      <span class="section-tag">{{ 'HOME.FEATURES_TAG' | translate }}</span>
+      <h2>{{ 'HOME.FEATURES_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.FEATURES_DESC' | translate }}</p>
+    </div>
+
+    <div class="sections-wrapper row g-4">
+      <div class="col-lg-4 col-md-6" *ngFor="let section of sections">
+        <div class="card h-100 shadow-sm p-4 section-card">
+          <div class="card-icon-wrap">
+            <i [class]="section.icon + ' section-icon'"></i>
+          </div>
+          <h3 class="card-title">{{ section.title | translate }}</h3>
+          <p class="card-text">{{ section.desc | translate }}</p>
+          <ul class="card-detail-list">
+            <li *ngFor="let detail of section.details">{{ detail | translate }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+  <section class="how-section">
+    <div class="section-header">
+      <span class="section-tag">{{ 'HOME.HOW_TAG' | translate }}</span>
+      <h2>{{ 'HOME.HOW_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.HOW_DESC' | translate }}</p>
+    </div>
+
+    <div class="steps-row">
+      <div class="step-item" *ngFor="let step of howSteps; let i = index">
+        <div class="step-num">{{ i + 1 }}</div>
+        <div class="step-connector" *ngIf="i < howSteps.length - 1"></div>
+        <div class="step-icon-box">
+          <i [class]="step.icon"></i>
+        </div>
+        <h4>{{ step.title | translate }}</h4>
+        <p>{{ step.desc | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ MODES SECTION ═══════════════ -->
+  <section class="modes-section">
+    <div class="section-header">
+      <span class="section-tag">{{ 'HOME.MODES_TAG' | translate }}</span>
+      <h2>{{ 'HOME.MODES_TITLE' | translate }}</h2>
+    </div>
+
+    <div class="modes-grid">
+      <!-- Text Chat -->
+      <div class="mode-showcase-card chat-card">
+        <div class="mode-card-glow"></div>
+        <div class="mode-card-badge">{{ 'HOME.FREE' | translate }}</div>
+        <div class="mode-card-icon">
+          <i class="fas fa-comments"></i>
+        </div>
+        <h3>{{ 'HOME.TEXT_CHAT' | translate }}</h3>
+        <p>{{ 'HOME.TEXT_CHAT_DESC' | translate }}</p>
+        <ul class="mode-features">
+          <li *ngFor="let f of chatFeatures">
+            <i class="fas fa-check"></i>
+            {{ f | translate }}
+          </li>
+        </ul>
+        <button class="mode-cta-btn chat-btn" (click)="openModeWithName('chat')">
+          {{ 'HOME.START_CHAT_BTN' | translate }}
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Video Call -->
+      <div class="mode-showcase-card video-card">
+        <div class="mode-card-glow video-glow"></div>
+        <div class="mode-card-badge video-badge-green">{{ 'HOME.NEW' | translate }}</div>
+        <div class="mode-card-icon video-icon">
+          <i class="fas fa-video"></i>
+        </div>
+        <h3>{{ 'HOME.VIDEO_CALL' | translate }}</h3>
+        <p>{{ 'HOME.VIDEO_CALL_DESC' | translate }}</p>
+        <ul class="mode-features">
+          <li *ngFor="let f of videoFeatures">
+            <i class="fas fa-check"></i>
+            {{ f | translate }}
+          </li>
+        </ul>
+        <button class="mode-cta-btn video-btn" (click)="openModeWithName('video')">
+          {{ 'HOME.START_VIDEO_BTN' | translate }}
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ TRUST / SAFETY SECTION ═══════════════ -->
+  <section class="trust-section">
+    <div class="trust-inner">
+      <div class="trust-text">
+        <span class="section-tag">{{ 'HOME.TRUST_TAG' | translate }}</span>
+        <h2>{{ 'HOME.TRUST_TITLE' | translate }}</h2>
+        <p>{{ 'HOME.TRUST_DESC' | translate }}</p>
+        <div class="trust-items">
+          <div class="trust-item" *ngFor="let t of trustItems">
+            <div class="trust-icon">
+              <i [class]="t.icon"></i>
+            </div>
+            <div>
+              <strong>{{ t.title | translate }}</strong>
+              <span>{{ t.desc | translate }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="trust-visual">
+        <div class="trust-card-mockup">
+          <div class="tm-header">
+            <div class="tm-dot green"></div>
+            <span>{{ 'HOME.TRUST_SECURE' | translate }}</span>
+            <i class="fas fa-lock tm-lock"></i>
+          </div>
+          <div class="tm-body">
+            <div class="tm-msg tm-right">
+              <span>{{ 'HOME.TRUST_MSG1' | translate }}</span>
+            </div>
+            <div class="tm-msg tm-left">
+              <span>{{ 'HOME.TRUST_MSG2' | translate }}</span>
+            </div>
+            <div class="tm-msg tm-right">
+              <span>{{ 'HOME.TRUST_MSG3' | translate }}</span>
+            </div>
+          </div>
+          <div class="tm-footer">
+            <i class="fas fa-shield-alt"></i>
+            {{ 'HOME.TRUST_ENCRYPTED' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CTA SECTION ═══════════════ -->
+  <section class="cta-section">
+    <div class="cta-inner">
+      <div class="cta-glow"></div>
+      <h2>{{ 'HOME.CTA_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.CTA_DESC' | translate }}</p>
+      <button class="cta-btn" (click)="scrollToHero()">
+        <i class="fas fa-bolt"></i>
+        {{ 'HOME.CTA_BTN' | translate }}
+      </button>
+    </div>
+  </section>
+
 </div>
 
-<!-- Mode Selection Modal Overlay -->
+<!-- ═══════════════ MODE SELECTION MODAL ═══════════════ -->
 <div class="mode-overlay" *ngIf="showModeSelector" (click)="closeModeSelector()">
   <div class="mode-modal" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" (click)="$event.stopPropagation()">
     <div class="mode-modal-header">
@@ -39,7 +198,6 @@
       <p>{{ 'HOME.CHOOSE_MODE_DESC' | translate }}</p>
     </div>
     <div class="mode-options">
-      <!-- Text Chat Option -->
       <button class="mode-card" (click)="selectMode('chat')">
         <div class="mode-icon-wrapper chat-icon-wrapper">
           <i class="fas fa-comments"></i>
@@ -48,8 +206,6 @@
         <p>{{ 'HOME.TEXT_CHAT_DESC' | translate }}</p>
         <span class="mode-badge">{{ 'HOME.FREE' | translate }}</span>
       </button>
-
-      <!-- Video Call Option -->
       <button class="mode-card" (click)="selectMode('video')">
         <div class="mode-icon-wrapper video-icon-wrapper">
           <i class="fas fa-video"></i>
