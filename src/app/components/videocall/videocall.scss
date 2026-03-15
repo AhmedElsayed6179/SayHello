@@ -27,7 +27,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 .videocall-wrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - var(--navbar-height, 60px));
+  height: 100vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -277,10 +277,16 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: none;
+  // Use opacity instead of display:none to keep element in render tree
+  // display:none prevents video from playing when it becomes visible
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.4s ease;
+  z-index: 2;
 
   &.visible {
-    display: block;
+    opacity: 1;
   }
 }
 
@@ -900,6 +906,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .vc-controls {
     gap: 6px;
     padding: 0 0.75rem;
+    height: 70px;
   }
 
   .vc-ctrl-btn {
@@ -912,18 +919,40 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 
   .vc-local-pip {
-    width: 90px;
-    height: 135px;
-    bottom: calc(#{$vc-ctrl-height} + 12px);
+    width: 80px;
+    height: 120px;
+    bottom: calc(70px + 10px);
+    right: 10px;
   }
 }
 
 @media (max-width: 480px) {
+  .vc-controls {
+    gap: 4px;
+    padding: 0 0.5rem;
+    height: 64px;
+  }
+
   .vc-ctrl-btn {
-    min-width: 40px;
-    padding: 7px 8px;
+    min-width: 38px;
+    padding: 6px 7px;
+    border-radius: 12px;
     i {
       font-size: 0.9rem;
     }
   }
+
+  .vc-local-pip {
+    width: 70px;
+    height: 105px;
+    bottom: calc(64px + 8px);
+  }
+}
+
+// ── Global: body in videocall mode ─────────────
+// Appended via TS ngOnInit/ngOnDestroy
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
 }

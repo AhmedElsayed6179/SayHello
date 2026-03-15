@@ -87,6 +87,8 @@ export class Videocall implements OnInit, OnDestroy {
     document.getElementById('page-content')?.classList.add('videocall-active');
     document.querySelector('app-navbar')?.classList.add('d-none');
     document.getElementById('page-footer')?.classList.add('d-none');
+    // إضافة كلاس على الـ body عشان نعرف إننا في صفحة الفيديو
+    document.body.classList.add('in-videocall');
   }
 
   async startCall() {
@@ -129,10 +131,16 @@ export class Videocall implements OnInit, OnDestroy {
   private attachRemoteStream(stream: MediaStream) {
     this.pendingRemoteStream = stream;
     const tryAttach = (attempts = 0) => {
-      if (this.remoteVideoRef?.nativeElement) {
-        const video = this.remoteVideoRef.nativeElement;
-        video.srcObject = stream;
-        video.play().catch(e => console.warn('Remote video play error:', e));
+      const video = this.remoteVideoRef?.nativeElement;
+      if (video) {
+        // Set srcObject always (even if hidden — opacity trick handles visibility)
+        if (video.srcObject !== stream) {
+          video.srcObject = stream;
+        }
+        // Force play after a tick to ensure element is visible
+        setTimeout(() => {
+          video.play().catch(e => console.warn('Remote video play error:', e));
+        }, 100);
         this.pendingRemoteStream = null;
       } else if (attempts < 20) {
         setTimeout(() => tryAttach(attempts + 1), 100);
@@ -320,6 +328,14 @@ export class Videocall implements OnInit, OnDestroy {
         if (!this.remoteStreamActive) {
           this.remoteStreamActive = true;
           this.cd.detectChanges();
+          // Force play after Angular renders the visible video element
+          setTimeout(() => {
+            const video = this.remoteVideoRef?.nativeElement;
+            if (video) {
+              video.srcObject = stream;
+              video.play().catch(e => console.warn('play after visible:', e));
+            }
+          }, 150);
         }
       });
     };
@@ -527,6 +543,7 @@ export class Videocall implements OnInit, OnDestroy {
     document.querySelector('app-navbar')?.classList.remove('d-none');
     document.getElementById('page-footer')?.classList.remove('d-none');
     document.getElementById('page-content')?.classList.remove('videocall-active');
+    document.body.classList.remove('in-videocall');
 
     this.cleanupMedia();
     this.socket?.emit('leave');
