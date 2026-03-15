@@ -137,19 +137,26 @@ export class Videocall implements OnInit, OnDestroy {
       this.cd.detectChanges();
     }
 
-    // ✅ Step 2: بعد ما Angular يرسم العنصر، اربط الـ stream
+    // ✅ Step 2: بعد ما Angular يرسم العنصر ويطبق visible class، اربط الـ stream
     const tryAttach = (attempts = 0) => {
       const video = this.remoteVideoRef?.nativeElement;
       if (video) {
         video.srcObject = stream;
-        video.play().catch(e => console.warn('Remote video play error:', e));
+        // الـ visibility يتحكم فيها Angular عبر [class.visible] + opacity في SCSS
+        const playPromise = video.play();
+        if (playPromise) {
+          playPromise.catch(e => {
+            console.warn('Remote video play error:', e);
+            setTimeout(() => video.play().catch(() => { }), 500);
+          });
+        }
         this.pendingRemoteStream = null;
-      } else if (attempts < 20) {
+      } else if (attempts < 30) {
         setTimeout(() => tryAttach(attempts + 1), 50);
       }
     };
     // نعطي Angular وقت كافي يرسم العنصر بعد detectChanges
-    setTimeout(() => tryAttach(), 50);
+    setTimeout(() => tryAttach(), 100);
   }
 
   connectToServer() {
@@ -186,8 +193,10 @@ export class Videocall implements OnInit, OnDestroy {
 
       this.addSystemMessage('CHAT.CONNECTED');
 
-      // ✅ الـ Initiator: بنعمل pc ونبعت offer
+      // ✅ الـ Initiator: بنعمل pc ونبعت offer بعد delay بسيط عشان الطرف الثاني يكون جاهز
       await this.createPeerConnection();
+      // delay 300ms عشان الـ Answerer يكون سجّل listener الـ webrtc-offer
+      await new Promise(resolve => setTimeout(resolve, 300));
       const offer = await this.pc!.createOffer({
         offerToReceiveAudio: true,
         offerToReceiveVideo: true
@@ -293,23 +302,25 @@ export class Videocall implements OnInit, OnDestroy {
     this.closePC();
     this.iceCandidateQueue = [];
 
+    // ✅ جيب الـ ICE servers من السيرفر
+    let iceServers: RTCIceServer[] = [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' }
+    ];
+
+    try {
+      const res = await fetch(`${environment.SayHello_Server}/ice-servers`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.iceServers) iceServers = data.iceServers;
+      }
+    } catch (e) {
+      console.warn('Could not fetch ICE servers, using defaults');
+    }
+
     const config: RTCConfiguration = {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        // ✅ TURN server عشان الشبكات الصعبة (NAT)
-        {
-          urls: 'turn:openrelay.metered.ca:80',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        },
-        {
-          urls: 'turn:openrelay.metered.ca:443',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        }
-      ]
+      iceServers,
+      iceCandidatePoolSize: 10
     };
 
     this.pc = new RTCPeerConnection(config);
