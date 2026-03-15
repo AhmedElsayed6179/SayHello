@@ -31,10 +31,10 @@
     <!-- ── Video Area ── -->
     <div class="vc-video-section" [class.chat-open]="isChatOpen">
 
-      <!-- Remote video fills entire background -->
+      <!-- Remote video -->
       <div class="vc-remote-wrapper">
 
-        <!-- Placeholder: shown when no remote stream -->
+        <!-- Placeholder -->
         <div class="vc-remote-placeholder" *ngIf="!remoteStreamActive">
           <div class="placeholder-content">
             <div class="placeholder-avatar">
@@ -49,7 +49,7 @@
           </div>
         </div>
 
-        <!-- Remote video element — always in DOM, shown when stream is active -->
+        <!-- Remote video element -->
         <video
           #remoteVideo
           class="vc-remote-video"
@@ -59,7 +59,7 @@
         </video>
       </div>
 
-      <!-- Local PiP — draggable corner preview -->
+      <!-- Local PiP -->
       <div class="vc-local-pip" *ngIf="localVideoReady">
         <video #localVideo class="vc-local-video" autoplay playsinline muted></video>
         <div class="pip-mic-off" *ngIf="!isMicOn">
@@ -69,20 +69,24 @@
 
       <!-- Controls bar -->
       <div class="vc-controls">
+
+        <!-- ✅ Mic button - مترجم -->
         <button class="vc-ctrl-btn"
           [class.off]="!isMicOn"
           (click)="toggleMic()">
           <i class="fas" [ngClass]="isMicOn ? 'fa-microphone' : 'fa-microphone-slash'"></i>
-          <span>{{ isMicOn ? 'Mute' : 'Unmute' }}</span>
+          <span>{{ isMicOn ? ('VIDEOCALL.MIC_MUTE' | translate) : ('VIDEOCALL.MIC_UNMUTE' | translate) }}</span>
         </button>
 
+        <!-- ✅ Camera button - مترجم -->
         <button class="vc-ctrl-btn"
           [class.off]="!isCameraOn"
           (click)="toggleCamera()">
           <i class="fas" [ngClass]="isCameraOn ? 'fa-video' : 'fa-video-slash'"></i>
-          <span>{{ isCameraOn ? 'Stop' : 'Start' }}</span>
+          <span>{{ isCameraOn ? ('VIDEOCALL.CAM_STOP' | translate) : ('VIDEOCALL.CAM_START' | translate) }}</span>
         </button>
 
+        <!-- Next button -->
         <button class="vc-ctrl-btn next-btn"
           [class.confirm]="confirmNext"
           (click)="onNextClick()">
@@ -90,6 +94,7 @@
           <span>{{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}</span>
         </button>
 
+        <!-- End call button -->
         <button class="vc-ctrl-btn end-btn"
           [class.confirm]="exitConfirm"
           (click)="onExitClick()">
@@ -97,6 +102,7 @@
           <span>{{ exitConfirm ? confirmText : ('CHAT.STOP' | translate) }}</span>
         </button>
 
+        <!-- Chat toggle button -->
         <button class="vc-ctrl-btn chat-toggle-btn" (click)="isChatOpen = !isChatOpen">
           <i class="fas" [ngClass]="isChatOpen ? 'fa-comment-slash' : 'fa-comment'"></i>
           <span>{{ isChatOpen ? ('VIDEOCALL.HIDE_CHAT' | translate) : ('VIDEOCALL.SHOW_CHAT' | translate) }}</span>

@@ -1,6 +1,6 @@
 import {
   Component, NgZone, OnInit, OnDestroy,
-  ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit
+  ViewChild, ElementRef, ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -58,8 +58,6 @@ export class Videocall implements OnInit, OnDestroy {
   private pc: RTCPeerConnection | null = null;
   remoteStreamActive = false;
   localVideoReady = false;
-
-  // Stores the remote stream so we can attach it whenever the view is ready
   private pendingRemoteStream: MediaStream | null = null;
 
   // UI
@@ -72,7 +70,7 @@ export class Videocall implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private router: Router,
     private chatService: ChatService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -82,7 +80,13 @@ export class Videocall implements OnInit, OnDestroy {
 
     if (!this.token || !this.myName) {
       this.router.navigate(['/']);
+      return;
     }
+
+    // إخفاء الـ navbar والـ footer عشان الصفحة full screen
+    document.getElementById('page-content')?.classList.add('videocall-active');
+    document.querySelector('app-navbar')?.classList.add('d-none');
+    document.getElementById('page-footer')?.classList.add('d-none');
   }
 
   async startCall() {
@@ -95,8 +99,6 @@ export class Videocall implements OnInit, OnDestroy {
       });
       this.localVideoReady = true;
       this.cd.detectChanges();
-
-      // Attach local stream after view renders
       this.attachLocalStream();
     } catch (err) {
       console.error('Camera error:', err);
@@ -116,7 +118,7 @@ export class Videocall implements OnInit, OnDestroy {
       if (this.localVideoRef?.nativeElement && this.localStream) {
         const video = this.localVideoRef.nativeElement;
         video.srcObject = this.localStream;
-        video.play().catch(() => {});
+        video.play().catch(() => { });
       } else if (attempts < 10) {
         setTimeout(() => tryAttach(attempts + 1), 100);
       }
@@ -172,7 +174,15 @@ export class Videocall implements OnInit, OnDestroy {
       if (waitIdx !== -1) { this.messages.splice(waitIdx, 1); this.waitingMessageShown = false; }
 
       this.addSystemMessage('CHAT.CONNECTED');
-      await this.startWebRTC(true); // Initiator
+
+      // ✅ الـ Initiator: بنعمل pc ونبعت offer
+      await this.createPeerConnection();
+      const offer = await this.pc!.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true
+      });
+      await this.pc!.setLocalDescription(offer);
+      this.socket.emit('webrtc-offer', { sdp: offer });
     }));
 
     this.socket.on('waiting', () => this.zone.run(() => {
@@ -190,7 +200,6 @@ export class Videocall implements OnInit, OnDestroy {
       this.remoteStreamActive = false;
       this.pendingRemoteStream = null;
       this.closePC();
-      // Clear remote video
       if (this.remoteVideoRef?.nativeElement) {
         this.remoteVideoRef.nativeElement.srcObject = null;
       }
@@ -203,9 +212,11 @@ export class Videocall implements OnInit, OnDestroy {
     }));
 
     // ─── WebRTC Signaling ───────────────────────────────────────────
+
+    // ✅ الـ Answerer: بنعمل pc ونرد بـ answer (بدون closePC هنا!)
     this.socket.on('webrtc-offer', async (data: { sdp: RTCSessionDescriptionInit }) => {
       await this.zone.run(async () => {
-        await this.startWebRTC(false);
+        await this.createPeerConnection();
         await this.pc!.setRemoteDescription(new RTCSessionDescription(data.sdp));
         const answer = await this.pc!.createAnswer();
         await this.pc!.setLocalDescription(answer);
@@ -219,12 +230,18 @@ export class Videocall implements OnInit, OnDestroy {
       }
     });
 
+    // ✅ ICE candidates — بنحطهم في queue لو الـ remote description لسه مجتش
     this.socket.on('webrtc-ice', async (data: { candidate: RTCIceCandidateInit }) => {
       try {
         if (this.pc && data.candidate) {
-          await this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+          if (this.pc.remoteDescription) {
+            await this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+          } else {
+            // احتفظ بالـ candidate في queue لحد ما الـ remote description تيجي
+            this.iceCandidateQueue.push(data.candidate);
+          }
         }
-      } catch (e) {}
+      } catch (e) { console.warn('ICE error:', e); }
     });
 
     // ─── Chat Messages ──────────────────────────────────────────────
@@ -257,41 +274,49 @@ export class Videocall implements OnInit, OnDestroy {
     }));
   }
 
-  // ─── WebRTC Setup ─────────────────────────────────────────────────
-  private async startWebRTC(isInitiator: boolean) {
+  // ─── ICE candidate queue (لو جت قبل setRemoteDescription) ────────
+  private iceCandidateQueue: RTCIceCandidateInit[] = [];
+
+  // ✅ دالة موحدة لإنشاء الـ RTCPeerConnection
+  private async createPeerConnection() {
     this.closePC();
+    this.iceCandidateQueue = [];
 
     const config: RTCConfiguration = {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' }
+        { urls: 'stun:stun2.l.google.com:19302' },
+        // ✅ TURN server عشان الشبكات الصعبة (NAT)
+        {
+          urls: 'turn:openrelay.metered.ca:80',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
       ]
     };
 
     this.pc = new RTCPeerConnection(config);
 
-    // Add local tracks
+    // ✅ إضافة الـ local tracks
     if (this.localStream) {
       this.localStream.getTracks().forEach(track => {
         this.pc!.addTrack(track, this.localStream!);
       });
     }
 
-    // ── Remote stream handler — KEY FIX ──
-    // We use a single MediaStream and collect all incoming tracks
-    const remoteStream = new MediaStream();
-
+    // ✅ استقبال الـ remote stream
     this.pc.ontrack = (event) => {
-      event.streams[0]?.getTracks().forEach(track => {
-        remoteStream.addTrack(track);
-      });
+      const stream = event.streams[0];
+      if (!stream) return;
 
       this.zone.run(() => {
-        // Attach the stream to the video element
-        this.attachRemoteStream(event.streams[0] || remoteStream);
-
-        // Mark as active only when we actually have video or audio
+        this.attachRemoteStream(stream);
         if (!this.remoteStreamActive) {
           this.remoteStreamActive = true;
           this.cd.detectChanges();
@@ -299,41 +324,37 @@ export class Videocall implements OnInit, OnDestroy {
       });
     };
 
-    // ICE candidates
+    // ✅ إرسال ICE candidates
     this.pc.onicecandidate = (event) => {
       if (event.candidate) {
         this.socket.emit('webrtc-ice', { candidate: event.candidate });
       }
     };
 
+    // ✅ معالجة تغيير الـ connection state
     this.pc.onconnectionstatechange = () => {
       this.zone.run(() => {
         const state = this.pc?.connectionState;
         console.log('WebRTC connection state:', state);
-
-        if (state === 'connected') {
-          // Stream should already be active from ontrack
-          this.cd.detectChanges();
-        } else if (state === 'disconnected' || state === 'failed' || state === 'closed') {
+        if (state === 'disconnected' || state === 'failed' || state === 'closed') {
           this.remoteStreamActive = false;
           this.cd.detectChanges();
         }
       });
     };
 
-    this.pc.oniceconnectionstatechange = () => {
-      const state = this.pc?.iceConnectionState;
-      console.log('ICE connection state:', state);
+    // ✅ بعد setRemoteDescription، نطبق الـ ICE candidates المعلقة
+    this.pc.onsignalingstatechange = async () => {
+      if (this.pc?.signalingState === 'stable' && this.iceCandidateQueue.length > 0) {
+        const queue = [...this.iceCandidateQueue];
+        this.iceCandidateQueue = [];
+        for (const candidate of queue) {
+          try {
+            await this.pc.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (e) { }
+        }
+      }
     };
-
-    if (isInitiator) {
-      const offer = await this.pc.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true
-      });
-      await this.pc.setLocalDescription(offer);
-      this.socket.emit('webrtc-offer', { sdp: offer });
-    }
   }
 
   private closePC() {
@@ -341,6 +362,7 @@ export class Videocall implements OnInit, OnDestroy {
       this.pc.ontrack = null;
       this.pc.onicecandidate = null;
       this.pc.onconnectionstatechange = null;
+      this.pc.onsignalingstatechange = null;
       this.pc.close();
       this.pc = null;
     }
@@ -425,8 +447,8 @@ export class Videocall implements OnInit, OnDestroy {
     this.closePC();
     this.remoteStreamActive = false;
     this.pendingRemoteStream = null;
+    this.iceCandidateQueue = [];
 
-    // Clear remote video
     if (this.remoteVideoRef?.nativeElement) {
       this.remoteVideoRef.nativeElement.srcObject = null;
     }
@@ -502,7 +524,12 @@ export class Videocall implements OnInit, OnDestroy {
   get isRtl(): boolean { return this.translate.currentLang === 'ar'; }
 
   ngOnDestroy() {
+    document.querySelector('app-navbar')?.classList.remove('d-none');
+    document.getElementById('page-footer')?.classList.remove('d-none');
+    document.getElementById('page-content')?.classList.remove('videocall-active');
+
     this.cleanupMedia();
+    this.socket?.emit('leave');
     this.socket?.disconnect();
     clearTimeout(this.typingTimeout);
     clearTimeout(this.confirmTimeout);

@@ -130,7 +130,11 @@
     "START": "Iniciar videollamada",
     "READY": "Listo para conectar...",
     "HIDE_CHAT": "Ocultar chat",
-    "SHOW_CHAT": "Chat"
+    "SHOW_CHAT": "Chat",
+    "MIC_MUTE": "Silenciar",
+    "MIC_UNMUTE": "Activar",
+    "CAM_STOP": "Detener",
+    "CAM_START": "Iniciar"
   },
   "FOOTER": {
     "COPYRIGHT": "Todos los derechos reservados",

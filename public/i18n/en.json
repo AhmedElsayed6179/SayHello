@@ -130,7 +130,11 @@
     "START": "Start Video Call",
     "READY": "Ready to connect...",
     "HIDE_CHAT": "Hide Chat",
-    "SHOW_CHAT": "Chat"
+    "SHOW_CHAT": "Chat",
+    "MIC_MUTE": "Mute",
+    "MIC_UNMUTE": "Unmute",
+    "CAM_STOP": "Stop",
+    "CAM_START": "Start"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",
