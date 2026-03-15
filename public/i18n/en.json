@@ -11,7 +11,15 @@
     "ERROR_PATTERN": "Name can contain letters only, with a single space between words",
     "ERROR_SERVER": "Failed to start chat. Try again later",
     "ERROR_INTERNET": "No internet connection",
-    "ERROR_OK": "OK"
+    "ERROR_OK": "OK",
+    "CHOOSE_MODE": "How do you want to chat?",
+    "CHOOSE_MODE_DESC": "Select your preferred way to connect with a stranger",
+    "TEXT_CHAT": "Text Chat",
+    "TEXT_CHAT_DESC": "Send and receive text messages instantly",
+    "VIDEO_CALL": "Video Call",
+    "VIDEO_CALL_DESC": "Face-to-face video with built-in chat",
+    "FREE": "Classic",
+    "NEW": "New"
   },
   "SECTIONS": {
     "ONE": {
@@ -66,6 +74,16 @@
     "CONFIRM": "Are you sure?",
     "INFO": "Info",
     "RECORD_CANCELED": "Recording was canceled because the other user left the chat"
+  },
+  "VIDEOCALL": {
+    "TITLE": "Video Call",
+    "WELCOME_DESC": "Connect face-to-face with someone new. Camera and microphone access is required.",
+    "CAMERA_PERM": "Camera access",
+    "MIC_PERM": "Microphone access",
+    "START": "Start Video Call",
+    "READY": "Ready to connect...",
+    "HIDE_CHAT": "Hide Chat",
+    "SHOW_CHAT": "Chat"
   },
   "FOOTER": {
     "COPYRIGHT": "All rights reserved",

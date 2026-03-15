@@ -1,0 +1,132 @@
+<div class="videocall-wrapper" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" [class.rtl]="isRtl">
+
+  <!-- ═══════════════ WELCOME SCREEN ═══════════════ -->
+  <div class="vc-welcome" *ngIf="showWelcome">
+    <div class="vc-welcome-card">
+      <div class="vc-welcome-icon">
+        <i class="fas fa-video"></i>
+      </div>
+      <h2>{{ 'VIDEOCALL.TITLE' | translate }}</h2>
+      <p>{{ 'VIDEOCALL.WELCOME_DESC' | translate }}</p>
+      <div class="vc-welcome-perms">
+        <div class="perm-item"><i class="fas fa-camera"></i><span>{{ 'VIDEOCALL.CAMERA_PERM' | translate }}</span></div>
+        <div class="perm-item"><i class="fas fa-microphone"></i><span>{{ 'VIDEOCALL.MIC_PERM' | translate }}</span>
+        </div>
+      </div>
+      <button class="vc-start-btn" (click)="startCall()">
+        <i class="fas fa-play-circle"></i>
+        {{ 'VIDEOCALL.START' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MAIN CALL LAYOUT ═══════════════ -->
+  <div class="vc-main" *ngIf="!showWelcome">
+
+    <!-- ── Video Area ── -->
+    <div class="vc-video-section" [class.chat-open]="isChatOpen">
+
+      <!-- Remote video (big) -->
+      <div class="vc-remote-wrapper">
+        <!-- Black placeholder when no partner -->
+        <div class="vc-remote-placeholder" *ngIf="!remoteStreamActive">
+          <div class="placeholder-content">
+            <div class="placeholder-avatar"><i class="fas fa-user"></i></div>
+            <p *ngIf="waiting">{{ 'CHAT.WAITING' | translate }}</p>
+            <p *ngIf="!waiting && !connected && partnerDisconnected">{{ 'CHAT.PARTNER_LEFT' | translate }}</p>
+            <p *ngIf="!waiting && !connected && !partnerDisconnected">{{ 'VIDEOCALL.READY' | translate }}</p>
+            <div class="waiting-dots" *ngIf="waiting">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+        <video #remoteVideo class="vc-remote-video" [class.visible]="remoteStreamActive" autoplay playsinline></video>
+      </div>
+
+      <!-- Local video (small PiP) -->
+      <div class="vc-local-pip" *ngIf="localVideoReady">
+        <video #localVideo class="vc-local-video" autoplay playsinline muted></video>
+        <div class="pip-mic-off" *ngIf="!isMicOn"><i class="fas fa-microphone-slash"></i></div>
+      </div>
+
+      <!-- Controls bar -->
+      <div class="vc-controls">
+        <button class="vc-ctrl-btn" [class.off]="!isMicOn" (click)="toggleMic()" [title]="isMicOn ? 'Mute' : 'Unmute'">
+          <i class="fas" [ngClass]="isMicOn ? 'fa-microphone' : 'fa-microphone-slash'"></i>
+        </button>
+        <button class="vc-ctrl-btn" [class.off]="!isCameraOn" (click)="toggleCamera()"
+          [title]="isCameraOn ? 'Stop Video' : 'Start Video'">
+          <i class="fas" [ngClass]="isCameraOn ? 'fa-video' : 'fa-video-slash'"></i>
+        </button>
+        <button class="vc-ctrl-btn next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
+          <i class="fas fa-forward" *ngIf="!confirmNext"></i>
+          <i class="fas fa-check" *ngIf="confirmNext"></i>
+          <span>{{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}</span>
+        </button>
+        <button class="vc-ctrl-btn end-btn" [class.confirm]="exitConfirm" (click)="onExitClick()">
+          <i class="fas fa-phone-slash" *ngIf="!exitConfirm"></i>
+          <i class="fas fa-exclamation" *ngIf="exitConfirm"></i>
+          <span>{{ exitConfirm ? confirmText : ('CHAT.STOP' | translate) }}</span>
+        </button>
+        <button class="vc-ctrl-btn chat-toggle-btn" (click)="isChatOpen = !isChatOpen">
+          <i class="fas" [ngClass]="isChatOpen ? 'fa-comment-slash' : 'fa-comment'"></i>
+          <span>{{ isChatOpen ? ('VIDEOCALL.HIDE_CHAT' | translate) : ('VIDEOCALL.SHOW_CHAT' | translate) }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Chat Sidebar ── -->
+    <div class="vc-chat-section" [class.open]="isChatOpen">
+      <div class="vc-chat-header">
+        <i class="fas fa-comments"></i>
+        <span>{{ 'CHAT.TITLE' | translate }}</span>
+        <button class="chat-close-btn" (click)="isChatOpen = false"><i class="fas fa-times"></i></button>
+      </div>
+
+      <!-- Messages -->
+      <div #chatBox class="vc-chat-box">
+        <div *ngFor="let msg of messages" class="vc-msg-wrapper" [ngClass]="{
+            'vc-system-msg': msg.sender === 'system',
+            'vc-msg-right': msg.senderName === myName && msg.sender === 'user',
+            'vc-msg-left': msg.senderName !== myName && msg.sender === 'user'
+          }">
+          <!-- System -->
+          <ng-container *ngIf="msg.sender === 'system'">
+            <div class="vc-system-text">{{ msg.key | translate }}</div>
+          </ng-container>
+
+          <!-- User messages -->
+          <ng-container *ngIf="msg.sender === 'user'">
+            <div class="vc-msg-content">
+              <span class="vc-sender-name">
+                {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName || '') }}
+              </span>
+              <div class="vc-bubble-wrapper">
+                <span class="vc-bubble" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
+                <div class="vc-reaction" *ngIf="msg.reactions && msg.reactions['❤️'] && msg.reactions['❤️'].length">
+                  ❤️ {{ msg.reactions['❤️'].length }}
+                </div>
+              </div>
+              <small class="vc-time">{{ msg.time }}</small>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Typing -->
+        <div *ngIf="isTyping" class="vc-typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="vc-chat-input-wrapper" [class.rtl]="isRtl">
+        <input type="text" class="vc-chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()"
+          (input)="onTyping()" [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
+        <button class="vc-send-btn" (click)="sendMessage()" [disabled]="!connected">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -15,6 +15,8 @@ import { environment } from '../../environments/environment.development';
 export class Home {
   usernameForm: FormGroup;
   sections: any[] = [];
+  showModeSelector = false;
+  private pendingName = '';
 
   constructor(private router: Router, private translate: TranslateService) {
     this.usernameForm = new FormGroup({
@@ -28,36 +30,25 @@ export class Home {
         ]
       })
     });
+
     this.sections = [
       {
         icon: 'fas fa-comments',
         title: 'SECTIONS.ONE.TITLE',
         desc: 'SECTIONS.ONE.DESC',
-        details: [
-          'SECTIONS.ONE.DETAIL1',
-          'SECTIONS.ONE.DETAIL2',
-          'SECTIONS.ONE.DETAIL3'
-        ]
+        details: ['SECTIONS.ONE.DETAIL1', 'SECTIONS.ONE.DETAIL2', 'SECTIONS.ONE.DETAIL3']
       },
       {
         icon: 'fas fa-users',
         title: 'SECTIONS.TWO.TITLE',
         desc: 'SECTIONS.TWO.DESC',
-        details: [
-          'SECTIONS.TWO.DETAIL1',
-          'SECTIONS.TWO.DETAIL2',
-          'SECTIONS.TWO.DETAIL3'
-        ]
+        details: ['SECTIONS.TWO.DETAIL1', 'SECTIONS.TWO.DETAIL2', 'SECTIONS.TWO.DETAIL3']
       },
       {
         icon: 'fas fa-shield-alt',
         title: 'SECTIONS.THREE.TITLE',
         desc: 'SECTIONS.THREE.DESC',
-        details: [
-          'SECTIONS.THREE.DETAIL1',
-          'SECTIONS.THREE.DETAIL2',
-          'SECTIONS.THREE.DETAIL3'
-        ]
+        details: ['SECTIONS.THREE.DETAIL1', 'SECTIONS.THREE.DETAIL2', 'SECTIONS.THREE.DETAIL3']
       }
     ];
   }
@@ -88,12 +79,20 @@ export class Home {
     if (!name) return;
 
     const randomSuffix = Math.floor(100000 + Math.random() * 900000);
-    const uniqueName = `${name}-${randomSuffix}`;
+    this.pendingName = `${name}-${randomSuffix}`;
+
+    // Show mode selector modal instead of going directly
+    this.showModeSelector = true;
+  }
+
+  selectMode(mode: 'chat' | 'video') {
+    this.showModeSelector = false;
+    const name = this.pendingName;
 
     fetch(`${environment.SayHello_Server}/start-chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: uniqueName })
+      body: JSON.stringify({ name })
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to start chat');
@@ -101,10 +100,17 @@ export class Home {
       })
       .then(data => {
         const token = data.token;
-        this.router.navigate(['/chat'], {
-          queryParams: { token },
-          state: { name: uniqueName }
-        });
+        if (mode === 'video') {
+          this.router.navigate(['/videocall'], {
+            queryParams: { token },
+            state: { name }
+          });
+        } else {
+          this.router.navigate(['/chat'], {
+            queryParams: { token },
+            state: { name }
+          });
+        }
       })
       .catch(err => {
         console.error(err);
@@ -115,6 +121,10 @@ export class Home {
           confirmButtonText: this.translate.instant('HOME.ERROR_OK')
         });
       });
+  }
+
+  closeModeSelector() {
+    this.showModeSelector = false;
   }
 
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }

@@ -30,3 +30,37 @@
     </div>
   </section>
 </div>
+
+<!-- Mode Selection Modal Overlay -->
+<div class="mode-overlay" *ngIf="showModeSelector" (click)="closeModeSelector()">
+  <div class="mode-modal" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" (click)="$event.stopPropagation()">
+    <div class="mode-modal-header">
+      <h3>{{ 'HOME.CHOOSE_MODE' | translate }}</h3>
+      <p>{{ 'HOME.CHOOSE_MODE_DESC' | translate }}</p>
+    </div>
+    <div class="mode-options">
+      <!-- Text Chat Option -->
+      <button class="mode-card" (click)="selectMode('chat')">
+        <div class="mode-icon-wrapper chat-icon-wrapper">
+          <i class="fas fa-comments"></i>
+        </div>
+        <h4>{{ 'HOME.TEXT_CHAT' | translate }}</h4>
+        <p>{{ 'HOME.TEXT_CHAT_DESC' | translate }}</p>
+        <span class="mode-badge">{{ 'HOME.FREE' | translate }}</span>
+      </button>
+
+      <!-- Video Call Option -->
+      <button class="mode-card" (click)="selectMode('video')">
+        <div class="mode-icon-wrapper video-icon-wrapper">
+          <i class="fas fa-video"></i>
+        </div>
+        <h4>{{ 'HOME.VIDEO_CALL' | translate }}</h4>
+        <p>{{ 'HOME.VIDEO_CALL_DESC' | translate }}</p>
+        <span class="mode-badge video-badge">{{ 'HOME.NEW' | translate }}</span>
+      </button>
+    </div>
+    <button class="mode-close-btn" (click)="closeModeSelector()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+</div>
