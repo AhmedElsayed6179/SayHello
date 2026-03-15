@@ -183,7 +183,7 @@ export class Videocall implements OnInit, OnDestroy {
     this.socket.emit('join', token);
 
     // ─── Matchmaking ───────────────────────────────────────────────
-    this.socket.on('connected', () => this.zone.run(async () => {
+    this.socket.on('connected', (data: { role: 'initiator' | 'answerer' }) => this.zone.run(async () => {
       this.connected = true;
       this.waiting = false;
       this.partnerDisconnected = false;
@@ -193,16 +193,18 @@ export class Videocall implements OnInit, OnDestroy {
 
       this.addSystemMessage('CHAT.CONNECTED');
 
-      // ✅ الـ Initiator: بنعمل pc ونبعت offer بعد delay بسيط عشان الطرف الثاني يكون جاهز
       await this.createPeerConnection();
-      // delay 300ms عشان الـ Answerer يكون سجّل listener الـ webrtc-offer
-      await new Promise(resolve => setTimeout(resolve, 300));
-      const offer = await this.pc!.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true
-      });
-      await this.pc!.setLocalDescription(offer);
-      this.socket.emit('webrtc-offer', { sdp: offer });
+
+      // ✅ فقط الـ initiator يبعت offer — الـ answerer ينتظر
+      if (data?.role === 'initiator') {
+        await new Promise(resolve => setTimeout(resolve, 300));
+        const offer = await this.pc!.createOffer({
+          offerToReceiveAudio: true,
+          offerToReceiveVideo: true
+        });
+        await this.pc!.setLocalDescription(offer);
+        this.socket.emit('webrtc-offer', { sdp: offer });
+      }
     }));
 
     this.socket.on('waiting', () => this.zone.run(() => {

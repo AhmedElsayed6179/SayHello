@@ -13,32 +13,27 @@
           {{ 'CHAT.WELCOME1' | translate }} {{ getDisplayName(myName) }}!
         </div>
       </div>
-
       <div class="welcome-msg system-msg">
-        <div class="system-text">
-          {{ 'CHAT.WELCOME2' | translate }}
-        </div>
+        <div class="system-text">{{ 'CHAT.WELCOME2' | translate }}</div>
       </div>
-
       <div class="welcome-msg system-msg">
-        <div class="system-text">
-          {{ 'CHAT.WELCOME3' | translate }}
-        </div>
+        <div class="system-text">{{ 'CHAT.WELCOME3' | translate }}</div>
       </div>
     </div>
 
     @if (!showWelcome) {
     <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{
-           'system-msg': msg.sender === 'system',
-           'message-right': msg.senderName === myName && msg.sender === 'user',
-           'message-left': msg.senderName !== myName && msg.sender === 'user'
-         }">
+             'system-msg':    msg.sender === 'system',
+             'message-right': msg.senderName === myName && msg.sender === 'user',
+             'message-left':  msg.senderName !== myName && msg.sender === 'user'
+           }">
 
       <!-- System messages -->
       <ng-container *ngIf="msg.sender === 'system'">
         <div class="system-text">{{ msg.key | translate }}</div>
       </ng-container>
 
+      <!-- Text messages -->
       <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
           <span class="sender-name">
@@ -54,35 +49,28 @@
         </div>
       </ng-container>
 
+      <!-- Voice messages -->
       <ng-container *ngIf="msg.sender === 'user' && msg.audioUrl">
         <div class="voice-message" [ngClass]="msg.senderName === myName ? 'voice-right' : 'voice-left'">
-
           <span class="sender-name">
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
-
           <div class="voice-bubble" style="cursor: pointer; position: relative;"
             (click)="$event.stopPropagation(); reactToMessage(msg, '❤️')">
             <button class="play-btn" (click)="togglePlay(msg); $event.stopPropagation()">
               <i class="fa" [ngClass]="msg.isPlaying ? 'fa-pause' : 'fa-play'"></i>
             </button>
-
             <audio #audio [src]="msg.audioUrl"></audio>
-
             <input type="range" min="0" [max]="msg.duration || 0" [value]="msg.audioRef?.currentTime || 0"
               (input)="seekAudio(msg, $event)" (click)="$event.stopPropagation()" />
-
             <div class="wave" [class.active]="msg.isPlaying">
               <span></span><span></span><span></span><span></span>
             </div>
-
             <span class="voice-counter">{{ msg.remainingTime }}</span>
-
             <div class="reaction" *ngIf="msg.reactions && msg.reactions['❤️'] && msg.reactions['❤️'].length">
               ❤️ {{ msg.reactions['❤️'].length }}
             </div>
           </div>
-
           <small class="voice-time">{{ msg.time }}</small>
         </div>
       </ng-container>
@@ -92,8 +80,6 @@
     <div *ngIf="partnerRecording" class="recording-indicator">
       {{ 'CHAT.PARTNER_RECORDING' | translate }}
     </div>
-
-    <!-- Typing Indicator -->
     <div *ngIf="isTyping" class="typing-indicator">
       {{ 'CHAT.TYPING' | translate }}
     </div>
@@ -101,46 +87,61 @@
 
   <!-- Input & Buttons -->
   <div class="input-wrapper">
+
+    <!-- ── Input Bar ── -->
     <div class="input-inner" [ngClass]="isRtl ? 'rtl' : 'ltr'">
+
+      <!-- Emoji button (shown when not recording, not welcome) -->
+      <button *ngIf="!showWelcome && !isRecording" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">
+        <i class="far fa-smile-wink"></i>
+      </button>
+
+      <!-- Text input -->
       <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
         [disabled]="!connected || isRecording" [placeholder]="
-         isRecording
-           ? ''
-           : (showWelcome
-               ? ('CHAT.WELCOME_PLACEHOLDER' | translate)
-               : ('CHAT.PLACEHOLDER' | translate))
-       " />
-      <button *ngIf="!showWelcome" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()"><i
-          class="far fa-smile-wink"></i></button>
-      @if(!showWelcome){
-      <button class="voice-btn" *ngIf="!isRecording" (click)="onStartVoiceClick()"><i class="fas fa-microphone"></i>
-      </button>
-      }
+          isRecording
+            ? ''
+            : (showWelcome
+                ? ('CHAT.WELCOME_PLACEHOLDER' | translate)
+                : ('CHAT.PLACEHOLDER' | translate))
+        " />
+
+      <!-- Recording controls (cancel, pause, timer) -->
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">
-          <button class="voice-btn cancel-btn" *ngIf="!showWelcome" (click)="cancelRecording()"><i
-              class="fas fa-times"></i></button>
-          <button class="voice-btn pause-btn" *ngIf="!showWelcome" (click)="togglePauseResume()">
+          <button *ngIf="!showWelcome" class="cancel-btn" (click)="cancelRecording()">
+            <i class="fas fa-times"></i>
+          </button>
+          <button *ngIf="!showWelcome" class="pause-btn" (click)="togglePauseResume()">
             <i [class]="isRecordingPaused ? 'fas fa-play' : 'fas fa-pause'"></i>
           </button>
           <span *ngIf="!showWelcome" class="record-timer">{{ recordTime }}</span>
         </div>
       </ng-container>
+
+      <!-- Mic button (when not recording, not welcome) -->
+      <button *ngIf="!showWelcome && !isRecording" class="voice-btn" (click)="onStartVoiceClick()">
+        <i class="fas fa-microphone"></i>
+      </button>
+
+      <!-- Send button (text mode) -->
       <button *ngIf="!showWelcome && !isRecording" class="send-btn" (click)="sendMessage()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
 
+      <!-- Send button (voice mode — stops and sends) -->
       <button *ngIf="isRecording && !showWelcome" class="send-btn" (click)="stopRecording()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
+
     </div>
 
+    <!-- Emoji Picker -->
     <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" [ngStyle]="{
-    'bottom.px': 120,
-    'left.px': isRtl ? null : 3,
-    'right.px': isRtl ? 0 : null
-  }" class="emoji-picker">
-    </emoji-picker>
+      'bottom.px': 120,
+      'left.px':  isRtl ? null : 3,
+      'right.px': isRtl ? 0    : null
+    }" class="emoji-picker"></emoji-picker>
 
     <!-- Action buttons -->
     <div class="action-buttons">
