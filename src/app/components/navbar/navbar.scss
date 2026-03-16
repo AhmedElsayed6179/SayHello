@@ -8,9 +8,9 @@
   direction: ltr !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background: rgba(13, 15, 20, 0.85) !important;
+  background: rgba(13, 15, 20, 0.88) !important;
   border-bottom: 1px solid $dark-border;
-  padding: 0.6rem 1.5rem;
+  padding: 0.65rem 1.5rem;
   transition:
     background 0.4s ease,
     box-shadow 0.4s ease;
@@ -19,8 +19,17 @@
   z-index: 1000;
   box-shadow: 0 2px 32px rgba(0, 0, 0, 0.25);
 
+  // Light mode
+  body:not(.dark-mode) & {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border-bottom: 1px solid $light-border;
+    box-shadow:
+      0 2px 24px rgba(79, 142, 247, 0.1),
+      0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  }
+
   &.light-nav {
-    background: rgba(255, 255, 255, 0.82) !important;
+    background: rgba(255, 255, 255, 0.92) !important;
     border-bottom: 1px solid $light-border;
     box-shadow: 0 2px 24px rgba(79, 142, 247, 0.08);
   }
@@ -49,13 +58,34 @@
   }
 }
 
+// ── Toggler ──────────────────────────
 .navbar-toggler {
-  border: 1px solid $dark-border !important;
   border-radius: 10px !important;
-  padding: 6px 10px;
+  padding: 7px 10px;
+  transition: all 0.2s;
+
+  body.dark-mode & {
+    border: 1px solid $dark-border !important;
+  }
+
+  body:not(.dark-mode) & {
+    border: 1.5px solid rgba(79, 142, 247, 0.3) !important;
+    background: rgba(79, 142, 247, 0.07);
+  }
 
   &:focus {
     box-shadow: 0 0 0 3px $primary-glow;
+  }
+}
+
+// Toggler icon — fix invisible icon in light mode
+.navbar-toggler-icon {
+  body.dark-mode & {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+  }
+
+  body:not(.dark-mode) & {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%234f8ef7' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.5' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
   }
 }
 
@@ -69,8 +99,10 @@
     .btn-lang {
       background: $light-bg-dark;
       color: $light-text;
+      border: 1.5px solid $light-border;
       &:hover {
         background: darken(#eef1f8, 5%);
+        border-color: rgba(79, 142, 247, 0.3);
       }
     }
     .select-arrow {
@@ -82,6 +114,7 @@
     .btn-lang {
       background: $dark-bg-lighter;
       color: $dark-text;
+      border: 1.5px solid $dark-border;
       &:hover {
         background: lighten(#1e2535, 5%);
       }
@@ -195,32 +228,55 @@
   }
 }
 
-// ── Responsive ────────────────────────
+// ═══════════════════════════════════════
+// MOBILE — Professional collapsed menu
+// ═══════════════════════════════════════
 @media (max-width: $mobile) {
   .navbar {
-    padding: 0.5rem 1rem;
+    padding: 0.55rem 1rem;
   }
 
+  // ── Collapsed dropdown panel ──────────
   .navbar-collapse {
-    margin-top: 0.5rem;
+    margin-top: 0.65rem;
     padding: 1rem;
-    border-radius: 16px;
-    background: rgba(13, 15, 20, 0.96);
-    border: 1px solid $dark-border;
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+
+    // Dark mode panel
+    body.dark-mode & {
+      background: rgba(16, 19, 28, 0.97);
+      border: 1px solid $dark-border;
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 1px 0 rgba(255, 255, 255, 0.04) inset;
+    }
+
+    // ✅ Light mode panel — was missing/broken
+    body:not(.dark-mode) & {
+      background: rgba(255, 255, 255, 0.98);
+      border: 1.5px solid rgba(79, 142, 247, 0.18);
+      box-shadow:
+        0 20px 60px rgba(79, 142, 247, 0.15),
+        0 1px 0 rgba(255, 255, 255, 1) inset;
+    }
 
     &.light-nav-collapse {
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255, 255, 255, 0.98);
       border-color: $light-border;
     }
 
     > div {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       width: 100%;
     }
   }
 
+  // ── Full-width items ───────────────────
   .btn-download,
   .btn-theme,
   .btn-like,
@@ -231,11 +287,47 @@
   .btn {
     justify-content: center;
     text-align: center;
-    border-radius: 12px !important;
+    border-radius: 14px !important;
+    padding: 11px 14px !important;
+    font-size: 0.92rem;
   }
 
-  .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  // ── Language dropdown in light mode ───
+  .select-wrapper.light {
+    .btn-lang {
+      background: #f4f6fb;
+      color: #0f172a;
+      border: 1.5px solid rgba(79, 142, 247, 0.2);
+      font-size: 0.92rem;
+      padding: 11px 36px 11px 14px;
+    }
+    .select-arrow {
+      color: #475569;
+    }
+  }
+
+  .select-wrapper.dark {
+    .btn-lang {
+      padding: 11px 36px 11px 14px;
+      font-size: 0.92rem;
+    }
+  }
+
+  // ── Online users badge in light mode ──
+  .btn-like {
+    padding: 11px 14px;
+
+    body:not(.dark-mode) & {
+      background: #f4f6fb !important;
+      color: #0f172a !important;
+      border: 1.5px solid rgba(79, 142, 247, 0.18) !important;
+    }
+  }
+
+  // ── Theme button sizing ─────────────
+  .btn-theme {
+    padding: 10px 14px;
+    font-size: 1.1rem;
   }
 }
 

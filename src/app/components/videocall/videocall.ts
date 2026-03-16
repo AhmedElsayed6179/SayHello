@@ -94,22 +94,53 @@ export class Videocall implements OnInit, OnDestroy {
   async startCall() {
     this.showWelcome = false;
 
+    // ── Adaptive video constraints (mobile vs desktop) ──────────────
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    const videoConstraints: MediaTrackConstraints = isMobile
+      ? {
+        facingMode: 'user',
+        width: { ideal: 1280, min: 640 },
+        height: { ideal: 720, min: 480 },
+        frameRate: { ideal: 30, min: 15 }
+      }
+      : {
+        facingMode: 'user',
+        width: { ideal: 1920, min: 1280 },
+        height: { ideal: 1080, min: 720 },
+        frameRate: { ideal: 30, min: 24 }
+      };
+
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: true
+        video: videoConstraints,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          sampleRate: 48000
+        }
       });
       this.localVideoReady = true;
       this.cd.detectChanges();
       this.attachLocalStream();
     } catch (err) {
-      console.error('Camera error:', err);
-      Swal.fire({
-        icon: 'warning',
-        title: 'Camera Error',
-        text: 'Could not access camera/microphone. Please check permissions.',
-        confirmButtonText: 'OK'
-      });
+      // Fallback: try lower quality if ideal fails
+      try {
+        this.localStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: { echoCancellation: true, noiseSuppression: true }
+        });
+        this.localVideoReady = true;
+        this.cd.detectChanges();
+        this.attachLocalStream();
+      } catch (fallbackErr) {
+        console.error('Camera error:', fallbackErr);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Camera Error',
+          text: 'Could not access camera/microphone. Please check permissions.',
+          confirmButtonText: 'OK'
+        });
+      }
     }
 
     this.connectToServer();
@@ -322,15 +353,30 @@ export class Videocall implements OnInit, OnDestroy {
 
     const config: RTCConfiguration = {
       iceServers,
-      iceCandidatePoolSize: 10
+      iceCandidatePoolSize: 10,
+      bundlePolicy: 'max-bundle',
+      rtcpMuxPolicy: 'require'
     };
 
     this.pc = new RTCPeerConnection(config);
 
-    // ✅ إضافة الـ local tracks
+    // ✅ إضافة الـ local tracks مع ضبط جودة الإرسال
     if (this.localStream) {
       this.localStream.getTracks().forEach(track => {
-        this.pc!.addTrack(track, this.localStream!);
+        const sender = this.pc!.addTrack(track, this.localStream!);
+
+        // ضبط bandwidth للفيديو
+        if (track.kind === 'video') {
+          const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+          const maxBitrate = isMobile ? 1_500_000 : 2_500_000; // 1.5 Mbps mobile / 2.5 Mbps desktop
+          const params = sender.getParameters();
+          if (!params.encodings || params.encodings.length === 0) {
+            params.encodings = [{}];
+          }
+          params.encodings[0].maxBitrate = maxBitrate;
+          params.encodings[0].maxFramerate = 30;
+          sender.setParameters(params).catch(() => { });
+        }
       });
     }
 
