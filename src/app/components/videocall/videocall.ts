@@ -225,11 +225,14 @@ export class Videocall implements OnInit, OnDestroy {
       this.addSystemMessage('CHAT.CONNECTED');
       await this.createPeerConnection();
       if (data?.role === 'initiator') {
-        await new Promise(r => setTimeout(r, 300));
-        const offer = await this.pc!.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
-        await this.pc!.setLocalDescription(offer);
-        this.socket.emit('webrtc-offer', { sdp: offer });
+        // Initiator creates offer — no artificial delay needed since PC is freshly created
+        try {
+          const offer = await this.pc!.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+          await this.pc!.setLocalDescription(offer);
+          this.socket.emit('webrtc-offer', { sdp: offer });
+        } catch (e) { console.error('createOffer error', e); }
       }
+      // Answerer waits for the offer — createPeerConnection() is already done above
     }));
 
     this.socket.on('waiting', () => this.zone.run(() => {
@@ -248,11 +251,20 @@ export class Videocall implements OnInit, OnDestroy {
 
     this.socket.on('webrtc-offer', async (d: { sdp: RTCSessionDescriptionInit }) => {
       await this.zone.run(async () => {
-        await this.createPeerConnection();
-        await this.pc!.setRemoteDescription(new RTCSessionDescription(d.sdp));
-        const ans = await this.pc!.createAnswer();
-        await this.pc!.setLocalDescription(ans);
-        this.socket.emit('webrtc-answer', { sdp: ans });
+        // Answerer already called createPeerConnection() on 'connected' event.
+        // Only create a new PC if we don't have one yet (safety guard).
+        if (!this.pc) await this.createPeerConnection();
+        try {
+          await this.pc!.setRemoteDescription(new RTCSessionDescription(d.sdp));
+          // Flush any ICE candidates that arrived before remoteDescription was set
+          if (this.iceCandidateQueue.length > 0) {
+            const q = [...this.iceCandidateQueue]; this.iceCandidateQueue = [];
+            for (const c of q) { try { await this.pc!.addIceCandidate(new RTCIceCandidate(c)); } catch { } }
+          }
+          const ans = await this.pc!.createAnswer();
+          await this.pc!.setLocalDescription(ans);
+          this.socket.emit('webrtc-answer', { sdp: ans });
+        } catch (e) { console.error('webrtc-offer error', e); }
       });
     });
 
@@ -305,22 +317,48 @@ export class Videocall implements OnInit, OnDestroy {
     this.closePC(); this.iceCandidateQueue = [];
     let iceServers: RTCIceServer[] = [
       { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' }
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun.cloudflare.com:3478' }
     ];
     try {
       const r = await fetch(`${environment.SayHello_Server}/ice-servers`);
       if (r.ok) { const d = await r.json(); if (d.iceServers) iceServers = d.iceServers; }
     } catch { }
     this.pc = new RTCPeerConnection({ iceServers, iceCandidatePoolSize: 10 });
-    if (this.localStream) this.localStream.getTracks().forEach(t => this.pc!.addTrack(t, this.localStream!));
-    this.pc.ontrack = e => { const s = e.streams[0]; if (s) this.zone.run(() => this.attachRemoteStream(s)); };
-    this.pc.onicecandidate = e => { if (e.candidate) this.socket.emit('webrtc-ice', { candidate: e.candidate }); };
+
+    // Add local tracks BEFORE creating offer/answer so they're included in SDP
+    if (this.localStream) {
+      this.localStream.getTracks().forEach(t => this.pc!.addTrack(t, this.localStream!));
+    }
+
+    this.pc.ontrack = e => {
+      const s = e.streams[0] || new MediaStream([e.track]);
+      this.zone.run(() => this.attachRemoteStream(s));
+    };
+
+    this.pc.onicecandidate = e => {
+      if (e.candidate) this.socket.emit('webrtc-ice', { candidate: e.candidate });
+    };
+
     this.pc.onconnectionstatechange = () => {
       this.zone.run(() => {
         const s = this.pc?.connectionState;
-        if (s === 'disconnected' || s === 'failed' || s === 'closed') { this.remoteStreamActive = false; this.cd.detectChanges(); }
+        console.log('[WebRTC] connectionState:', s);
+        if (s === 'connected') {
+          // Stream is flowing — ensure UI reflects this
+          this.cd.detectChanges();
+        }
+        if (s === 'disconnected' || s === 'failed' || s === 'closed') {
+          this.remoteStreamActive = false;
+          this.cd.detectChanges();
+        }
       });
     };
+
+    this.pc.oniceconnectionstatechange = () => {
+      console.log('[WebRTC] iceConnectionState:', this.pc?.iceConnectionState);
+    };
+
     this.pc.onsignalingstatechange = async () => {
       if (this.pc?.signalingState === 'stable' && this.iceCandidateQueue.length > 0) {
         const q = [...this.iceCandidateQueue]; this.iceCandidateQueue = [];

@@ -168,6 +168,9 @@
       'right.px': isRtl ? 0    : null
     }" class="emoji-picker"></emoji-picker>
 
+    <!-- Mobile overlay backdrop — closes picker on tap -->
+    <div *ngIf="showEmoji" class="emoji-overlay" (click)="showEmoji = false"></div>
+
     <div class="action-buttons">
       <button *ngIf="!showWelcome" class="next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
         {{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}

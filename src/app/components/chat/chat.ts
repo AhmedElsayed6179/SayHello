@@ -1,5 +1,5 @@
 import {
-  Component, NgZone, OnInit, OnDestroy,
+  Component, NgZone, OnInit, OnDestroy, HostListener,
   ViewChild, ElementRef, ChangeDetectorRef,
   CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList
 } from '@angular/core';
@@ -76,7 +76,12 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
   }
 
-  startChat() { this.showWelcome = false; this.connectToServer(); }
+  startChat() {
+    this.showWelcome = false;
+    // Push a state so the browser back button triggers popstate instead of leaving the page
+    history.pushState({ chatActive: true }, '');
+    this.connectToServer();
+  }
 
   connectToServer() {
     fetch(`${environment.SayHello_Server}/start-chat`, {
@@ -146,13 +151,28 @@ export class Chat implements OnInit, OnDestroy {
     }));
 
     this.socket.on('newVoice', (msg: any) => this.zone.run(() => {
+      const isOwnMsg = msg.sender === this.myName;
+
+      // Own voice: just upgrade status of existing message (already added in uploadVoice)
+      if (isOwnMsg) {
+        const existing = this.messages.find(m => m.id === msg.id);
+        if (existing) { existing.status = 'sent'; this.cd.detectChanges(); }
+        return;
+      }
+
+      // Partner's voice message
       const chatMsg: ChatMessage = {
         id: msg.id, sender: 'user', senderName: msg.sender,
         audioUrl: msg.url, duration: msg.duration,
         remainingTime: this.formatSeconds(msg.duration), isPlaying: false,
-        time: this.formatTime(msg.time), status: 'sent'
+        time: this.formatTime(msg.time),
+        status: 'sent'
       };
       this.messages.push(chatMsg); this.cd.detectChanges(); this.scrollToBottom();
+
+      // Auto-send seen — we received it
+      this.socket.emit('messageSeen', { messageId: msg.id });
+
       setTimeout(() => {
         const list = this.audioEls.toArray();
         if (!list.length) return;
@@ -275,12 +295,24 @@ export class Chat implements OnInit, OnDestroy {
     const fd = new FormData();
     fd.append('voice', blob, 'voice.webm');
     fd.append('room', (this.socket as any).room);
+    const id = this.generateUniqueId();
+    // Add own message immediately with 'sending' status
+    const ownMsg: any = {
+      id, sender: 'user', senderName: this.myName,
+      audioUrl: '', duration,
+      remainingTime: this.formatSeconds(duration), isPlaying: false,
+      time: this.formatTime(new Date().toISOString()), status: 'sending'
+    };
+    this.messages.push(ownMsg); this.scrollToBottom(); this.cd.detectChanges();
+
     fetch(`${environment.SayHello_Server}/upload-voice`, { method: 'POST', body: fd })
       .then(r => r.json())
       .then(d => {
-        const id = this.generateUniqueId();
+        ownMsg.audioUrl = d.url;
+        ownMsg.status = 'sent';
         this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
         this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
+        this.cd.detectChanges();
       });
   }
 
@@ -351,6 +383,30 @@ export class Chat implements OnInit, OnDestroy {
     this.startRecording();
   }
 
+  // ── Back button (mobile / browser) ────────────
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // Only intercept when chat is active (not on welcome screen)
+    if (this.showWelcome) return;
+
+    Swal.fire({
+      icon: 'warning',
+      title: this.translate.instant('CHAT.CONFIRM'),
+      text: this.translate.instant('CHAT.STOP') + '?',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('HOME.ERROR_OK'),
+      cancelButtonText: this.translate.instant('CHAT.Cancel'),
+      confirmButtonColor: '#f43f5e',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.exitChat();
+      } else {
+        // User cancelled — push state back so back button works again next time
+        history.pushState({ chatActive: true }, '');
+      }
+    });
+  }
+
   onNextClick() {
     if (!this.confirmNext) {
       this.confirmNext = true; clearTimeout(this.confirmTimeout);
@@ -406,5 +462,7 @@ export class Chat implements OnInit, OnDestroy {
     clearTimeout(this.exitTimeout); clearTimeout(this.recordingTimeout);
     clearInterval(this.recordInterval); clearInterval(this.recordingPing);
     this.stopMicStream();
+    // Close any open Swal dialogs to avoid memory leaks on destroy
+    Swal.close();
   }
 }

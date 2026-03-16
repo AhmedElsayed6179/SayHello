@@ -171,6 +171,8 @@
           <i class="fa-solid fa-paper-plane"></i>
         </button>
         <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" class="vc-emoji-picker"></emoji-picker>
+        <!-- Mobile overlay backdrop -->
+        <div *ngIf="showEmoji" class="vc-emoji-overlay" (click)="showEmoji = false"></div>
       </div>
     </div>
 

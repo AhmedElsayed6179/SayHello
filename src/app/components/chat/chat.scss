@@ -796,10 +796,38 @@ input[type='range'] {
     left: auto;
     right: 0;
   }
+
+  .dark-mode & {
+    border-color: $dark-border;
+  }
 }
 
-// Mobile: slide up from bottom of screen
+// Mobile overlay backdrop
+.emoji-overlay {
+  display: none;
+}
+
+// Mobile: slide up from bottom of screen — WhatsApp style
 @media (max-width: 600px) {
+  // dim backdrop
+  .emoji-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 99998;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   .emoji-picker {
     position: fixed !important;
     bottom: 0 !important;
@@ -808,11 +836,80 @@ input[type='range'] {
     top: auto !important;
     width: 100vw !important;
     max-width: 100vw !important;
-    max-height: 50vh !important;
-    border-radius: 20px 20px 0 0 !important;
+    max-height: 55vh !important;
+    border-radius: 22px 22px 0 0 !important;
     border-bottom: none !important;
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.22) !important;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.35) !important;
     z-index: 99999 !important;
+    animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) !important;
+    overflow-y: auto !important;
+    padding-bottom: env(safe-area-inset-bottom, 16px) !important;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  // Close pill handle at top
+  .emoji-picker::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+    margin: 10px auto 4px;
+  }
+
+  .dark-mode .emoji-picker::before {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  // Close (X) button inside picker
+  .emoji-close-btn {
+    display: flex !important;
+  }
+}
+
+// Emoji close button — hidden on desktop, shown on mobile
+.emoji-close-btn {
+  display: none;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  justify-content: flex-end;
+  padding: 6px 12px 2px;
+  background: inherit;
+
+  button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+    transition: background 0.18s;
+
+    .dark-mode & {
+      background: rgba(255, 255, 255, 0.12);
+      color: #eee;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
   }
 }
 
@@ -839,21 +936,56 @@ body.dark-mode {
 // ── Responsive ─────────────────────────────────
 @media (max-width: $mobile) {
   .chat-container {
-    margin: 10px;
-    padding: 1rem;
-    border-radius: 20px;
+    margin: 8px;
+    padding: 0.85rem;
+    border-radius: 18px;
   }
 
   .chat-box {
-    min-height: 300px;
+    min-height: 260px;
+    max-height: 52vh;
+    padding: 14px 12px;
+    gap: 10px;
   }
+
+  .message-content {
+    max-width: 82%;
+  }
+
+  .voice-message {
+    max-width: 82%;
+  }
+
   .bubble-text {
-    max-width: 240px;
+    font-size: 0.9rem;
+    padding: 9px 13px;
+  }
+
+  .voice-bubble {
+    min-width: 170px;
+    padding: 9px 12px;
+    gap: 6px;
+  }
+
+  input[type='range'] {
+    width: 60px;
   }
 
   .action-buttons {
-    flex-direction: column;
     gap: 8px;
+  }
+
+  .next-btn,
+  .exit-btn,
+  .start-btn {
+    padding: 11px 0;
+    font-size: 0.85rem;
+    border-radius: 14px;
+  }
+
+  .input-inner {
+    min-height: 46px;
+    padding: 0 5px;
   }
 
   // emoji picker handled globally above
@@ -933,29 +1065,34 @@ body.dark-mode {
 // On right (own) bubble: white with opacity (readable on gradient bg)
 // On left (partner) bubble: grey
 .tick-sent {
-  color: rgba(255, 255, 255, 0.75); // default: own bubble (gradient) → white
+  color: rgba(255, 255, 255, 0.85); // default: own bubble (gradient) → white
 
   .message-left & {
-    color: rgba(0, 0, 0, 0.35);
+    color: rgba(0, 0, 0, 0.45);
     .dark-mode & {
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.35);
     }
   }
 }
 
 // Voice bubbles
 .voice-right .tick-sent {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
 }
 .voice-left .tick-sent {
-  color: rgba(0, 0, 0, 0.35);
+  color: rgba(0, 0, 0, 0.45);
 }
 .dark-mode .voice-left .tick-sent {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 // Double tick — seen (blue, always visible)
 .tick-seen {
+  color: #29b6f6;
+  filter: drop-shadow(0 0 3px rgba(41, 182, 246, 0.55));
+}
+// On own (right) bubble in light mode — use darker blue so it contrasts on white backgrounds
+.message-right .tick-seen {
   color: #29b6f6;
   filter: drop-shadow(0 0 3px rgba(41, 182, 246, 0.55));
 }
