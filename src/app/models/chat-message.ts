@@ -1,4 +1,5 @@
 export interface ChatMessage {
+  status: string;
   id?: string;
   sender: 'user' | 'system';
 

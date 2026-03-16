@@ -9,9 +9,7 @@
   <div #chatBox class="chat-box">
     <div *ngIf="showWelcome" class="welcome-wrapper text-center">
       <div class="welcome-msg system-msg">
-        <div class="system-text">
-          {{ 'CHAT.WELCOME1' | translate }} {{ getDisplayName(myName) }}!
-        </div>
+        <div class="system-text">{{ 'CHAT.WELCOME1' | translate }} {{ getDisplayName(myName) }}!</div>
       </div>
       <div class="welcome-msg system-msg">
         <div class="system-text">{{ 'CHAT.WELCOME2' | translate }}</div>
@@ -23,10 +21,10 @@
 
     @if (!showWelcome) {
     <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{
-             'system-msg':    msg.sender === 'system',
-             'message-right': msg.senderName === myName && msg.sender === 'user',
-             'message-left':  msg.senderName !== myName && msg.sender === 'user'
-           }">
+          'system-msg':    msg.sender === 'system',
+          'message-right': msg.senderName === myName && msg.sender === 'user',
+          'message-left':  msg.senderName !== myName && msg.sender === 'user'
+        }">
 
       <!-- System messages -->
       <ng-container *ngIf="msg.sender === 'system'">
@@ -45,7 +43,29 @@
               ❤️ {{ msg.reactions['❤️'].length }}
             </div>
           </div>
-          <small class="time-text" style="direction: ltr;">{{ msg.time }}</small>
+          <!-- Time + Status ticks -->
+          <div class="msg-footer">
+            <small class="time-text" style="direction:ltr">{{ msg.time }}</small>
+            <span class="msg-status" *ngIf="msg.senderName === myName">
+              <ng-container *ngIf="msg.status === 'sending'">
+                <i class="fas fa-clock status-sending"></i>
+              </ng-container>
+              <ng-container *ngIf="msg.status === 'sent'">
+                <svg class="tick-icon tick-sent" viewBox="0 0 16 11" fill="none">
+                  <path d="M1 5.5L5.5 10L15 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </ng-container>
+              <ng-container *ngIf="msg.status === 'seen'">
+                <svg class="tick-icon tick-seen" viewBox="0 0 20 11" fill="none">
+                  <path d="M1 5.5L5.5 10L15 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path d="M6 5.5L10.5 10L20 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </ng-container>
+            </span>
+          </div>
         </div>
       </ng-container>
 
@@ -55,14 +75,14 @@
           <span class="sender-name">
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
-          <div class="voice-bubble" style="cursor: pointer; position: relative;"
-            (click)="$event.stopPropagation(); reactToMessage(msg, '❤️')">
-            <button class="play-btn" (click)="togglePlay(msg); $event.stopPropagation()">
+          <div class="voice-bubble" style="cursor:pointer;position:relative;"
+            (click)="$event.stopPropagation(); reactToMessage(msg,'❤️')">
+            <button class="play-btn" (click)="togglePlay(msg);$event.stopPropagation()">
               <i class="fa" [ngClass]="msg.isPlaying ? 'fa-pause' : 'fa-play'"></i>
             </button>
             <audio #audio [src]="msg.audioUrl"></audio>
-            <input type="range" min="0" [max]="msg.duration || 0" [value]="msg.audioRef?.currentTime || 0"
-              (input)="seekAudio(msg, $event)" (click)="$event.stopPropagation()" />
+            <input type="range" min="0" [max]="msg.duration||0" [value]="msg.audioRef?.currentTime||0"
+              (input)="seekAudio(msg,$event)" (click)="$event.stopPropagation()" />
             <div class="wave" [class.active]="msg.isPlaying">
               <span></span><span></span><span></span><span></span>
             </div>
@@ -71,7 +91,29 @@
               ❤️ {{ msg.reactions['❤️'].length }}
             </div>
           </div>
-          <small class="voice-time">{{ msg.time }}</small>
+          <!-- Voice msg footer -->
+          <div class="msg-footer voice-footer">
+            <small class="voice-time">{{ msg.time }}</small>
+            <span class="msg-status" *ngIf="msg.senderName === myName">
+              <ng-container *ngIf="msg.status === 'sending'">
+                <i class="fas fa-clock status-sending"></i>
+              </ng-container>
+              <ng-container *ngIf="msg.status === 'sent'">
+                <svg class="tick-icon tick-sent" viewBox="0 0 16 11" fill="none">
+                  <path d="M1 5.5L5.5 10L15 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </ng-container>
+              <ng-container *ngIf="msg.status === 'seen'">
+                <svg class="tick-icon tick-seen" viewBox="0 0 20 11" fill="none">
+                  <path d="M1 5.5L5.5 10L15 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                  <path d="M6 5.5L10.5 10L20 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </ng-container>
+            </span>
+          </div>
         </div>
       </ng-container>
     </div>
@@ -87,26 +129,16 @@
 
   <!-- Input & Buttons -->
   <div class="input-wrapper">
-
-    <!-- ── Input Bar ── -->
     <div class="input-inner" [ngClass]="isRtl ? 'rtl' : 'ltr'">
 
-      <!-- Emoji button (shown when not recording, not welcome) -->
       <button *ngIf="!showWelcome && !isRecording" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">
         <i class="far fa-smile-wink"></i>
       </button>
 
-      <!-- Text input -->
       <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
-        [disabled]="!connected || isRecording" [placeholder]="
-          isRecording
-            ? ''
-            : (showWelcome
-                ? ('CHAT.WELCOME_PLACEHOLDER' | translate)
-                : ('CHAT.PLACEHOLDER' | translate))
-        " />
+        [disabled]="!connected || isRecording"
+        [placeholder]="isRecording ? '' : (showWelcome ? ('CHAT.WELCOME_PLACEHOLDER'|translate) : ('CHAT.PLACEHOLDER'|translate))" />
 
-      <!-- Recording controls (cancel, pause, timer) -->
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">
           <button *ngIf="!showWelcome" class="cancel-btn" (click)="cancelRecording()">
@@ -119,31 +151,23 @@
         </div>
       </ng-container>
 
-      <!-- Mic button (when not recording, not welcome) -->
       <button *ngIf="!showWelcome && !isRecording" class="voice-btn" (click)="onStartVoiceClick()">
         <i class="fas fa-microphone"></i>
       </button>
-
-      <!-- Send button (text mode) -->
       <button *ngIf="!showWelcome && !isRecording" class="send-btn" (click)="sendMessage()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
-
-      <!-- Send button (voice mode — stops and sends) -->
       <button *ngIf="isRecording && !showWelcome" class="send-btn" (click)="stopRecording()">
         <i class="fa-solid fa-paper-plane"></i>
       </button>
-
     </div>
 
-    <!-- Emoji Picker -->
     <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" [ngStyle]="{
       'bottom.px': 120,
       'left.px':  isRtl ? null : 3,
       'right.px': isRtl ? 0    : null
     }" class="emoji-picker"></emoji-picker>
 
-    <!-- Action buttons -->
     <div class="action-buttons">
       <button *ngIf="!showWelcome" class="next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
         {{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}

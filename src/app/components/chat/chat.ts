@@ -1,4 +1,8 @@
-import { Component, NgZone, OnInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList } from '@angular/core';
+import {
+  Component, NgZone, OnInit, OnDestroy,
+  ViewChild, ElementRef, ChangeDetectorRef,
+  CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -32,7 +36,7 @@ export class Chat implements OnInit, OnDestroy {
   private typingTimeout: any;
   public myName = '';
   showEmoji = false;
-  connectedUsers: number = 0;
+  connectedUsers = 0;
   confirmNext = false;
   private confirmTimeout: any;
   exitConfirm = false;
@@ -55,672 +59,345 @@ export class Chat implements OnInit, OnDestroy {
   private recordStartTime = 0;
   partnerDisconnected = false;
 
-  constructor(private route: ActivatedRoute, private zone: NgZone, private translate: TranslateService, private cd: ChangeDetectorRef, private router: Router, private chatService: ChatService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private zone: NgZone,
+    private translate: TranslateService,
+    private cd: ChangeDetectorRef,
+    private router: Router,
+    private chatService: ChatService
+  ) { }
+
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.token = params['token'];
-    });
-
+    this.route.queryParams.subscribe(p => { this.token = p['token']; });
     this.myName = history.state?.name;
-
-    if (!this.token || !this.myName) {
-      this.router.navigate(['/']);
-      return;
-    }
+    if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
   }
 
-  startChat() {
-    this.showWelcome = false;
-    this.connectToServer();
-  }
+  startChat() { this.showWelcome = false; this.connectToServer(); }
 
   connectToServer() {
     fetch(`${environment.SayHello_Server}/start-chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: this.myName })
     })
-      .then(res => {
-        if (!res.ok) throw new Error('Failed to start chat');
-        return res.json();
-      })
-      .then(data => {
-        const token = data.token;
-        this.initSocket(token);
-      })
-      .catch(err => {
-        console.error(err);
-        Swal.fire('Error', 'Failed to connect', 'error');
-        this.router.navigate(['/']);
-      });
+      .then(r => { if (!r.ok) throw 0; return r.json(); })
+      .then(d => this.initSocket(d.token))
+      .catch(() => { Swal.fire('Error', 'Failed to connect', 'error'); this.router.navigate(['/']); });
   }
 
   initSocket(token: string) {
-    if (this.socket) {
-      this.socket.emit('leave');
-      this.socket.disconnect();
-    }
+    if (this.socket) { this.socket.emit('leave'); this.socket.disconnect(); }
     this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
     this.socket.emit('join', token);
 
     this.socket.on('connected', () => this.zone.run(() => {
-      this.connected = true;
-      this.waiting = false;
-
-      const waitingIndex = this.messages.findIndex(msg => msg.key === 'CHAT.WAITING');
-      if (waitingIndex !== -1) {
-        this.messages.splice(waitingIndex, 1);
-        this.waitingMessageShown = false;
-      }
-
+      this.connected = true; this.waiting = false;
+      const wi = this.messages.findIndex(m => m.key === 'CHAT.WAITING');
+      if (wi !== -1) { this.messages.splice(wi, 1); this.waitingMessageShown = false; }
       this.addSystemMessage('CHAT.CONNECTED');
     }));
 
-    this.socket.on('user_count', (count: number) => this.zone.run(() => {
-      this.connectedUsers = count;
-      this.chatService.connectedUsers$.next(this.connectedUsers);
-      this.cd.detectChanges();
+    this.socket.on('user_count', (c: number) => this.zone.run(() => {
+      this.connectedUsers = c; this.chatService.connectedUsers$.next(c); this.cd.detectChanges();
     }));
 
     this.socket.on('waiting', () => this.zone.run(() => {
-      this.connected = false;
-      this.waiting = true;
-      if (!this.waitingMessageShown) {
-        this.addSystemMessage('CHAT.WAITING');
-        this.waitingMessageShown = true;
-      }
+      this.connected = false; this.waiting = true;
+      if (!this.waitingMessageShown) { this.addSystemMessage('CHAT.WAITING'); this.waitingMessageShown = true; }
     }));
 
     this.socket.on('partner_left', () => this.zone.run(() => {
-      this.connected = false;
-      this.partnerDisconnected = true;
-
+      this.connected = false; this.partnerDisconnected = true;
       if (this.isRecording) {
-        this.isCanceled = true;
-        this.mediaRecorder?.stop();
-        this.stopRecordTimer();
-        this.stopRecordingPing();
-        this.stopMicStream();
-        this.isRecording = false;
-
-        Swal.fire({
-          icon: 'info',
-          title: this.translate.instant('CHAT.INFO'),
-          text: this.translate.instant('CHAT.RECORD_CANCELED'),
-          confirmButtonText: this.translate.instant('HOME.ERROR_OK')
-        });
+        this.isCanceled = true; this.mediaRecorder?.stop();
+        this.stopRecordTimer(); this.stopRecordingPing(); this.stopMicStream(); this.isRecording = false;
+        Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.INFO'), text: this.translate.instant('CHAT.RECORD_CANCELED'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') });
       }
-
-      this.addSystemMessage('CHAT.PARTNER_LEFT');
-      this.cd.detectChanges();
+      this.addSystemMessage('CHAT.PARTNER_LEFT'); this.cd.detectChanges();
     }));
 
-    this.socket.on('newMessage', msg => this.zone.run(() => {
-      const exists = this.messages.find(m => m.id === msg.id);
-      if (!exists) {
+    // ── Incoming messages ──
+    this.socket.on('newMessage', (msg: any) => this.zone.run(() => {
+      if (!this.messages.find(m => m.id === msg.id)) {
         this.messages.push({
-          id: msg.id,
-          sender: 'user',
-          senderName: msg.sender,
-          text: msg.text,
-          time: this.formatTime(msg.time)
+          id: msg.id, sender: 'user', senderName: msg.sender,
+          text: msg.text, time: this.formatTime(msg.time),
+          status: 'sent'  // incoming = delivered to us
         });
+        // Auto-send seen if chat is visible
+        this.socket.emit('messageSeen', { messageId: msg.id });
       }
-      this.scrollToBottom();
-      this.cd.detectChanges();
+      this.scrollToBottom(); this.cd.detectChanges();
+    }));
+
+    // Seen confirmation from partner
+    this.socket.on('messageSeen', (d: { messageId: string }) => this.zone.run(() => {
+      const m = this.messages.find(x => x.id === d.messageId);
+      if (m) { m.status = 'seen'; this.cd.detectChanges(); }
     }));
 
     this.socket.on('typing', () => this.zone.run(() => {
-      this.isTyping = true;
-      this.cd.detectChanges();
-
+      this.isTyping = true; this.cd.detectChanges();
       clearTimeout(this.typingTimeout);
-      this.typingTimeout = setTimeout(() => {
-        this.isTyping = false;
-        this.cd.detectChanges();
-      }, 1000);
+      this.typingTimeout = setTimeout(() => { this.isTyping = false; this.cd.detectChanges(); }, 1000);
     }));
 
-    this.socket.on('newVoice', msg => {
-      this.zone.run(() => {
-
-        const chatMsg: ChatMessage = {
-          id: msg.id,
-          sender: 'user',
-          senderName: msg.sender,
-          audioUrl: msg.url,
-          duration: msg.duration,
-          remainingTime: this.formatSeconds(msg.duration),
-          isPlaying: false,
-          time: this.formatTime(msg.time)
+    this.socket.on('newVoice', (msg: any) => this.zone.run(() => {
+      const chatMsg: ChatMessage = {
+        id: msg.id, sender: 'user', senderName: msg.sender,
+        audioUrl: msg.url, duration: msg.duration,
+        remainingTime: this.formatSeconds(msg.duration), isPlaying: false,
+        time: this.formatTime(msg.time), status: 'sent'
+      };
+      this.messages.push(chatMsg); this.cd.detectChanges(); this.scrollToBottom();
+      setTimeout(() => {
+        const list = this.audioEls.toArray();
+        if (!list.length) return;
+        const last = list[list.length - 1];
+        chatMsg.audioRef = last.nativeElement;
+        chatMsg.audioRef.onended = () => this.zone.run(() => {
+          chatMsg.isPlaying = false;
+          chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
+          chatMsg.audioRef!.currentTime = 0; this.cd.detectChanges();
+        });
+        chatMsg.audioRef.ontimeupdate = () => {
+          const rem = Math.max(chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime), 0);
+          this.zone.run(() => { chatMsg.remainingTime = this.formatSeconds(rem); this.cd.detectChanges(); });
         };
+      }, 50);
+      this.scrollToBottom(); this.cd.detectChanges();
+    }));
 
-        // 🔴 push + detectChanges + scroll
-        this.messages.push(chatMsg);
-        this.cd.detectChanges();
-        this.scrollToBottom();
-
-        setTimeout(() => {
-          const audioList = this.audioEls.toArray();
-          if (!audioList.length) return;
-
-          const lastAudio = audioList[audioList.length - 1];
-          chatMsg.audioRef = lastAudio.nativeElement;
-
-          chatMsg.audioRef.onended = () => {
-            this.zone.run(() => {
-              chatMsg.isPlaying = false;
-              chatMsg.remainingTime = this.formatSeconds(chatMsg.duration!);
-              chatMsg.audioRef!.currentTime = 0;
-              this.cd.detectChanges();
-            });
-          };
-
-          chatMsg.audioRef.ontimeupdate = () => {
-            const remaining =
-              Math.max(
-                chatMsg.duration! - Math.floor(chatMsg.audioRef!.currentTime),
-                0
-              );
-
-            this.zone.run(() => {
-              chatMsg.remainingTime = this.formatSeconds(remaining);
-              this.cd.detectChanges();
-            });
-          };
-
-        }, 50);
-
-        this.scrollToBottom();
-        this.cd.detectChanges();
-      });
-    });
-
-    this.socket.on('partnerRecording', (isRecording: boolean) => {
-      this.zone.run(() => {
-
-        if (isRecording) {
-          this.partnerRecording = true;
-
-          clearTimeout(this.recordingTimeout);
-          this.recordingTimeout = setTimeout(() => {
-            this.partnerRecording = false;
-            this.cd.detectChanges();
-          }, 1500);
-        } else {
-          this.partnerRecording = false;
-          clearTimeout(this.recordingTimeout);
-        }
-
-        this.cd.detectChanges();
-      });
-    });
-
-    this.socket.on('newReaction', data => {
-      const msg = this.messages.find(m => m.id === data.messageId);
-      if (!msg) return;
-
-      msg.reactions = data.reactions;
+    this.socket.on('partnerRecording', (rec: boolean) => this.zone.run(() => {
+      if (rec) {
+        this.partnerRecording = true;
+        clearTimeout(this.recordingTimeout);
+        this.recordingTimeout = setTimeout(() => { this.partnerRecording = false; this.cd.detectChanges(); }, 1500);
+      } else { this.partnerRecording = false; clearTimeout(this.recordingTimeout); }
       this.cd.detectChanges();
+    }));
+
+    this.socket.on('newReaction', (d: any) => {
+      const m = this.messages.find(x => x.id === d.messageId);
+      if (m) { m.reactions = d.reactions; this.cd.detectChanges(); }
     });
   }
 
+  // ── Recording ──────────────────────────────────
   async startRecording() {
     if (!this.connected) return;
-
     if (!this.isMediaRecorderSupported()) {
       Swal.fire({
-        icon: 'warning',
-        title: this.translate.instant('CHAT.Unsupported'),
-        text: this.translate.instant('CHAT.browser'),
-        showCancelButton: true,
-        confirmButtonText: this.translate.instant('HOME.ERROR_OK'),
-        cancelButtonText: this.translate.instant('CHAT.Cancel'),
+        icon: 'warning', title: this.translate.instant('CHAT.Unsupported'), text: this.translate.instant('CHAT.browser'),
+        showCancelButton: true, confirmButtonText: this.translate.instant('HOME.ERROR_OK'), cancelButtonText: this.translate.instant('CHAT.Cancel')
       });
       return;
     }
-
-    this.recordedSeconds = 0;
-    this.recordTime = '0:00';
-    this.audioChunks = [];
-    this.isCanceled = false;
-    this.isRecordingPaused = false;
+    this.recordedSeconds = 0; this.recordTime = '0:00';
+    this.audioChunks = []; this.isCanceled = false; this.isRecordingPaused = false;
     this.cd.detectChanges();
-
-    if (!this.micStream) {
-      this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    }
-
+    if (!this.micStream) this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.mediaRecorder = new MediaRecorder(this.micStream);
-
-    this.mediaRecorder.ondataavailable = e => {
-      if (e.data.size > 0) this.audioChunks.push(e.data);
-    };
-
+    this.mediaRecorder.ondataavailable = e => { if (e.data.size > 0) this.audioChunks.push(e.data); };
     this.mediaRecorder.onstop = () => {
-      this.stopRecordTimer();
-      this.stopRecordingPing();
-      this.socket.emit('stopRecording');
-
-      if (
-        this.partnerDisconnected ||
-        this.isCanceled ||
-        this.audioChunks.length === 0
-      ) {
-        this.audioChunks = [];
-        this.stopMicStream();
-        return;
+      this.stopRecordTimer(); this.stopRecordingPing(); this.socket.emit('stopRecording');
+      if (this.partnerDisconnected || this.isCanceled || this.audioChunks.length === 0) {
+        this.audioChunks = []; this.stopMicStream(); return;
       }
-
       if (!this.isCanceled && this.audioChunks.length > 0) {
-        const audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-        this.uploadVoice(audioBlob, this.recordedSeconds);
+        const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+        this.uploadVoice(blob, this.recordedSeconds);
       }
-
-      this.recordedSeconds = 0;
-      this.recordTime = '0:00';
-      this.audioChunks = [];
-      this.stopMicStream();
-      this.cd.detectChanges();
+      this.recordedSeconds = 0; this.recordTime = '0:00'; this.audioChunks = [];
+      this.stopMicStream(); this.cd.detectChanges();
     };
-
-    this.mediaRecorder.start();
-    this.isRecording = true;
-    this.recordStartTime = Date.now();
-
-    this.startRecordTimer();
-    this.startRecordingPing();
+    this.mediaRecorder.start(); this.isRecording = true; this.recordStartTime = Date.now();
+    this.startRecordTimer(); this.startRecordingPing();
   }
 
   startRecordingPing() {
     this.stopRecordingPing();
-    this.recordingPing = setInterval(() => {
-      if (!this.isRecordingPaused) {
-        this.socket.emit('startRecording');
-      }
-    }, 800);
+    this.recordingPing = setInterval(() => { if (!this.isRecordingPaused) this.socket.emit('startRecording'); }, 800);
   }
-
-  stopRecordingPing() {
-    if (this.recordingPing) {
-      clearInterval(this.recordingPing);
-      this.recordingPing = null;
-    }
-  }
+  stopRecordingPing() { if (this.recordingPing) { clearInterval(this.recordingPing); this.recordingPing = null; } }
 
   cancelRecording() {
     this.stopRecordTimer();
     if (this.isRecording) {
-      this.isCanceled = true;
-      clearInterval(this.recordingPing);
-      this.socket.emit('stopRecording');
-      this.mediaRecorder?.stop();
-      this.stopMicStream();
-      this.isRecording = false;
-      this.cd.detectChanges();
-
-      this.deleteSound.currentTime = 0;
-      this.deleteSound.play().catch(err => console.warn(err));
+      this.isCanceled = true; clearInterval(this.recordingPing);
+      this.socket.emit('stopRecording'); this.mediaRecorder?.stop();
+      this.stopMicStream(); this.isRecording = false; this.cd.detectChanges();
+      this.deleteSound.currentTime = 0; this.deleteSound.play().catch(() => { });
     }
-  }
-
-  getDisplayName(fullName: string | undefined): string {
-    if (!fullName) return '';
-    return fullName.split('-')[0];
   }
 
   stopRecording() {
     if (!this.mediaRecorder || !this.isRecording) return;
-
-    clearInterval(this.recordingPing);
-    this.socket.emit('stopRecording');
-
-    this.mediaRecorder.stop();
-    this.isRecording = false;
-    this.mediaRecorder.stop();
-  }
-
-  togglePlay(msg: ChatMessage) {
-    const audio = msg.audioRef!;
-    if (!audio) return;
-
-    if (msg.isPlaying) {
-      audio.pause();
-      msg.isPlaying = false;
-      return;
-    }
-
-    audio.play();
-    msg.isPlaying = true;
-
-    audio.ontimeupdate = () => {
-      const remaining = Math.max((msg.duration || 0) - Math.floor(audio.currentTime), 0);
-      msg.remainingTime = this.formatSeconds(remaining);
-      this.cd.detectChanges();
-    };
-
-    audio.onended = () => {
-      msg.isPlaying = false;
-      msg.remainingTime = this.formatSeconds(msg.duration || 0);
-      audio.currentTime = 0;
-      this.cd.detectChanges();
-    };
-  }
-
-  formatSeconds(sec: number): string {
-    const m = Math.floor(sec / 60);
-    const s = (sec % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  }
-
-  private stopMicStream() {
-    if (this.micStream) {
-      this.micStream.getTracks().forEach(track => track.stop());
-      this.micStream = null;
-    }
-  }
-
-  uploadVoice(blob: Blob, duration: number) {
-    const formData = new FormData();
-    formData.append('voice', blob, 'voice.webm');
-    formData.append('room', (this.socket as any).room);
-
-    fetch(`${environment.SayHello_Server}/upload-voice`, {
-      method: 'POST',
-      body: formData
-    })
-      .then(res => res.json())
-      .then(data => {
-        const msgId = this.generateUniqueId();
-        this.socket.emit('sendVoice', {
-          id: msgId,
-          url: data.url,
-          duration,
-          room: (this.socket as any).room
-        });
-
-        this.sendSound.currentTime = 0;
-        this.sendSound.play().catch(() => { });
-      });
-  }
-
-  seekAudio(msg: ChatMessage, event: any) {
-    const audio = msg.audioRef;
-    if (!audio) return;
-
-    const value = Number(event.target.value);
-
-    const wasPlaying = msg.isPlaying;
-
-    audio.currentTime = value;
-
-    msg.remainingTime = this.formatSeconds(
-      Math.max((msg.duration || 0) - value, 0)
-    );
-
-    if (wasPlaying && audio.paused) {
-      audio.play();
-    }
-
-    this.cd.detectChanges();
-  }
-
-  onStartVoiceClick() {
-    if (!this.connected) {
-      Swal.fire({
-        icon: 'info',
-        title: this.translate.instant('CHAT.PARTNER'),
-        text: this.translate.instant('CHAT.VOICE_NO_PARTNER'),
-        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
-      });
-      return;
-    }
-
-    this.startRecording();
-  }
-
-  private isMediaRecorderSupported(): boolean {
-    return typeof MediaRecorder !== 'undefined';
-  }
-
-  onOpentoggleEmoji() {
-    if (!this.connected) {
-      Swal.fire({
-        icon: 'info',
-        title: this.translate.instant('CHAT.PARTNER'),
-        text: this.translate.instant('CHAT.EMOJI_NO_PARTNER'),
-        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
-      });
-      return;
-    }
-
-    this.toggleEmoji()
-  }
-
-  startRecordTimer() {
-    clearInterval(this.recordInterval);
-
-    this.recordInterval = setInterval(() => {
-      if (this.isRecordingPaused) return;
-
-      const elapsedMs = Date.now() - this.recordStartTime;
-      this.recordedSeconds = Math.floor(elapsedMs / 1000);
-
-      const mins = Math.floor(this.recordedSeconds / 60);
-      const secs = (this.recordedSeconds % 60).toString().padStart(2, '0');
-
-      this.recordTime = `${mins}:${secs}`;
-      this.cd.detectChanges();
-    }, 200);
-  }
-
-  stopRecordTimer() {
-    clearInterval(this.recordInterval);
-  }
-
-  get confirmText(): string {
-    return this.translate.instant('CHAT.CONFIRM');
-  }
-
-  sendMessage() {
-    if (!this.connected || this.partnerDisconnected) {
-      Swal.fire({
-        icon: 'info',
-        title: this.translate.instant('CHAT.PARTNER'),
-        text: this.translate.instant('CHAT.message_NO_PARTNER'),
-        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
-      });
-      return;
-    }
-
-    const text = this.message.trim();
-    if (!text) {
-      Swal.fire({
-        icon: 'info',
-        title: this.translate.instant('CHAT.Empty_text'),
-        text: this.translate.instant('CHAT.empty_message'),
-        confirmButtonText: this.translate.instant('HOME.ERROR_OK')
-      });
-      return;
-    }
-
-    const chatMsg: ChatMessage = {
-      id: this.generateUniqueId(),
-      sender: 'user',
-      senderName: this.myName,
-      text,
-      time: this.formatTime(new Date().toISOString())
-    };
-
-    this.messages.push(chatMsg);
-    this.socket.emit('sendMessage', { id: chatMsg.id, text });
-
-    this.message = '';
-
-    this.sendSound.currentTime = 0;
-    this.sendSound.play().catch(err => console.warn(err));
-  }
-
-  generateUniqueId(): string {
-    return 'msg-' + Math.random().toString(36).substr(2, 9);
+    clearInterval(this.recordingPing); this.socket.emit('stopRecording');
+    this.mediaRecorder.stop(); this.isRecording = false;
   }
 
   togglePauseResume() {
     if (!this.mediaRecorder) return;
-
     if (this.isRecordingPaused) {
-      // ▶️ Resume
-      this.mediaRecorder.resume();
-      this.isRecordingPaused = false;
-
-      this.startRecordTimer();
-      this.startRecordingPing();
-      this.socket.emit('resumeRecording');
-
+      this.mediaRecorder.resume(); this.isRecordingPaused = false;
+      this.startRecordTimer(); this.startRecordingPing(); this.socket.emit('resumeRecording');
     } else {
-      // ⏸️ Pause
-      this.mediaRecorder.pause();
-      this.isRecordingPaused = true;
-
-      this.stopRecordTimer();
-      this.stopRecordingPing();
-      this.socket.emit('pauseRecording');
+      this.mediaRecorder.pause(); this.isRecordingPaused = true;
+      this.stopRecordTimer(); this.stopRecordingPing(); this.socket.emit('pauseRecording');
     }
+  }
+
+  startRecordTimer() {
+    clearInterval(this.recordInterval);
+    this.recordInterval = setInterval(() => {
+      if (this.isRecordingPaused) return;
+      const ms = Date.now() - this.recordStartTime;
+      this.recordedSeconds = Math.floor(ms / 1000);
+      const m = Math.floor(this.recordedSeconds / 60);
+      const s = (this.recordedSeconds % 60).toString().padStart(2, '0');
+      this.recordTime = `${m}:${s}`; this.cd.detectChanges();
+    }, 200);
+  }
+  stopRecordTimer() { clearInterval(this.recordInterval); }
+
+  private stopMicStream() { if (this.micStream) { this.micStream.getTracks().forEach(t => t.stop()); this.micStream = null; } }
+
+  uploadVoice(blob: Blob, duration: number) {
+    const fd = new FormData();
+    fd.append('voice', blob, 'voice.webm');
+    fd.append('room', (this.socket as any).room);
+    fetch(`${environment.SayHello_Server}/upload-voice`, { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(d => {
+        const id = this.generateUniqueId();
+        this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
+        this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
+      });
+  }
+
+  // ── Messages ──────────────────────────────────
+  sendMessage() {
+    if (!this.connected || this.partnerDisconnected) {
+      Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.PARTNER'), text: this.translate.instant('CHAT.message_NO_PARTNER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') });
+      return;
+    }
+    const text = this.message.trim();
+    if (!text) {
+      Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.Empty_text'), text: this.translate.instant('CHAT.empty_message'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') });
+      return;
+    }
+    const id = this.generateUniqueId();
+    const msg: ChatMessage = { id, sender: 'user', senderName: this.myName, text, time: this.formatTime(new Date().toISOString()), status: 'sending' };
+    this.messages.push(msg);
+    this.socket.emit('sendMessage', { id, text });
+    this.message = '';
+    this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
+    this.scrollToBottom(); this.cd.detectChanges();
+    // upgrade to 'sent' after short delay (server echo)
+    setTimeout(() => { const m = this.messages.find(x => x.id === id); if (m && m.status === 'sending') { m.status = 'sent'; this.cd.detectChanges(); } }, 600);
   }
 
   reactToMessage(msg: ChatMessage, reaction: string) {
     if (!msg.id) return;
     this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName });
   }
-
   toggleReaction(msg: ChatMessage, reaction: string) {
-    const user = this.myName;
-
     if (!msg.reactions) msg.reactions = {};
-
     if (!msg.reactions[reaction]) msg.reactions[reaction] = [];
+    const i = msg.reactions[reaction].indexOf(this.myName);
+    if (i === -1) msg.reactions[reaction].push(this.myName); else msg.reactions[reaction].splice(i, 1);
+    this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName }); this.cd.detectChanges();
+  }
 
-    const idx = msg.reactions[reaction].indexOf(user);
+  onTyping() { if (this.connected) this.socket.emit('typing'); }
 
-    if (idx === -1) {
-      msg.reactions[reaction].push(user);
-    } else {
-      msg.reactions[reaction].splice(idx, 1);
+  togglePlay(msg: ChatMessage) {
+    const a = msg.audioRef!; if (!a) return;
+    if (msg.isPlaying) { a.pause(); msg.isPlaying = false; return; }
+    a.play(); msg.isPlaying = true;
+    a.ontimeupdate = () => { const r = Math.max((msg.duration || 0) - Math.floor(a.currentTime), 0); msg.remainingTime = this.formatSeconds(r); this.cd.detectChanges(); };
+    a.onended = () => { msg.isPlaying = false; msg.remainingTime = this.formatSeconds(msg.duration || 0); a.currentTime = 0; this.cd.detectChanges(); };
+  }
+
+  seekAudio(msg: ChatMessage, event: any) {
+    const a = msg.audioRef; if (!a) return;
+    const v = Number(event.target.value); const was = msg.isPlaying;
+    a.currentTime = v; msg.remainingTime = this.formatSeconds(Math.max((msg.duration || 0) - v, 0));
+    if (was && a.paused) a.play(); this.cd.detectChanges();
+  }
+
+  toggleEmoji() { this.showEmoji = !this.showEmoji; }
+  onOpentoggleEmoji() {
+    if (!this.connected) {
+      Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.PARTNER'), text: this.translate.instant('CHAT.EMOJI_NO_PARTNER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') }); return;
     }
-
-    this.socket.emit('react', {
-      messageId: msg.id,
-      reaction,
-      sender: user
-    });
-
-    this.cd.detectChanges();
+    this.toggleEmoji();
   }
+  onEmojiSelect(event: any) { this.message += event.detail.unicode; this.showEmoji = false; }
 
-  onTyping() {
-    if (this.connected) {
-      this.socket.emit('typing');
+  onStartVoiceClick() {
+    if (!this.connected) {
+      Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.PARTNER'), text: this.translate.instant('CHAT.VOICE_NO_PARTNER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') }); return;
     }
-  }
-
-  toggleEmoji() {
-    this.showEmoji = !this.showEmoji;
-  }
-
-  onEmojiSelect(event: any) {
-    this.message += event.detail.unicode;
-    this.showEmoji = false;
+    this.startRecording();
   }
 
   onNextClick() {
     if (!this.confirmNext) {
-      this.confirmNext = true;
-
-      clearTimeout(this.confirmTimeout);
-      this.confirmTimeout = setTimeout(() => {
-        this.confirmNext = false;
-        this.cd.detectChanges();
-      }, 2000);
-
-      return;
+      this.confirmNext = true; clearTimeout(this.confirmTimeout);
+      this.confirmTimeout = setTimeout(() => { this.confirmNext = false; this.cd.detectChanges(); }, 2000); return;
     }
-
-    this.confirmNext = false;
-    clearTimeout(this.confirmTimeout);
-    this.nextChat();
+    this.confirmNext = false; clearTimeout(this.confirmTimeout); this.nextChat();
   }
-
   onExitClick() {
     if (!this.exitConfirm) {
-      this.exitConfirm = true;
-
-      clearTimeout(this.exitTimeout);
-      this.exitTimeout = setTimeout(() => {
-        this.exitConfirm = false;
-        this.cd.detectChanges();
-      }, 2000);
-
-      return;
+      this.exitConfirm = true; clearTimeout(this.exitTimeout);
+      this.exitTimeout = setTimeout(() => { this.exitConfirm = false; this.cd.detectChanges(); }, 2000); return;
     }
-
-    this.exitConfirm = false;
-    clearTimeout(this.exitTimeout);
-    this.exitChat();
+    this.exitConfirm = false; clearTimeout(this.exitTimeout); this.exitChat();
   }
 
   nextChat() {
     if (!this.socket) return;
-    this.socket.emit('leave');
-    this.socket.disconnect();
-    this.messages = [];
-    this.connected = false;
-    this.waiting = true;
-    this.waitingMessageShown = false;
-    this.cd.detectChanges();
-    this.partnerDisconnected = false;
-
+    this.socket.emit('leave'); this.socket.disconnect();
+    this.messages = []; this.connected = false; this.waiting = true;
+    this.waitingMessageShown = false; this.partnerDisconnected = false; this.cd.detectChanges();
     fetch(`${environment.SayHello_Server}/start-chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: this.myName }) })
-      .then(res => { if (!res.ok) throw new Error('Failed to get new token'); return res.json(); })
-      .then(data => { this.token = data.token; setTimeout(() => this.initSocket(this.token), 500); })
-      .catch(err => { console.error(err); Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_INTERNET'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') }); this.router.navigate(['/']); });
+      .then(r => { if (!r.ok) throw 0; return r.json(); })
+      .then(d => { this.token = d.token; setTimeout(() => this.initSocket(this.token), 500); })
+      .catch(() => { Swal.fire({ icon: 'error', title: this.translate.instant('HOME.ERROR_INTERNET'), text: this.translate.instant('HOME.ERROR_SERVER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') }); this.router.navigate(['/']); });
   }
 
   exitChat() { this.socket?.disconnect(); this.router.navigate(['/']); }
 
+  // ── Helpers ──────────────────────────────────
   private addSystemMessage(key: string) {
-    this.messages.push({ sender: 'system', key });
-    this.scrollToBottom();
-    this.cd.detectChanges();
+    this.messages.push({
+      sender: 'system', key,
+      status: ''
+    }); this.scrollToBottom(); this.cd.detectChanges();
   }
-
-  private scrollToBottom() {
-    setTimeout(() => { if (this.chatBox) this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight; }, 50);
+  private scrollToBottom() { setTimeout(() => { if (this.chatBox) this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight; }, 50); }
+  private formatTime(iso: string): string {
+    const d = new Date(iso); let h = d.getHours(); const m = d.getMinutes(); const ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12; return `${h}:${m < 10 ? '0' + m : m} ${ap}`;
   }
+  formatSeconds(s: number): string { const m = Math.floor(s / 60); const ss = (s % 60).toString().padStart(2, '0'); return `${m}:${ss}`; }
+  generateUniqueId(): string { return 'msg-' + Math.random().toString(36).substr(2, 9); }
+  getDisplayName(n: string | undefined): string { return (n || '').split('-')[0]; }
+  private isMediaRecorderSupported(): boolean { return typeof MediaRecorder !== 'undefined'; }
 
-  private formatTime(isoTime: string): string {
-    const date = new Date(isoTime);
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12;
-    const mins = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${mins} ${ampm}`;
-  }
-
+  get confirmText(): string { return this.translate.instant('CHAT.CONFIRM'); }
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
+  get isRtl(): boolean { return this.translate.currentLang === 'ar'; }
 
   ngOnDestroy() {
     this.socket?.disconnect();
-    clearTimeout(this.typingTimeout);
-    clearTimeout(this.confirmTimeout);
-    clearTimeout(this.exitTimeout);
-    clearTimeout(this.recordingTimeout);
-    clearInterval(this.recordInterval);
-    clearInterval(this.recordingPing);
+    clearTimeout(this.typingTimeout); clearTimeout(this.confirmTimeout);
+    clearTimeout(this.exitTimeout); clearTimeout(this.recordingTimeout);
+    clearInterval(this.recordInterval); clearInterval(this.recordingPing);
     this.stopMicStream();
-  }
-
-  get isRtl(): boolean {
-    return this.translate.currentLang === 'ar';
   }
 }

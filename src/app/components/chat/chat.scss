@@ -837,3 +837,67 @@ body.dark-mode {
     max-height: 50vh !important;
   }
 }
+
+// ══════════════════════════════════════════════
+// Message Status Ticks (WhatsApp-style)
+// ══════════════════════════════════════════════
+.msg-footer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+
+  .message-right & {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+  }
+  .message-left & {
+    justify-content: flex-start;
+  }
+}
+
+.voice-footer {
+  margin-top: 4px;
+}
+
+.msg-status {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.status-sending {
+  font-size: 0.6rem;
+  opacity: 0.45;
+  color: inherit;
+}
+
+.tick-icon {
+  width: 18px;
+  height: 12px;
+  display: block;
+  flex-shrink: 0;
+}
+
+// Single tick — sent (grey/white)
+.tick-sent {
+  .message-right & {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .dark-mode .message-right & {
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .light-mode .message-right & {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+// Double tick — seen (blue)
+.tick-seen {
+  color: #53d0f5;
+  filter: drop-shadow(0 0 2px rgba(83, 208, 245, 0.5));
+
+  .light-mode .message-right & {
+    color: #3ab4e0;
+  }
+}

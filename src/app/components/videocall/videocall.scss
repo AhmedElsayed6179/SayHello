@@ -1,7 +1,6 @@
 // ═══════════════════════════════════════════════
-//  VideoCall Component — Premium Redesign
+//  VideoCall — Premium Redesign v2
 // ═══════════════════════════════════════════════
-
 $vc-primary: #4f8ef7;
 $vc-secondary: #06b6d4;
 $vc-accent: #a78bfa;
@@ -14,7 +13,6 @@ $vc-dark-border: rgba(255, 255, 255, 0.07);
 $vc-dark-text: #e8eaf0;
 $vc-dark-muted: #6b7485;
 $vc-light-bg: #f2f4f8;
-$vc-light-surface: #ffffff;
 $vc-light-card: #ffffff;
 $vc-light-border: #e2e6ef;
 $vc-light-text: #0f172a;
@@ -37,7 +35,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     BlinkMacSystemFont,
     'Segoe UI',
     sans-serif;
-
   &.dark-mode {
     background: $vc-dark-bg;
     color: $vc-dark-text;
@@ -48,7 +45,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 }
 
-// ── Welcome Screen ─────────────────────────────
+// ── Welcome ────────────────────────────────────
 .vc-welcome {
   flex: 1;
   display: flex;
@@ -57,7 +54,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   padding: 2rem;
   animation: vcFadeIn 0.5s ease;
 }
-
 .vc-welcome-card {
   max-width: 440px;
   width: 100%;
@@ -65,30 +61,25 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   padding: 3rem 2.5rem;
   border-radius: 28px;
   backdrop-filter: blur(20px);
-
   .dark-mode & {
     background: $vc-dark-card;
     border: 1px solid $vc-dark-border;
     box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
   }
-
   .light-mode & {
     background: $vc-light-card;
     border: 1px solid $vc-light-border;
     box-shadow: 0 24px 60px rgba(79, 142, 247, 0.12);
   }
-
   h2 {
     font-weight: 800;
     font-size: 1.7rem;
-    letter-spacing: -0.5px;
     margin-bottom: 0.6rem;
     background: $vc-gradient;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
   p {
     font-size: 0.92rem;
     line-height: 1.65;
@@ -101,7 +92,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     }
   }
 }
-
 .vc-welcome-icon {
   width: 84px;
   height: 84px;
@@ -115,7 +105,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   color: #fff;
   box-shadow: 0 8px 28px rgba(79, 142, 247, 0.45);
 }
-
 .vc-welcome-perms {
   display: flex;
   gap: 1rem;
@@ -123,7 +112,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   margin-bottom: 2rem;
   flex-wrap: wrap;
 }
-
 .perm-item {
   display: flex;
   align-items: center;
@@ -131,7 +119,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 0.82rem;
   padding: 6px 14px;
   border-radius: 20px;
-
   .dark-mode & {
     background: rgba(255, 255, 255, 0.06);
     color: $vc-dark-muted;
@@ -140,12 +127,10 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     background: rgba(0, 0, 0, 0.05);
     color: $vc-light-muted;
   }
-
   i {
     color: $vc-primary;
   }
 }
-
 .vc-start-btn {
   width: 100%;
   padding: 14px;
@@ -164,7 +149,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     transform 0.2s,
     box-shadow 0.2s;
   box-shadow: 0 4px 18px rgba(79, 142, 247, 0.4);
-
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 28px rgba(79, 142, 247, 0.5);
@@ -190,21 +174,18 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   overflow: hidden;
   transition: margin 0.3s ease;
   background: #000;
-
   &.chat-open {
     @media (min-width: 769px) {
       margin-right: $vc-chat-width;
     }
   }
 }
-
 .vc-remote-wrapper {
   flex: 1;
   position: relative;
   background: #000;
   overflow: hidden;
 }
-
 .vc-remote-placeholder {
   position: absolute;
   inset: 0;
@@ -214,7 +195,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   background: radial-gradient(ellipse at center, #0d1b3e 0%, #04060c 100%);
   z-index: 1;
 }
-
 .placeholder-content {
   text-align: center;
   color: rgba(255, 255, 255, 0.65);
@@ -224,7 +204,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     opacity: 0.6;
   }
 }
-
 .placeholder-avatar {
   width: 96px;
   height: 96px;
@@ -238,20 +217,17 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 2.4rem;
   color: rgba(79, 142, 247, 0.5);
 }
-
 .waiting-dots {
   display: flex;
   justify-content: center;
   gap: 6px;
   margin-top: 1.2rem;
-
   span {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     background: $vc-primary;
     animation: vcDotBounce 0.9s infinite ease-in-out;
-
     &:nth-child(2) {
       animation-delay: 0.15s;
     }
@@ -260,7 +236,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     }
   }
 }
-
 @keyframes vcDotBounce {
   0%,
   100% {
@@ -273,7 +248,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 }
 
-// ── Remote Video — improved dimensions ─────────
+// ── Remote Video ───────────────────────────────
 .vc-remote-video {
   width: 100%;
   height: 100%;
@@ -282,45 +257,53 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   inset: 0;
   transition: opacity 0.4s ease;
   z-index: 2;
-
-  // Desktop/tablet: cover fills the area naturally
   object-fit: cover;
-
-  // Portrait mobile: contain so the full face is visible
   @media (max-width: 768px) and (orientation: portrait) {
     object-fit: contain;
     background: #000;
   }
-
-  // Landscape mobile: cover works well
-  @media (max-width: 768px) and (orientation: landscape) {
-    object-fit: cover;
-  }
-
   &.visible {
     opacity: 1;
   }
 }
 
-// ── Local PiP ──────────────────────────────────
-// width/height تيجي من [ngStyle] في الـ TS بناءً على الجهاز
+// ══════════════════════════════════════════════
+//  LOCAL PiP — DRAGGABLE (position: fixed)
+// ══════════════════════════════════════════════
 .vc-local-pip {
-  position: absolute;
-  bottom: calc(#{$vc-ctrl-height} + 20px);
-  right: 20px;
+  position: fixed; // fixed so it floats above everything
   border-radius: 18px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-  z-index: 10;
-  cursor: move;
-  transition: box-shadow 0.2s;
+  border: 2.5px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(79, 142, 247, 0.15);
+  z-index: 9999;
+  cursor: grab;
+  touch-action: none; // disable scroll-on-drag on mobile
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
   background: #000;
+  user-select: none;
 
   &:hover {
+    border-color: rgba(79, 142, 247, 0.6);
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.8),
       0 0 0 2px $vc-primary;
+    .pip-overlay {
+      opacity: 1;
+    }
+  }
+
+  &.dragging {
+    cursor: grabbing;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.9),
+      0 0 0 2.5px $vc-primary;
+    border-color: $vc-primary;
+    transform: scale(1.03);
   }
 }
 
@@ -334,20 +317,49 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   display: block;
 }
 
-.pip-mic-off {
+// PiP overlay (drag hint)
+.pip-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45) 0%, transparent 50%);
+  pointer-events: none;
+}
+.pip-drag-handle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 20px;
+  padding: 2px 8px;
+  backdrop-filter: blur(4px);
+}
+
+.pip-mic-off,
+.pip-cam-off {
   position: absolute;
   bottom: 8px;
-  left: 8px;
+  border-radius: 50%;
   width: 26px;
   height: 26px;
-  border-radius: 50%;
-  background: $vc-danger;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.65rem;
   color: #fff;
+}
+.pip-mic-off {
+  left: 8px;
+  background: $vc-danger;
   box-shadow: 0 2px 8px rgba(244, 63, 94, 0.5);
+}
+.pip-cam-off {
+  left: 40px;
+  background: rgba(0, 0, 0, 0.55);
 }
 
 // ── Controls Bar ───────────────────────────────
@@ -382,7 +394,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   backdrop-filter: blur(12px);
   transition: all 0.2s;
   min-width: 60px;
-
   i {
     font-size: 1.1rem;
   }
@@ -391,7 +402,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     white-space: nowrap;
     opacity: 0.8;
   }
-
   &:hover {
     background: rgba(255, 255, 255, 0.22);
     transform: scale(1.05);
@@ -399,91 +409,96 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   &:active {
     transform: scale(0.97);
   }
-
   &.off {
     background: rgba(244, 63, 94, 0.2);
     border-color: rgba(244, 63, 94, 0.2);
     color: lighten($vc-danger, 15%);
   }
-
   &.end-btn {
     background: $vc-danger;
     border-color: $vc-danger;
     padding: 10px 20px;
     box-shadow: 0 4px 16px rgba(244, 63, 94, 0.45);
-
     &:hover {
       background: darken($vc-danger, 8%);
     }
-    &.confirm {
-      animation: vcPulseDanger 0.6s infinite alternate;
-    }
   }
-
   &.next-btn {
-    background: rgba($vc-primary, 0.25);
-    border-color: rgba($vc-primary, 0.2);
-
+    background: rgba(79, 142, 247, 0.2);
+    border-color: rgba(79, 142, 247, 0.3);
     &:hover {
-      background: rgba($vc-primary, 0.4);
+      background: rgba(79, 142, 247, 0.35);
     }
     &.confirm {
-      background: rgba($vc-danger, 0.4);
-      animation: vcPulseDanger 0.6s infinite alternate;
+      background: $vc-success;
+      border-color: $vc-success;
     }
   }
-
+  &.end-btn.confirm {
+    background: #f97316;
+    border-color: #f97316;
+  }
   &.chat-toggle-btn {
-    background: rgba($vc-secondary, 0.2);
-    border-color: rgba($vc-secondary, 0.2);
-
+    position: relative;
     &:hover {
-      background: rgba($vc-secondary, 0.35);
+      background: rgba(255, 255, 255, 0.22);
     }
   }
 }
 
-@keyframes vcPulseDanger {
-  from {
-    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
-  }
-  to {
-    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.65);
-  }
+// ── Unread badge on chat toggle ────────────────
+.chat-btn-inner {
+  position: relative;
+  display: inline-flex;
 }
-
-@keyframes pulse-danger {
+.unread-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: $vc-danger;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.6);
+  animation: badgePop 0.3s cubic-bezier(0.36, 2, 0.6, 1) both;
+}
+@keyframes badgePop {
   from {
-    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+    transform: scale(0);
   }
   to {
-    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.65);
+    transform: scale(1);
   }
 }
 
 // ── Chat Sidebar ───────────────────────────────
 .vc-chat-section {
-  position: fixed;
+  position: absolute;
   top: 0;
   right: 0;
-  bottom: 0;
   width: $vc-chat-width;
+  height: 100%;
   display: flex;
   flex-direction: column;
   z-index: 30;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   .dark-mode & {
     background: $vc-dark-surface;
     border-left: 1px solid $vc-dark-border;
   }
   .light-mode & {
-    background: $vc-light-surface;
+    background: $vc-light-card;
     border-left: 1px solid $vc-light-border;
-    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
   }
-
   &.open {
     transform: translateX(0);
   }
@@ -491,102 +506,86 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   @media (max-width: 768px) {
     width: 100%;
     border-left: none !important;
+    .dark-mode &,
+    .light-mode & {
+      border-left: none;
+    }
   }
 }
-
 .vc-chat-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 1.2rem 1rem;
-  font-weight: 700;
-  font-size: 0.95rem;
+  padding: 16px 18px;
   flex-shrink: 0;
-
   .dark-mode & {
     border-bottom: 1px solid $vc-dark-border;
-    color: $vc-dark-text;
   }
   .light-mode & {
     border-bottom: 1px solid $vc-light-border;
-    color: $vc-light-text;
   }
-
   i {
+    font-size: 1rem;
     color: $vc-primary;
-    font-size: 1.1rem;
   }
   span {
+    font-weight: 700;
+    font-size: 0.95rem;
     flex: 1;
+    .dark-mode & {
+      color: $vc-dark-text;
+    }
+    .light-mode & {
+      color: $vc-light-text;
+    }
   }
 }
-
 .chat-close-btn {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s;
   font-size: 0.85rem;
-  transition: all 0.2s;
-
   .dark-mode & {
-    background: $vc-dark-card;
+    background: rgba(255, 255, 255, 0.07);
     color: $vc-dark-muted;
     &:hover {
-      background: lighten(#161b28, 8%);
+      background: rgba(255, 255, 255, 0.14);
     }
   }
   .light-mode & {
-    background: #f0f0f0;
+    background: rgba(0, 0, 0, 0.06);
     color: $vc-light-muted;
     &:hover {
-      background: #e0e0e0;
+      background: rgba(0, 0, 0, 0.1);
     }
   }
-
-  &:hover {
-    transform: rotate(90deg);
-  }
 }
-
 .vc-chat-box {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   scrollbar-width: thin;
-
   .dark-mode & {
-    scrollbar-color: rgba(79, 142, 247, 0.3) transparent;
+    scrollbar-color: $vc-dark-card transparent;
   }
   .light-mode & {
-    scrollbar-color: rgba(79, 142, 247, 0.3) transparent;
-  }
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background: rgba(79, 142, 247, 0.3);
+    scrollbar-color: #d1d5db transparent;
   }
 }
-
 .vc-msg-wrapper {
   display: flex;
   flex-direction: column;
-  animation: vcMsgIn 0.25s ease;
+  animation: vcMsgIn 0.25s ease both;
 }
-
 @keyframes vcMsgIn {
   from {
     opacity: 0;
@@ -602,14 +601,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   align-items: center;
   margin: 4px 0;
 }
-
 .vc-system-text {
   font-size: 0.75rem;
   font-style: italic;
   text-align: center;
   padding: 3px 10px;
   border-radius: 10px;
-
   .dark-mode & {
     color: $vc-dark-muted;
     background: rgba(255, 255, 255, 0.04);
@@ -619,20 +616,17 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     background: rgba(0, 0, 0, 0.04);
   }
 }
-
 .vc-msg-right {
   align-items: flex-end;
 }
 .vc-msg-left {
   align-items: flex-start;
 }
-
 .vc-msg-content {
   display: flex;
   flex-direction: column;
   max-width: 82%;
 }
-
 .vc-msg-right .vc-msg-content {
   align-items: flex-end;
 }
@@ -644,8 +638,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 0.68rem;
   font-weight: 600;
   margin-bottom: 3px;
-  letter-spacing: 0.2px;
-
   .dark-mode & {
     color: $vc-dark-muted;
   }
@@ -653,12 +645,10 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     color: $vc-light-muted;
   }
 }
-
 .vc-bubble-wrapper {
   position: relative;
   display: inline-block;
 }
-
 .vc-bubble {
   display: inline-block;
   padding: 9px 14px;
@@ -668,22 +658,18 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   cursor: pointer;
   line-height: 1.5;
   transition: filter 0.15s;
-
   &:hover {
     filter: brightness(0.93);
   }
 }
-
 .vc-msg-right .vc-bubble {
   background: linear-gradient(135deg, $vc-primary, $vc-secondary);
   color: #fff;
   border-bottom-right-radius: 5px;
   box-shadow: 0 3px 12px rgba(79, 142, 247, 0.3);
 }
-
 .vc-msg-left .vc-bubble {
   border-bottom-left-radius: 5px;
-
   .dark-mode & {
     background: $vc-dark-card;
     color: $vc-dark-text;
@@ -693,8 +679,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     color: $vc-light-text;
   }
 }
-
-// ── Reactions — ✅ FIXED light mode visibility ──
 .vc-reaction {
   position: absolute;
   bottom: -8px;
@@ -705,22 +689,17 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   line-height: 1.4;
   font-weight: 600;
   white-space: nowrap;
-
   .vc-msg-right & {
     left: -36px;
   }
   .vc-msg-left & {
     right: -36px;
   }
-
-  // Dark mode
   .dark-mode & {
     background: $vc-dark-card;
     color: $vc-dark-text;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
   }
-
-  // ✅ Light mode — was blending into white bubble
   .light-mode & {
     background: #fff;
     color: #0f172a;
@@ -729,11 +708,20 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 }
 
+// ── Message footer (time + ticks) ─────────────
+.vc-msg-footer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  .vc-msg-right & {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+  }
+}
 .vc-time {
   font-size: 0.63rem;
-  margin-top: 3px;
   direction: ltr;
-
   .dark-mode & {
     color: $vc-dark-muted;
   }
@@ -742,6 +730,40 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 }
 
+// ── WhatsApp-style ticks ───────────────────────
+.msg-status {
+  display: inline-flex;
+  align-items: center;
+}
+.status-sending {
+  font-size: 0.6rem;
+  .dark-mode & {
+    color: rgba(255, 255, 255, 0.35);
+  }
+  .light-mode & {
+    color: rgba(0, 0, 0, 0.3);
+  }
+}
+.tick-icon {
+  width: 18px;
+  height: 12px;
+  .vc-msg-right & {
+    display: block;
+  }
+}
+.tick-sent {
+  color: rgba(255, 255, 255, 0.6);
+  .light-mode .vc-msg-right & {
+    color: rgba(0, 0, 0, 0.4);
+  }
+}
+.tick-seen {
+  color: #53d0f5;
+  // seen ticks = bright accent blue
+  filter: drop-shadow(0 0 2px rgba(83, 208, 245, 0.4));
+}
+
+// ── Typing ─────────────────────────────────────
 .vc-typing {
   display: flex;
   align-items: center;
@@ -750,27 +772,23 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   width: fit-content;
   border-radius: 18px;
   border-bottom-left-radius: 4px;
-
   .dark-mode & {
     background: $vc-dark-card;
   }
   .light-mode & {
     background: #eef0f5;
   }
-
   span {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     animation: vcTypingBounce 0.8s infinite ease-in-out;
-
     .dark-mode & {
       background: $vc-dark-muted;
     }
     .light-mode & {
       background: $vc-light-muted;
     }
-
     &:nth-child(2) {
       animation-delay: 0.12s;
     }
@@ -779,7 +797,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     }
   }
 }
-
 @keyframes vcTypingBounce {
   0%,
   100% {
@@ -792,13 +809,13 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 }
 
+// ── Chat Input ────────────────────────────────
 .vc-chat-input-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 14px;
   flex-shrink: 0;
-
   .dark-mode & {
     border-top: 1px solid $vc-dark-border;
   }
@@ -806,7 +823,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     border-top: 1px solid $vc-light-border;
   }
 }
-
 .vc-chat-input {
   flex: 1;
   padding: 10px 16px;
@@ -817,12 +833,10 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   transition:
     border-color 0.2s,
     box-shadow 0.2s;
-
   .dark-mode & {
     background: $vc-dark-card;
     color: $vc-dark-text;
     border-color: $vc-dark-border;
-
     &:focus {
       border-color: $vc-primary;
       box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
@@ -831,12 +845,10 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
       color: $vc-dark-muted;
     }
   }
-
   .light-mode & {
     background: #f4f6fb;
     color: $vc-light-text;
     border-color: $vc-light-border;
-
     &:focus {
       border-color: $vc-primary;
       box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.12);
@@ -845,13 +857,11 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
       color: $vc-light-muted;
     }
   }
-
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 }
-
 .vc-send-btn {
   width: 38px;
   height: 38px;
@@ -867,7 +877,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   flex-shrink: 0;
   box-shadow: 0 3px 10px rgba(79, 142, 247, 0.35);
   transition: all 0.2s;
-
   &:hover {
     transform: scale(1.1);
     box-shadow: 0 5px 16px rgba(79, 142, 247, 0.45);
@@ -878,38 +887,75 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+    transform: none;
   }
 }
 
 // ── RTL ───────────────────────────────────────
 .rtl {
-  .vc-local-pip {
-    right: auto;
-    left: 20px;
-  }
-
   .vc-chat-section {
     right: auto;
     left: 0;
     transform: translateX(-100%);
     border-left: none !important;
-
     .dark-mode & {
       border-right: 1px solid $vc-dark-border;
     }
     .light-mode & {
       border-right: 1px solid $vc-light-border;
     }
-
     &.open {
       transform: translateX(0);
     }
   }
-
   .vc-video-section.chat-open {
     @media (min-width: 769px) {
       margin-right: 0;
       margin-left: $vc-chat-width;
+    }
+  }
+}
+
+// ── Responsive ────────────────────────────────
+@media (max-width: 768px) {
+  .vc-controls {
+    gap: 6px;
+    padding: 0 0.75rem;
+    height: 70px;
+  }
+  .vc-ctrl-btn {
+    min-width: 46px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    span {
+      display: none;
+    }
+  }
+}
+@media (max-width: 480px) {
+  .vc-controls {
+    gap: 5px;
+    padding: 0 0.5rem;
+    height: 64px;
+  }
+  .vc-ctrl-btn {
+    min-width: 40px;
+    padding: 7px 8px;
+    border-radius: 12px;
+    i {
+      font-size: 0.95rem;
+    }
+  }
+}
+@media (max-width: 768px) and (orientation: landscape) {
+  .vc-controls {
+    height: 56px;
+  }
+  .vc-ctrl-btn {
+    min-width: 36px;
+    padding: 5px 7px;
+    i {
+      font-size: 0.85rem;
     }
   }
 }
@@ -925,79 +971,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     transform: translateY(0);
   }
 }
-
-// ════════════════════════════════════════════════
-// RESPONSIVE — Video quality & dimensions
-// ════════════════════════════════════════════════
-
-@media (max-width: 768px) {
-  .vc-controls {
-    gap: 6px;
-    padding: 0 0.75rem;
-    height: 70px;
-  }
-
-  .vc-ctrl-btn {
-    min-width: 46px;
-    padding: 8px 10px;
-    border-radius: 14px;
-    span {
-      display: none;
-    }
-  }
-
-  .vc-local-pip {
-    bottom: calc(70px + 12px);
-    right: 10px;
-    border-radius: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .vc-controls {
-    gap: 5px;
-    padding: 0 0.5rem;
-    height: 64px;
-  }
-
-  .vc-ctrl-btn {
-    min-width: 40px;
-    padding: 7px 8px;
-    border-radius: 12px;
-    i {
-      font-size: 0.95rem;
-    }
-  }
-
-  .vc-local-pip {
-    bottom: calc(64px + 8px);
-    right: 8px;
-    border-radius: 12px;
-    border-width: 1.5px;
-  }
-}
-
-@media (max-width: 768px) and (orientation: landscape) {
-  .vc-controls {
-    height: 56px;
-  }
-
-  .vc-ctrl-btn {
-    min-width: 36px;
-    padding: 5px 7px;
-    i {
-      font-size: 0.85rem;
-    }
-  }
-
-  .vc-local-pip {
-    bottom: calc(56px + 8px);
-    right: 8px;
-    border-radius: 10px;
-  }
-}
-
-// ── Global: body in videocall mode ─────────────
 :host {
   display: block;
   width: 100%;

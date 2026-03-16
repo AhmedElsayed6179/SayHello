@@ -33,13 +33,9 @@
 
       <!-- Remote video -->
       <div class="vc-remote-wrapper">
-
-        <!-- Placeholder -->
         <div class="vc-remote-placeholder" *ngIf="!remoteStreamActive">
           <div class="placeholder-content">
-            <div class="placeholder-avatar">
-              <i class="fas fa-user"></i>
-            </div>
+            <div class="placeholder-avatar"><i class="fas fa-user"></i></div>
             <p *ngIf="waiting">{{ 'CHAT.WAITING' | translate }}</p>
             <p *ngIf="!waiting && partnerDisconnected">{{ 'CHAT.PARTNER_LEFT' | translate }}</p>
             <p *ngIf="!waiting && !partnerDisconnected && !connected">{{ 'VIDEOCALL.READY' | translate }}</p>
@@ -48,51 +44,54 @@
             </div>
           </div>
         </div>
-
-        <!-- Remote video element -->
-        <video #remoteVideo class="vc-remote-video" [class.visible]="remoteStreamActive" autoplay playsinline>
-        </video>
+        <video #remoteVideo class="vc-remote-video" [class.visible]="remoteStreamActive" autoplay playsinline></video>
       </div>
 
-      <!-- Local PiP -->
+      <!-- ── Local PiP — draggable ── -->
       <div class="vc-local-pip" *ngIf="localVideoReady"
-        [ngStyle]="{ width: pipWidth + 'px', height: pipHeight + 'px' }">
+        [ngStyle]="{ width: pipWidth + 'px', height: pipHeight + 'px', left: pipX + 'px', top: pipY + 'px' }"
+        (pointerdown)="onPipPointerDown($event)" [class.dragging]="isDragging">
         <video #localVideo class="vc-local-video" autoplay playsinline muted></video>
+        <!-- pip overlay icons -->
+        <div class="pip-overlay">
+          <div class="pip-drag-handle"><i class="fas fa-grip-lines"></i></div>
+        </div>
         <div class="pip-mic-off" *ngIf="!isMicOn">
           <i class="fas fa-microphone-slash"></i>
+        </div>
+        <div class="pip-cam-off" *ngIf="!isCameraOn">
+          <i class="fas fa-video-slash"></i>
         </div>
       </div>
 
       <!-- Controls bar -->
       <div class="vc-controls">
-
-        <!-- ✅ Mic button - مترجم -->
         <button class="vc-ctrl-btn" [class.off]="!isMicOn" (click)="toggleMic()">
           <i class="fas" [ngClass]="isMicOn ? 'fa-microphone' : 'fa-microphone-slash'"></i>
           <span>{{ isMicOn ? ('VIDEOCALL.MIC_MUTE' | translate) : ('VIDEOCALL.MIC_UNMUTE' | translate) }}</span>
         </button>
 
-        <!-- ✅ Camera button - مترجم -->
         <button class="vc-ctrl-btn" [class.off]="!isCameraOn" (click)="toggleCamera()">
           <i class="fas" [ngClass]="isCameraOn ? 'fa-video' : 'fa-video-slash'"></i>
           <span>{{ isCameraOn ? ('VIDEOCALL.CAM_STOP' | translate) : ('VIDEOCALL.CAM_START' | translate) }}</span>
         </button>
 
-        <!-- Next button -->
         <button class="vc-ctrl-btn next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
           <i class="fas" [ngClass]="confirmNext ? 'fa-check' : 'fa-forward'"></i>
           <span>{{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}</span>
         </button>
 
-        <!-- End call button -->
         <button class="vc-ctrl-btn end-btn" [class.confirm]="exitConfirm" (click)="onExitClick()">
           <i class="fas" [ngClass]="exitConfirm ? 'fa-exclamation' : 'fa-phone-slash'"></i>
           <span>{{ exitConfirm ? confirmText : ('CHAT.STOP' | translate) }}</span>
         </button>
 
-        <!-- Chat toggle button -->
-        <button class="vc-ctrl-btn chat-toggle-btn" (click)="isChatOpen = !isChatOpen">
-          <i class="fas" [ngClass]="isChatOpen ? 'fa-comment-slash' : 'fa-comment'"></i>
+        <!-- Chat toggle with badge -->
+        <button class="vc-ctrl-btn chat-toggle-btn" (click)="toggleChat()">
+          <div class="chat-btn-inner">
+            <i class="fas" [ngClass]="isChatOpen ? 'fa-comment-slash' : 'fa-comment'"></i>
+            <span class="unread-badge" *ngIf="!isChatOpen && unreadCount > 0">{{ unreadCount }}</span>
+          </div>
           <span>{{ isChatOpen ? ('VIDEOCALL.HIDE_CHAT' | translate) : ('VIDEOCALL.SHOW_CHAT' | translate) }}</span>
         </button>
       </div>
@@ -108,7 +107,6 @@
         </button>
       </div>
 
-      <!-- Messages -->
       <div #chatBox class="vc-chat-box">
         <div *ngFor="let msg of messages" class="vc-msg-wrapper" [ngClass]="{
             'vc-system-msg': msg.sender === 'system',
@@ -116,12 +114,10 @@
             'vc-msg-left':  msg.senderName !== myName && msg.sender === 'user'
           }">
 
-          <!-- System messages -->
           <ng-container *ngIf="msg.sender === 'system'">
             <div class="vc-system-text">{{ msg.key | translate }}</div>
           </ng-container>
 
-          <!-- User messages -->
           <ng-container *ngIf="msg.sender === 'user'">
             <div class="vc-msg-content">
               <span class="vc-sender-name">
@@ -133,18 +129,38 @@
                   ❤️ {{ msg.reactions['❤️'].length }}
                 </div>
               </div>
-              <small class="vc-time">{{ msg.time }}</small>
+              <div class="vc-msg-footer">
+                <small class="vc-time">{{ msg.time }}</small>
+                <!-- Message status ticks — only for own messages -->
+                <span class="msg-status" *ngIf="msg.senderName === myName">
+                  <ng-container *ngIf="msg.status === 'sending'">
+                    <i class="fas fa-clock status-sending"></i>
+                  </ng-container>
+                  <ng-container *ngIf="msg.status === 'sent'">
+                    <svg class="tick-icon tick-sent" viewBox="0 0 16 11" fill="none">
+                      <path d="M1 5.5L5.5 10L15 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </ng-container>
+                  <ng-container *ngIf="msg.status === 'seen'">
+                    <svg class="tick-icon tick-seen" viewBox="0 0 20 11" fill="none">
+                      <path d="M1 5.5L5.5 10L15 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                      <path d="M6 5.5L10.5 10L20 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </ng-container>
+                </span>
+              </div>
             </div>
           </ng-container>
         </div>
 
-        <!-- Typing indicator -->
         <div *ngIf="isTyping" class="vc-typing">
           <span></span><span></span><span></span>
         </div>
       </div>
 
-      <!-- Input -->
       <div class="vc-chat-input-wrapper" [class.rtl]="isRtl">
         <input type="text" class="vc-chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()"
           (input)="onTyping()" [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
