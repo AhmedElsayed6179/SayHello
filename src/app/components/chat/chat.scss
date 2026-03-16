@@ -442,47 +442,38 @@ input[type='range'] {
 // ── Reactions ──────────────────────────────────
 .reaction {
   position: absolute;
-  bottom: -13px;
+  bottom: -10px;
   background: #fff;
-  border: 1.5px solid rgba(0, 0, 0, 0.08);
-  border-radius: 20px;
-  padding: 3px 9px 3px 7px;
-  font-size: 0.78rem;
-  font-weight: 700;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 2px 7px;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: #1e293b;
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.14),
-    0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   z-index: 2;
   pointer-events: none;
-  animation: reactionPop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: reactionPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
   white-space: nowrap;
-  backdrop-filter: blur(4px);
 
   .dark-mode & {
-    background: rgba(30, 35, 50, 0.95);
-    border-color: rgba(255, 255, 255, 0.12);
+    background: $dark-bg-lighter;
+    border-color: rgba(255, 255, 255, 0.1);
     color: $dark-text;
-    box-shadow:
-      0 4px 14px rgba(0, 0, 0, 0.45),
-      0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
   }
 }
 
 @keyframes reactionPop {
-  0% {
-    transform: scale(0.3) translateY(4px);
+  from {
+    transform: scale(0.4);
     opacity: 0;
   }
-  70% {
-    transform: scale(1.12) translateY(-1px);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) translateY(0);
+  to {
+    transform: scale(1);
     opacity: 1;
   }
 }
@@ -865,42 +856,34 @@ body.dark-mode {
   }
 }
 
-// ── Voice Sending Overlay ──────────────────────
-.voice-sending-overlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 18px;
-  background: rgba(0, 0, 0, 0.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3;
-  pointer-events: none;
-  color: #fff;
-  font-size: 1.1rem;
+.voice-footer {
+  margin-top: 4px;
+
+  .voice-right & {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+  }
+  .voice-left & {
+    justify-content: flex-start;
+  }
 }
 
-// ── Voice footer ticks ─────────────────────────
-.voice-footer {
-  .msg-status {
-    .tick-sent {
-      .voice-right & {
-        color: rgba(255, 255, 255, 0.65);
-      }
-      .voice-left & {
-        color: rgba(0, 0, 0, 0.4);
-      }
-      .dark-mode .voice-left & {
-        color: rgba(255, 255, 255, 0.4);
-      }
-    }
-    .tick-seen {
-      .voice-right & {
-        color: #53d0f5;
-        filter: drop-shadow(0 0 2px rgba(83, 208, 245, 0.5));
-      }
-    }
-  }
+// Voice tick colours
+.voice-right .tick-sent {
+  color: rgba(255, 255, 255, 0.65);
+}
+.voice-right .tick-seen {
+  color: #53d0f5;
+  filter: drop-shadow(0 0 2px rgba(83, 208, 245, 0.5));
+}
+.voice-left .tick-sent {
+  color: rgba(0, 0, 0, 0.3);
+}
+.dark-mode .voice-left .tick-sent {
+  color: rgba(255, 255, 255, 0.3);
+}
+.voice-left .tick-seen {
+  color: #3ab4e0;
 }
 
 .msg-status {

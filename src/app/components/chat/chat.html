@@ -32,7 +32,7 @@
       </ng-container>
 
       <!-- Text messages -->
-      <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl && msg.duration === undefined">
+      <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
           <span class="sender-name">
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
@@ -70,19 +70,14 @@
       </ng-container>
 
       <!-- Voice messages -->
-      <ng-container *ngIf="msg.sender === 'user' && msg.duration !== undefined">
+      <ng-container *ngIf="msg.sender === 'user' && msg.audioUrl">
         <div class="voice-message" [ngClass]="msg.senderName === myName ? 'voice-right' : 'voice-left'">
           <span class="sender-name">
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
           <div class="voice-bubble" style="cursor:pointer;position:relative;"
             (click)="$event.stopPropagation(); reactToMessage(msg,'❤️')">
-            <!-- Sending overlay -->
-            <div class="voice-sending-overlay" *ngIf="msg.status === 'sending'">
-              <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <button class="play-btn" (click)="togglePlay(msg);$event.stopPropagation()"
-              [disabled]="msg.status === 'sending'">
+            <button class="play-btn" (click)="togglePlay(msg);$event.stopPropagation()">
               <i class="fa" [ngClass]="msg.isPlaying ? 'fa-pause' : 'fa-play'"></i>
             </button>
             <audio #audio [src]="msg.audioUrl"></audio>

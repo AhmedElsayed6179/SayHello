@@ -144,15 +144,19 @@ export class Chat implements OnInit, OnDestroy {
     }));
 
     this.socket.on('newVoice', (msg: any) => this.zone.run(() => {
+      // If this is our own voice echo (already added as local msg), just confirm sent
+      const existing = this.messages.find(m => m.id === msg.id);
+      if (existing) { existing.status = 'sent'; this.cd.detectChanges(); return; }
+
       const chatMsg: ChatMessage = {
         id: msg.id, sender: 'user', senderName: msg.sender,
         audioUrl: msg.url, duration: msg.duration,
         remainingTime: this.formatSeconds(msg.duration), isPlaying: false,
         time: this.formatTime(msg.time), status: 'sent'
       };
-      // Auto-send seen for incoming voice (same as text)
-      this.socket.emit('messageSeen', { messageId: msg.id });
       this.messages.push(chatMsg); this.cd.detectChanges(); this.scrollToBottom();
+      // Auto-send seen for incoming voice
+      this.socket.emit('messageSeen', { messageId: msg.id });
       setTimeout(() => {
         const list = this.audioEls.toArray();
         if (!list.length) return;
@@ -206,13 +210,6 @@ export class Chat implements OnInit, OnDestroy {
       this.stopRecordTimer(); this.stopRecordingPing(); this.socket.emit('stopRecording');
       if (this.partnerDisconnected || this.isCanceled || this.audioChunks.length === 0) {
         this.audioChunks = []; this.stopMicStream(); return;
-      }
-      // ── Block recordings shorter than 1 second ──
-      if (this.recordedSeconds < 1) {
-        this.audioChunks = []; this.recordedSeconds = 0; this.recordTime = '0:00';
-        this.stopMicStream(); this.cd.detectChanges();
-        this.deleteSound.currentTime = 0; this.deleteSound.play().catch(() => { });
-        return;
       }
       if (!this.isCanceled && this.audioChunks.length > 0) {
         const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
@@ -274,44 +271,52 @@ export class Chat implements OnInit, OnDestroy {
   private stopMicStream() { if (this.micStream) { this.micStream.getTracks().forEach(t => t.stop()); this.micStream = null; } }
 
   uploadVoice(blob: Blob, duration: number) {
-    const id = this.generateUniqueId();
-    // Add a local "sending" placeholder immediately
-    const localMsg: ChatMessage = {
-      id, sender: 'user', senderName: this.myName,
-      audioUrl: '', duration, remainingTime: this.formatSeconds(duration),
-      isPlaying: false, time: this.formatTime(new Date().toISOString()), status: 'sending'
-    };
-    this.messages.push(localMsg); this.scrollToBottom(); this.cd.detectChanges();
-
     const fd = new FormData();
     fd.append('voice', blob, 'voice.webm');
     fd.append('room', (this.socket as any).room);
+
+    // Add an optimistic local message with status 'sending'
+    const id = this.generateUniqueId();
+    const localAudioUrl = URL.createObjectURL(blob);
+    const localMsg: ChatMessage = {
+      id, sender: 'user', senderName: this.myName,
+      audioUrl: localAudioUrl, duration,
+      remainingTime: this.formatSeconds(duration), isPlaying: false,
+      time: this.formatTime(new Date().toISOString()), status: 'sending'
+    };
+    this.messages.push(localMsg);
+    this.scrollToBottom(); this.cd.detectChanges();
+
+    // Bind audio element after render
+    setTimeout(() => {
+      const list = this.audioEls.toArray();
+      if (!list.length) return;
+      const last = list[list.length - 1];
+      localMsg.audioRef = last.nativeElement;
+      localMsg.audioRef.onended = () => this.zone.run(() => {
+        localMsg.isPlaying = false;
+        localMsg.remainingTime = this.formatSeconds(localMsg.duration!);
+        localMsg.audioRef!.currentTime = 0; this.cd.detectChanges();
+      });
+      localMsg.audioRef.ontimeupdate = () => {
+        const rem = Math.max(localMsg.duration! - Math.floor(localMsg.audioRef!.currentTime), 0);
+        this.zone.run(() => { localMsg.remainingTime = this.formatSeconds(rem); this.cd.detectChanges(); });
+      };
+    }, 50);
+
     fetch(`${environment.SayHello_Server}/upload-voice`, { method: 'POST', body: fd })
       .then(r => r.json())
       .then(d => {
-        localMsg.audioUrl = d.url;
-        this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
+        // Update status to 'sent' and emit to server
         localMsg.status = 'sent';
+        localMsg.audioUrl = d.url;   // swap blob URL → server URL
+        this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
         this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
         this.cd.detectChanges();
-        // Bind audio element after URL is set
-        setTimeout(() => {
-          const list = this.audioEls.toArray();
-          if (!list.length) return;
-          // find the audio element matching this message
-          const found = list.find(el => el.nativeElement.src === d.url || el.nativeElement.src.endsWith(d.url.split('/').pop()!));
-          const audioEl = found || list[list.length - 1];
-          localMsg.audioRef = audioEl.nativeElement;
-          localMsg.audioRef.onended = () => this.zone.run(() => {
-            localMsg.isPlaying = false;
-            localMsg.remainingTime = this.formatSeconds(localMsg.duration!);
-            localMsg.audioRef!.currentTime = 0; this.cd.detectChanges();
-          });
-          localMsg.audioRef.ontimeupdate = () => {
-            const rem = Math.max(localMsg.duration! - Math.floor(localMsg.audioRef!.currentTime), 0);
-            this.zone.run(() => { localMsg.remainingTime = this.formatSeconds(rem); this.cd.detectChanges(); });
-          };
-        }, 100);
+      })
+      .catch(() => {
+        localMsg.status = 'sent'; // fallback — don't leave stuck on 'sending'
+        this.cd.detectChanges();
       });
   }
 
@@ -373,7 +378,7 @@ export class Chat implements OnInit, OnDestroy {
     }
     this.toggleEmoji();
   }
-  onEmojiSelect(event: any) { this.message += event.detail.unicode; this.showEmoji = false; if (this.connected) this.socket.emit('typing'); }
+  onEmojiSelect(event: any) { this.message += event.detail.unicode; this.showEmoji = false; }
 
   onStartVoiceClick() {
     if (!this.connected) {
