@@ -99,7 +99,8 @@
       color: #0f172a;
       min-height: 100dvh;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     @media(prefers-color-scheme:dark) {
@@ -212,7 +213,7 @@
       align-items: center;
       justify-content: center;
       background: #f8faff;
-      transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+      transition: opacity 0.5s ease-out, visibility 0.5s ease-out, background-color 0.3s ease;
     }
 
     /* Dark mode support for loading screen */
@@ -234,19 +235,20 @@
       padding: 2rem;
     }
 
-    /* Logo Animation */
+    /* Logo Animation - بدون أي border أو border-radius أو shadow */
     .loading-logo {
       width: 120px;
       height: 120px;
       margin: 0 auto 1.5rem;
-      animation: floatLogo 2s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
+      animation: floatLogo 2s ease-in-out infinite;
     }
 
-    /* Logo Image */
+    /* Logo Image - بدون أي تأثيرات */
     .loading-logo img {
       width: 100%;
       height: 100%;
       object-fit: contain;
+      display: block;
     }
 
     /* Name Animation Container */
@@ -261,12 +263,16 @@
       font-weight: 700;
       display: inline-block;
       white-space: nowrap;
-      animation: slideIn 1s ease-out, glow 2s ease-in-out infinite;
-      background: linear-gradient(45deg, #4f8ef7, #9d7bf7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      animation: slideIn 1s ease-out;
+      color: #4f8ef7;
       letter-spacing: 2px;
+    }
+
+    /* Dark mode adjustment for text */
+    @media (prefers-color-scheme: dark) {
+      .animated-text {
+        color: #9d7bf7;
+      }
     }
 
     /* Loading Spinner */
@@ -317,18 +323,6 @@
       }
     }
 
-    @keyframes pulseGlow {
-
-      0%,
-      100% {
-        box-shadow: 0 10px 30px rgba(79, 142, 247, 0.2);
-      }
-
-      50% {
-        box-shadow: 0 20px 40px rgba(79, 142, 247, 0.4);
-      }
-    }
-
     @keyframes slideIn {
       0% {
         transform: translateY(100%);
@@ -338,18 +332,6 @@
       100% {
         transform: translateY(0);
         opacity: 1;
-      }
-    }
-
-    @keyframes glow {
-
-      0%,
-      100% {
-        filter: brightness(1);
-      }
-
-      50% {
-        filter: brightness(1.2);
       }
     }
 
@@ -421,6 +403,7 @@
         padding: 2rem;
         background: #f8faff;
         color: #0f172a;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
 
       @media (prefers-color-scheme: dark) {
@@ -429,10 +412,18 @@
           color: #e8eaf0;
         }
       }
+      
+      /* No border, border-radius, or shadow on the logo */
+      .noscript-msg img {
+        display: block;
+        margin: 0 auto 1rem;
+        width: 80px;
+        height: 80px;
+      }
     </style>
     <div class="noscript-msg">
       <div>
-        <img src="SayHello.png" alt="SayHello" width="80" height="80" style="margin-bottom:1rem;border-radius:16px">
+        <img src="SayHello.png" alt="SayHello">
         <p style="font-size:1.1rem;font-weight:600">JavaScript is required to use SayHello.</p>
         <p style="margin-top:.5rem;opacity:.7">Please enable JavaScript in your browser settings and refresh the page.
         </p>
