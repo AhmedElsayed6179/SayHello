@@ -146,23 +146,13 @@ export class Chat implements OnInit, OnDestroy {
     }));
 
     this.socket.on('newVoice', (msg: any) => this.zone.run(() => {
-      // If this is our own voice message echoed back → upgrade to 'sent'
-      if (msg.sender === this.myName) {
-        const own = this.messages.find(m => m.id === msg.id);
-        if (own) { own.status = 'sent'; this.cd.detectChanges(); }
-        return;
-      }
-      // Partner's voice message — add it and immediately send seen
       const chatMsg: ChatMessage = {
         id: msg.id, sender: 'user', senderName: msg.sender,
         audioUrl: msg.url, duration: msg.duration,
         remainingTime: this.formatSeconds(msg.duration), isPlaying: false,
         time: this.formatTime(msg.time), status: 'sent'
       };
-      this.messages.push(chatMsg);
-      // Auto-seen: voice arrived = chat is open = seen immediately
-      if (msg.id) this.socket.emit('messageSeen', { messageId: msg.id });
-      this.cd.detectChanges(); this.scrollToBottom();
+      this.messages.push(chatMsg); this.cd.detectChanges(); this.scrollToBottom();
       setTimeout(() => {
         const list = this.audioEls.toArray();
         if (!list.length) return;
@@ -282,53 +272,15 @@ export class Chat implements OnInit, OnDestroy {
   private stopMicStream() { if (this.micStream) { this.micStream.getTracks().forEach(t => t.stop()); this.micStream = null; } }
 
   uploadVoice(blob: Blob, duration: number) {
-    const id = this.generateUniqueId();
-    // Add optimistic message immediately with 'sending' status
-    const optimistic: ChatMessage = {
-      id, sender: 'user', senderName: this.myName,
-      audioUrl: URL.createObjectURL(blob),
-      duration, remainingTime: this.formatSeconds(duration),
-      isPlaying: false,
-      time: this.formatTime(new Date().toISOString()),
-      status: 'sending'
-    };
-    this.messages.push(optimistic);
-    this.scrollToBottom(); this.cd.detectChanges();
-
-    // Attach audio ref after DOM update
-    setTimeout(() => {
-      const list = this.audioEls.toArray();
-      if (!list.length) return;
-      const last = list[list.length - 1];
-      optimistic.audioRef = last.nativeElement;
-      optimistic.audioRef.onended = () => this.zone.run(() => {
-        optimistic.isPlaying = false;
-        optimistic.remainingTime = this.formatSeconds(optimistic.duration!);
-        optimistic.audioRef!.currentTime = 0; this.cd.detectChanges();
-      });
-      optimistic.audioRef.ontimeupdate = () => {
-        const rem = Math.max(optimistic.duration! - Math.floor(optimistic.audioRef!.currentTime), 0);
-        this.zone.run(() => { optimistic.remainingTime = this.formatSeconds(rem); this.cd.detectChanges(); });
-      };
-    }, 80);
-
     const fd = new FormData();
     fd.append('voice', blob, 'voice.webm');
     fd.append('room', (this.socket as any).room);
     fetch(`${environment.SayHello_Server}/upload-voice`, { method: 'POST', body: fd })
       .then(r => r.json())
       .then(d => {
-        // Replace blob URL with server URL
-        optimistic.audioUrl = d.url;
+        const id = this.generateUniqueId();
         this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
         this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
-        this.cd.detectChanges();
-      })
-      .catch(() => {
-        // Remove optimistic on failure
-        const idx = this.messages.findIndex(m => m.id === id);
-        if (idx !== -1) this.messages.splice(idx, 1);
-        this.cd.detectChanges();
       });
   }
 
