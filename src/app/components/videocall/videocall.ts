@@ -29,9 +29,10 @@ interface ChatMessage {
   styleUrls: ['./videocall.scss']
 })
 export class Videocall implements OnInit, OnDestroy {
-  @ViewChild('localVideo') localVideoRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('localVideo')  localVideoRef!:  ElementRef<HTMLVideoElement>;
   @ViewChild('remoteVideo') remoteVideoRef!: ElementRef<HTMLVideoElement>;
-  @ViewChild('chatBox') chatBoxRef!: ElementRef;
+  @ViewChild('chatBox')     chatBoxRef!:     ElementRef;
+  @ViewChild('localPip')    localPipRef!:    ElementRef<HTMLDivElement>;
 
   socket!: Socket;
   token = '';
@@ -61,7 +62,18 @@ export class Videocall implements OnInit, OnDestroy {
   private pendingRemoteStream: MediaStream | null = null;
 
   // UI
-  isChatOpen = true;
+  isChatOpen = false;
+
+  // ── PiP drag state ────────────────────────────
+  readonly isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  pipPos  = { right: 20, bottom: 100 }; // default position (px from edges)
+  private isDragging  = false;
+  private dragOffsetX = 0;
+  private dragOffsetY = 0;
+  private boundMouseMove!: (e: MouseEvent) => void;
+  private boundMouseUp!:   (e: MouseEvent) => void;
+  private boundTouchMove!: (e: TouchEvent) => void;
+  private boundTouchEnd!:  (e: TouchEvent) => void;
 
   constructor(
     private route: ActivatedRoute,
@@ -94,53 +106,22 @@ export class Videocall implements OnInit, OnDestroy {
   async startCall() {
     this.showWelcome = false;
 
-    // ── Adaptive video constraints (mobile vs desktop) ──────────────
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    const videoConstraints: MediaTrackConstraints = isMobile
-      ? {
-        facingMode: 'user',
-        width: { ideal: 1280, min: 640 },
-        height: { ideal: 720, min: 480 },
-        frameRate: { ideal: 30, min: 15 }
-      }
-      : {
-        facingMode: 'user',
-        width: { ideal: 1920, min: 1280 },
-        height: { ideal: 1080, min: 720 },
-        frameRate: { ideal: 30, min: 24 }
-      };
-
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          sampleRate: 48000
-        }
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: true
       });
       this.localVideoReady = true;
       this.cd.detectChanges();
       this.attachLocalStream();
     } catch (err) {
-      // Fallback: try lower quality if ideal fails
-      try {
-        this.localStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
-          audio: { echoCancellation: true, noiseSuppression: true }
-        });
-        this.localVideoReady = true;
-        this.cd.detectChanges();
-        this.attachLocalStream();
-      } catch (fallbackErr) {
-        console.error('Camera error:', fallbackErr);
-        Swal.fire({
-          icon: 'warning',
-          title: 'Camera Error',
-          text: 'Could not access camera/microphone. Please check permissions.',
-          confirmButtonText: 'OK'
-        });
-      }
+      console.error('Camera error:', err);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Camera Error',
+        text: 'Could not access camera/microphone. Please check permissions.',
+        confirmButtonText: 'OK'
+      });
     }
 
     this.connectToServer();
@@ -353,30 +334,15 @@ export class Videocall implements OnInit, OnDestroy {
 
     const config: RTCConfiguration = {
       iceServers,
-      iceCandidatePoolSize: 10,
-      bundlePolicy: 'max-bundle',
-      rtcpMuxPolicy: 'require'
+      iceCandidatePoolSize: 10
     };
 
     this.pc = new RTCPeerConnection(config);
 
-    // ✅ إضافة الـ local tracks مع ضبط جودة الإرسال
+    // ✅ إضافة الـ local tracks
     if (this.localStream) {
       this.localStream.getTracks().forEach(track => {
-        const sender = this.pc!.addTrack(track, this.localStream!);
-
-        // ضبط bandwidth للفيديو
-        if (track.kind === 'video') {
-          const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-          const maxBitrate = isMobile ? 1_500_000 : 2_500_000; // 1.5 Mbps mobile / 2.5 Mbps desktop
-          const params = sender.getParameters();
-          if (!params.encodings || params.encodings.length === 0) {
-            params.encodings = [{}];
-          }
-          params.encodings[0].maxBitrate = maxBitrate;
-          params.encodings[0].maxFramerate = 30;
-          sender.setParameters(params).catch(() => { });
-        }
+        this.pc!.addTrack(track, this.localStream!);
       });
     }
 
@@ -590,6 +556,123 @@ export class Videocall implements OnInit, OnDestroy {
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
   get isRtl(): boolean { return this.translate.currentLang === 'ar'; }
 
+  // ─── PiP Drag (Mouse + Touch) ─────────────────────────────────────
+
+  /** يُحسب حجم الـ PiP حسب نوع الجهاز */
+  get pipSize(): { width: number; height: number } {
+    const landscape = window.innerWidth > window.innerHeight;
+    if (this.isMobile) {
+      return landscape
+        ? { width: 128, height: 72  }   // landscape → 16:9
+        : { width: 90,  height: 120 };  // portrait  → 3:4
+    }
+    return { width: 120, height: 160 }; // desktop   → 3:4
+  }
+
+  /** style binding للـ PiP div */
+  get pipStyle(): Record<string, string> {
+    const { width, height } = this.pipSize;
+    return {
+      position: 'absolute',
+      width:    width  + 'px',
+      height:   height + 'px',
+      right:    this.pipPos.right  + 'px',
+      bottom:   this.pipPos.bottom + 'px',
+      left:     'auto',
+      top:      'auto',
+      cursor:   this.isDragging ? 'grabbing' : 'grab',
+      transition: this.isDragging ? 'none' : 'box-shadow 0.2s, width 0.3s, height 0.3s'
+    };
+  }
+
+  onPipMouseDown(e: MouseEvent) {
+    e.preventDefault();
+    this.startDrag(e.clientX, e.clientY);
+    this.boundMouseMove = (ev: MouseEvent) => this.onDragMove(ev.clientX, ev.clientY);
+    this.boundMouseUp   = () => this.stopDrag();
+    document.addEventListener('mousemove', this.boundMouseMove);
+    document.addEventListener('mouseup',   this.boundMouseUp);
+  }
+
+  onPipTouchStart(e: TouchEvent) {
+    if (e.touches.length !== 1) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    this.startDrag(t.clientX, t.clientY);
+    this.boundTouchMove = (ev: TouchEvent) => {
+      if (ev.touches.length) this.onDragMove(ev.touches[0].clientX, ev.touches[0].clientY);
+    };
+    this.boundTouchEnd = () => this.stopDrag();
+    document.addEventListener('touchmove', this.boundTouchMove, { passive: false });
+    document.addEventListener('touchend',  this.boundTouchEnd);
+  }
+
+  private startDrag(clientX: number, clientY: number) {
+    this.isDragging = true;
+    const pip = this.localPipRef?.nativeElement;
+    if (!pip) return;
+    const rect = pip.getBoundingClientRect();
+    // offset من الزاوية السفلية اليمنى لأننا بنستخدم right/bottom
+    this.dragOffsetX = window.innerWidth  - clientX - (window.innerWidth  - rect.right);
+    this.dragOffsetY = window.innerHeight - clientY - (window.innerHeight - rect.bottom);
+  }
+
+  private onDragMove(clientX: number, clientY: number) {
+    if (!this.isDragging) return;
+    const { width, height } = this.pipSize;
+    const margin = 8;
+    let right  = window.innerWidth  - clientX - this.dragOffsetX;
+    let bottom = window.innerHeight - clientY - this.dragOffsetY;
+
+    // حدود الشاشة
+    right  = Math.max(margin, Math.min(right,  window.innerWidth  - width  - margin));
+    bottom = Math.max(margin, Math.min(bottom, window.innerHeight - height - margin));
+
+    this.zone.run(() => {
+      this.pipPos = { right, bottom };
+      this.cd.detectChanges();
+    });
+  }
+
+  private stopDrag() {
+    if (!this.isDragging) return;
+    this.isDragging = false;
+
+    // Snap لأقرب corner
+    this.zone.run(() => {
+      this.snapToNearestCorner();
+      this.cd.detectChanges();
+    });
+
+    document.removeEventListener('mousemove', this.boundMouseMove);
+    document.removeEventListener('mouseup',   this.boundMouseUp);
+    document.removeEventListener('touchmove', this.boundTouchMove);
+    document.removeEventListener('touchend',  this.boundTouchEnd);
+  }
+
+  private snapToNearestCorner() {
+    const { width, height } = this.pipSize;
+    const margin  = 16;
+    const ctrlH   = this.isMobile ? 70 : 80; // ارتفاع شريط الأزرار
+    const corners = [
+      { right: margin,                              bottom: ctrlH + margin },          // bottom-right
+      { right: window.innerWidth - width - margin,  bottom: ctrlH + margin },          // bottom-left
+      { right: margin,                              bottom: window.innerHeight - height - margin }, // top-right
+      { right: window.innerWidth - width - margin,  bottom: window.innerHeight - height - margin } // top-left
+    ];
+
+    // أقرب corner للموضع الحالي
+    let best = corners[0];
+    let bestDist = Infinity;
+    for (const c of corners) {
+      const dx = c.right  - this.pipPos.right;
+      const dy = c.bottom - this.pipPos.bottom;
+      const d  = dx * dx + dy * dy;
+      if (d < bestDist) { bestDist = d; best = c; }
+    }
+    this.pipPos = best;
+  }
+
   ngOnDestroy() {
     document.querySelector('app-navbar')?.classList.remove('d-none');
     document.getElementById('page-footer')?.classList.remove('d-none');
@@ -602,5 +685,10 @@ export class Videocall implements OnInit, OnDestroy {
     clearTimeout(this.typingTimeout);
     clearTimeout(this.confirmTimeout);
     clearTimeout(this.exitTimeout);
+
+    if (this.boundMouseMove) document.removeEventListener('mousemove', this.boundMouseMove);
+    if (this.boundMouseUp)   document.removeEventListener('mouseup',   this.boundMouseUp);
+    if (this.boundTouchMove) document.removeEventListener('touchmove', this.boundTouchMove);
+    if (this.boundTouchEnd)  document.removeEventListener('touchend',  this.boundTouchEnd);
   }
 }

@@ -93,8 +93,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     font-size: 0.92rem;
     line-height: 1.65;
     margin-bottom: 2rem;
-    .dark-mode & { color: $vc-dark-muted; }
-    .light-mode & { color: $vc-light-muted; }
+    .dark-mode & {
+      color: $vc-dark-muted;
+    }
+    .light-mode & {
+      color: $vc-light-muted;
+    }
   }
 }
 
@@ -128,10 +132,18 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   padding: 6px 14px;
   border-radius: 20px;
 
-  .dark-mode & { background: rgba(255, 255, 255, 0.06); color: $vc-dark-muted; }
-  .light-mode & { background: rgba(0, 0, 0, 0.05); color: $vc-light-muted; }
+  .dark-mode & {
+    background: rgba(255, 255, 255, 0.06);
+    color: $vc-dark-muted;
+  }
+  .light-mode & {
+    background: rgba(0, 0, 0, 0.05);
+    color: $vc-light-muted;
+  }
 
-  i { color: $vc-primary; }
+  i {
+    color: $vc-primary;
+  }
 }
 
 .vc-start-btn {
@@ -148,11 +160,18 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   box-shadow: 0 4px 18px rgba(79, 142, 247, 0.4);
 
-  &:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(79, 142, 247, 0.5); }
-  &:active { transform: translateY(0); }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(79, 142, 247, 0.5);
+  }
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 // ── Main Layout ────────────────────────────────
@@ -233,14 +252,25 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     background: $vc-primary;
     animation: vcDotBounce 0.9s infinite ease-in-out;
 
-    &:nth-child(2) { animation-delay: 0.15s; }
-    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.3s;
+    }
   }
 }
 
 @keyframes vcDotBounce {
-  0%, 100% { transform: scale(0.6); opacity: 0.3; }
-  50%       { transform: scale(1.2); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
 }
 
 // ── Remote Video — improved dimensions ─────────
@@ -267,36 +297,60 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     object-fit: cover;
   }
 
-  &.visible { opacity: 1; }
+  &.visible {
+    opacity: 1;
+  }
 }
 
-// ── Local PiP ──────────────────────────────────
+// ── Local PiP — drag-enabled ───────────────────
 .vc-local-pip {
-  position: absolute;
-  bottom: calc(#{$vc-ctrl-height} + 20px);
-  right: 20px;
-  // Desktop: 9:16 portrait ratio
-  width: 140px;
-  height: 210px;
+  // position/size/bottom/right come from [ngStyle] binding in TS
+  position: absolute !important;
   border-radius: 18px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   z-index: 10;
-  cursor: move;
-  transition: box-shadow 0.2s;
+  background: #000;
+  user-select: none;
+  touch-action: none; // prevent scroll while dragging on touch
 
   &:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px $vc-primary;
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.8),
+      0 0 0 2px $vc-primary;
   }
+
+  // snap transition handled via [ngStyle] in TS
 }
 
 .vc-local-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: #111;
+  object-position: center top;
+  background: #000;
   transform: scaleX(-1);
+  display: block;
+  pointer-events: none;
+}
+
+// ── drag hint icon (shows on hover) ────────────
+.pip-drag-hint {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.65rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+
+  .vc-local-pip:hover & {
+    opacity: 1;
+  }
 }
 
 .pip-mic-off {
@@ -348,11 +402,22 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   transition: all 0.2s;
   min-width: 60px;
 
-  i { font-size: 1.1rem; }
-  span { font-size: 0.62rem; white-space: nowrap; opacity: 0.8; }
+  i {
+    font-size: 1.1rem;
+  }
+  span {
+    font-size: 0.62rem;
+    white-space: nowrap;
+    opacity: 0.8;
+  }
 
-  &:hover { background: rgba(255, 255, 255, 0.22); transform: scale(1.05); }
-  &:active { transform: scale(0.97); }
+  &:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: scale(1.05);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
 
   &.off {
     background: rgba(244, 63, 94, 0.2);
@@ -366,15 +431,21 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     padding: 10px 20px;
     box-shadow: 0 4px 16px rgba(244, 63, 94, 0.45);
 
-    &:hover { background: darken($vc-danger, 8%); }
-    &.confirm { animation: vcPulseDanger 0.6s infinite alternate; }
+    &:hover {
+      background: darken($vc-danger, 8%);
+    }
+    &.confirm {
+      animation: vcPulseDanger 0.6s infinite alternate;
+    }
   }
 
   &.next-btn {
     background: rgba($vc-primary, 0.25);
     border-color: rgba($vc-primary, 0.2);
 
-    &:hover { background: rgba($vc-primary, 0.4); }
+    &:hover {
+      background: rgba($vc-primary, 0.4);
+    }
     &.confirm {
       background: rgba($vc-danger, 0.4);
       animation: vcPulseDanger 0.6s infinite alternate;
@@ -385,18 +456,28 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     background: rgba($vc-secondary, 0.2);
     border-color: rgba($vc-secondary, 0.2);
 
-    &:hover { background: rgba($vc-secondary, 0.35); }
+    &:hover {
+      background: rgba($vc-secondary, 0.35);
+    }
   }
 }
 
 @keyframes vcPulseDanger {
-  from { box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); }
-  to   { box-shadow: 0 8px 24px rgba(244, 63, 94, 0.65); }
+  from {
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+  }
+  to {
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.65);
+  }
 }
 
 @keyframes pulse-danger {
-  from { box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3); }
-  to   { box-shadow: 0 8px 24px rgba(244, 63, 94, 0.65); }
+  from {
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+  }
+  to {
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.65);
+  }
 }
 
 // ── Chat Sidebar ───────────────────────────────
@@ -422,7 +503,9 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
   }
 
-  &.open { transform: translateX(0); }
+  &.open {
+    transform: translateX(0);
+  }
 
   @media (max-width: 768px) {
     width: 100%;
@@ -439,11 +522,22 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 0.95rem;
   flex-shrink: 0;
 
-  .dark-mode & { border-bottom: 1px solid $vc-dark-border; color: $vc-dark-text; }
-  .light-mode & { border-bottom: 1px solid $vc-light-border; color: $vc-light-text; }
+  .dark-mode & {
+    border-bottom: 1px solid $vc-dark-border;
+    color: $vc-dark-text;
+  }
+  .light-mode & {
+    border-bottom: 1px solid $vc-light-border;
+    color: $vc-light-text;
+  }
 
-  i { color: $vc-primary; font-size: 1.1rem; }
-  span { flex: 1; }
+  i {
+    color: $vc-primary;
+    font-size: 1.1rem;
+  }
+  span {
+    flex: 1;
+  }
 }
 
 .chat-close-btn {
@@ -458,10 +552,24 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 0.85rem;
   transition: all 0.2s;
 
-  .dark-mode & { background: $vc-dark-card; color: $vc-dark-muted; &:hover { background: lighten(#161b28, 8%); } }
-  .light-mode & { background: #f0f0f0; color: $vc-light-muted; &:hover { background: #e0e0e0; } }
+  .dark-mode & {
+    background: $vc-dark-card;
+    color: $vc-dark-muted;
+    &:hover {
+      background: lighten(#161b28, 8%);
+    }
+  }
+  .light-mode & {
+    background: #f0f0f0;
+    color: $vc-light-muted;
+    &:hover {
+      background: #e0e0e0;
+    }
+  }
 
-  &:hover { transform: rotate(90deg); }
+  &:hover {
+    transform: rotate(90deg);
+  }
 }
 
 .vc-chat-box {
@@ -473,12 +581,23 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   gap: 8px;
   scrollbar-width: thin;
 
-  .dark-mode & { scrollbar-color: rgba(79, 142, 247, 0.3) transparent; }
-  .light-mode & { scrollbar-color: rgba(79, 142, 247, 0.3) transparent; }
+  .dark-mode & {
+    scrollbar-color: rgba(79, 142, 247, 0.3) transparent;
+  }
+  .light-mode & {
+    scrollbar-color: rgba(79, 142, 247, 0.3) transparent;
+  }
 
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-track { background: transparent; }
-  &::-webkit-scrollbar-thumb { border-radius: 4px; background: rgba(79, 142, 247, 0.3); }
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: rgba(79, 142, 247, 0.3);
+  }
 }
 
 .vc-msg-wrapper {
@@ -488,11 +607,20 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 }
 
 @keyframes vcMsgIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.vc-system-msg { align-items: center; margin: 4px 0; }
+.vc-system-msg {
+  align-items: center;
+  margin: 4px 0;
+}
 
 .vc-system-text {
   font-size: 0.75rem;
@@ -501,12 +629,22 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   padding: 3px 10px;
   border-radius: 10px;
 
-  .dark-mode & { color: $vc-dark-muted; background: rgba(255, 255, 255, 0.04); }
-  .light-mode & { color: $vc-light-muted; background: rgba(0, 0, 0, 0.04); }
+  .dark-mode & {
+    color: $vc-dark-muted;
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .light-mode & {
+    color: $vc-light-muted;
+    background: rgba(0, 0, 0, 0.04);
+  }
 }
 
-.vc-msg-right { align-items: flex-end; }
-.vc-msg-left  { align-items: flex-start; }
+.vc-msg-right {
+  align-items: flex-end;
+}
+.vc-msg-left {
+  align-items: flex-start;
+}
 
 .vc-msg-content {
   display: flex;
@@ -514,8 +652,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   max-width: 82%;
 }
 
-.vc-msg-right .vc-msg-content { align-items: flex-end; }
-.vc-msg-left  .vc-msg-content { align-items: flex-start; }
+.vc-msg-right .vc-msg-content {
+  align-items: flex-end;
+}
+.vc-msg-left .vc-msg-content {
+  align-items: flex-start;
+}
 
 .vc-sender-name {
   font-size: 0.68rem;
@@ -523,8 +665,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   margin-bottom: 3px;
   letter-spacing: 0.2px;
 
-  .dark-mode & { color: $vc-dark-muted; }
-  .light-mode & { color: $vc-light-muted; }
+  .dark-mode & {
+    color: $vc-dark-muted;
+  }
+  .light-mode & {
+    color: $vc-light-muted;
+  }
 }
 
 .vc-bubble-wrapper {
@@ -542,7 +688,9 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   line-height: 1.5;
   transition: filter 0.15s;
 
-  &:hover { filter: brightness(0.93); }
+  &:hover {
+    filter: brightness(0.93);
+  }
 }
 
 .vc-msg-right .vc-bubble {
@@ -555,8 +703,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 .vc-msg-left .vc-bubble {
   border-bottom-left-radius: 5px;
 
-  .dark-mode & { background: $vc-dark-card; color: $vc-dark-text; }
-  .light-mode & { background: #eef0f5; color: $vc-light-text; }
+  .dark-mode & {
+    background: $vc-dark-card;
+    color: $vc-dark-text;
+  }
+  .light-mode & {
+    background: #eef0f5;
+    color: $vc-light-text;
+  }
 }
 
 // ── Reactions — ✅ FIXED light mode visibility ──
@@ -571,8 +725,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-weight: 600;
   white-space: nowrap;
 
-  .vc-msg-right & { left: -36px; }
-  .vc-msg-left  & { right: -36px; }
+  .vc-msg-right & {
+    left: -36px;
+  }
+  .vc-msg-left & {
+    right: -36px;
+  }
 
   // Dark mode
   .dark-mode & {
@@ -595,8 +753,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   margin-top: 3px;
   direction: ltr;
 
-  .dark-mode & { color: $vc-dark-muted; }
-  .light-mode & { color: $vc-light-muted; }
+  .dark-mode & {
+    color: $vc-dark-muted;
+  }
+  .light-mode & {
+    color: $vc-light-muted;
+  }
 }
 
 .vc-typing {
@@ -608,8 +770,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   border-radius: 18px;
   border-bottom-left-radius: 4px;
 
-  .dark-mode & { background: $vc-dark-card; }
-  .light-mode & { background: #eef0f5; }
+  .dark-mode & {
+    background: $vc-dark-card;
+  }
+  .light-mode & {
+    background: #eef0f5;
+  }
 
   span {
     width: 6px;
@@ -617,17 +783,32 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     border-radius: 50%;
     animation: vcTypingBounce 0.8s infinite ease-in-out;
 
-    .dark-mode & { background: $vc-dark-muted; }
-    .light-mode & { background: $vc-light-muted; }
+    .dark-mode & {
+      background: $vc-dark-muted;
+    }
+    .light-mode & {
+      background: $vc-light-muted;
+    }
 
-    &:nth-child(2) { animation-delay: 0.12s; }
-    &:nth-child(3) { animation-delay: 0.24s; }
+    &:nth-child(2) {
+      animation-delay: 0.12s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.24s;
+    }
   }
 }
 
 @keyframes vcTypingBounce {
-  0%, 100% { transform: translateY(0); opacity: 0.4; }
-  50%       { transform: translateY(-5px); opacity: 1; }
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
 }
 
 .vc-chat-input-wrapper {
@@ -637,8 +818,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   padding: 12px 14px;
   flex-shrink: 0;
 
-  .dark-mode & { border-top: 1px solid $vc-dark-border; }
-  .light-mode & { border-top: 1px solid $vc-light-border; }
+  .dark-mode & {
+    border-top: 1px solid $vc-dark-border;
+  }
+  .light-mode & {
+    border-top: 1px solid $vc-light-border;
+  }
 }
 
 .vc-chat-input {
@@ -648,15 +833,22 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   border: 1.5px solid transparent;
   font-size: 0.88rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 
   .dark-mode & {
     background: $vc-dark-card;
     color: $vc-dark-text;
     border-color: $vc-dark-border;
 
-    &:focus { border-color: $vc-primary; box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15); }
-    &::placeholder { color: $vc-dark-muted; }
+    &:focus {
+      border-color: $vc-primary;
+      box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.15);
+    }
+    &::placeholder {
+      color: $vc-dark-muted;
+    }
   }
 
   .light-mode & {
@@ -664,11 +856,19 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     color: $vc-light-text;
     border-color: $vc-light-border;
 
-    &:focus { border-color: $vc-primary; box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.12); }
-    &::placeholder { color: $vc-light-muted; }
+    &:focus {
+      border-color: $vc-primary;
+      box-shadow: 0 0 0 3px rgba(79, 142, 247, 0.12);
+    }
+    &::placeholder {
+      color: $vc-light-muted;
+    }
   }
 
-  &:disabled { opacity: 0.5; cursor: not-allowed; }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .vc-send-btn {
@@ -687,14 +887,25 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   box-shadow: 0 3px 10px rgba(79, 142, 247, 0.35);
   transition: all 0.2s;
 
-  &:hover { transform: scale(1.1); box-shadow: 0 5px 16px rgba(79, 142, 247, 0.45); }
-  &:active { transform: scale(0.93); }
-  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 16px rgba(79, 142, 247, 0.45);
+  }
+  &:active {
+    transform: scale(0.93);
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 // ── RTL ───────────────────────────────────────
 .rtl {
-  .vc-local-pip { right: auto; left: 20px; }
+  .vc-local-pip {
+    right: auto;
+    left: 20px;
+  }
 
   .vc-chat-section {
     right: auto;
@@ -702,10 +913,16 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     transform: translateX(-100%);
     border-left: none !important;
 
-    .dark-mode & { border-right: 1px solid $vc-dark-border; }
-    .light-mode & { border-right: 1px solid $vc-light-border; }
+    .dark-mode & {
+      border-right: 1px solid $vc-dark-border;
+    }
+    .light-mode & {
+      border-right: 1px solid $vc-light-border;
+    }
 
-    &.open { transform: translateX(0); }
+    &.open {
+      transform: translateX(0);
+    }
   }
 
   .vc-video-section.chat-open {
@@ -718,8 +935,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 
 // ── Animations ────────────────────────────────
 @keyframes vcFadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // ════════════════════════════════════════════════
@@ -738,16 +961,9 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     min-width: 46px;
     padding: 8px 10px;
     border-radius: 14px;
-    span { display: none; }
-  }
-
-  .vc-local-pip {
-    // ✅ 9:16 portrait ratio on mobile
-    width: 80px;
-    height: 120px;
-    bottom: calc(70px + 10px);
-    right: 10px;
-    border-radius: 14px;
+    span {
+      display: none;
+    }
   }
 }
 
@@ -763,30 +979,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     min-width: 40px;
     padding: 7px 8px;
     border-radius: 12px;
-    i { font-size: 0.95rem; }
-  }
-
-  .vc-local-pip {
-    width: 72px;
-    height: 108px;  // 3:2 portrait
-    bottom: calc(64px + 8px);
-    right: 8px;
-    border-radius: 12px;
-    border-width: 1.5px;
+    i {
+      font-size: 0.95rem;
+    }
   }
 }
 
 // ── Mobile landscape — swap to 16:9 ───────────
 @media (max-width: 768px) and (orientation: landscape) {
-  .vc-local-pip {
-    // landscape: use 16:9 landscape ratio
-    width: 120px;
-    height: 68px;
-    bottom: calc(64px + 8px);
-    right: 8px;
-    border-radius: 10px;
-  }
-
   .vc-controls {
     height: 56px;
   }
@@ -794,7 +994,9 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .vc-ctrl-btn {
     min-width: 36px;
     padding: 5px 7px;
-    i { font-size: 0.85rem; }
+    i {
+      font-size: 0.85rem;
+    }
   }
 }
 

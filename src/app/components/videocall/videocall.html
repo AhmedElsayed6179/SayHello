@@ -60,10 +60,18 @@
       </div>
 
       <!-- Local PiP -->
-      <div class="vc-local-pip" *ngIf="localVideoReady">
+      <div class="vc-local-pip"
+           #localPip
+           *ngIf="localVideoReady"
+           [ngStyle]="pipStyle"
+           (mousedown)="onPipMouseDown($event)"
+           (touchstart)="onPipTouchStart($event)">
         <video #localVideo class="vc-local-video" autoplay playsinline muted></video>
         <div class="pip-mic-off" *ngIf="!isMicOn">
           <i class="fas fa-microphone-slash"></i>
+        </div>
+        <div class="pip-drag-hint">
+          <i class="fas fa-arrows-alt"></i>
         </div>
       </div>
 
