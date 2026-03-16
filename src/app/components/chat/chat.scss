@@ -791,6 +791,24 @@ input[type='range'] {
   border: 1px solid $light-border;
 }
 
+// Mobile emoji picker — full-width at bottom of input wrapper
+@media (max-width: 600px) {
+  .emoji-picker {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 45vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    border-bottom: none !important;
+    box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.18) !important;
+    z-index: 9999 !important;
+  }
+}
+
 :root {
   --welcome-bg: rgba(79, 142, 247, 0.08);
   --welcome-text-color: #0f172a;
@@ -831,11 +849,7 @@ body.dark-mode {
     gap: 8px;
   }
 
-  .emoji-picker {
-    position: relative !important;
-    width: 100% !important;
-    max-height: 50vh !important;
-  }
+  // emoji handled by global fixed rule above
 }
 
 // ══════════════════════════════════════════════
@@ -849,7 +863,7 @@ body.dark-mode {
 
   .message-right & {
     justify-content: flex-end;
-    flex-direction: row-reverse;
+    flex-direction: row;
   }
   .message-left & {
     justify-content: flex-start;
@@ -857,14 +871,18 @@ body.dark-mode {
 }
 
 .voice-footer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-top: 4px;
 
   .voice-right & {
     justify-content: flex-end;
-    flex-direction: row-reverse;
+    flex-direction: row;
   }
   .voice-left & {
     justify-content: flex-start;
+    flex-direction: row;
   }
 }
 

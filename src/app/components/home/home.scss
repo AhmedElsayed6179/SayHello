@@ -76,14 +76,16 @@
   h1 {
     font-family: 'Outfit', 'Segoe UI', sans-serif;
     font-weight: 800;
-    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    font-size: clamp(1.85rem, 6vw, 3.6rem);
     letter-spacing: -1.5px;
-    line-height: 1.15;
+    line-height: 1.18;
     margin-bottom: 1.2rem;
     background: $gradient-primary;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 
   .lead {

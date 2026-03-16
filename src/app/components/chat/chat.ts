@@ -1,7 +1,8 @@
 import {
   Component, NgZone, OnInit, OnDestroy,
   ViewChild, ElementRef, ChangeDetectorRef,
-  CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList
+  CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList,
+  HostListener
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -76,7 +77,32 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.token || !this.myName) { this.router.navigate(['/']); return; }
   }
 
-  startChat() { this.showWelcome = false; this.connectToServer(); }
+  startChat() {
+    this.showWelcome = false;
+    // Push a state so back button can be intercepted
+    history.pushState({ chatActive: true }, '');
+    this.connectToServer();
+  }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // User pressed browser back / swipe-back
+    Swal.fire({
+      icon: 'warning',
+      title: this.translate.instant('CHAT.CONFIRM'),
+      text: this.translate.instant('CHAT.STOP') + '?',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('HOME.ERROR_OK'),
+      cancelButtonText: this.translate.instant('CHAT.Cancel'),
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.exitChat();
+      } else {
+        // Re-push so the state is available for next back attempt
+        history.pushState({ chatActive: true }, '');
+      }
+    });
+  }
 
   connectToServer() {
     fetch(`${environment.SayHello_Server}/start-chat`, {

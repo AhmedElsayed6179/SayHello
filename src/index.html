@@ -198,120 +198,195 @@
   </script>
 
   <!-- ═══════════════════════════════════════════
-       LOADING ANIMATION STYLES
+       LOADING ANIMATION STYLES — Premium v2
   ═══════════════════════════════════════════ -->
   <style>
-    /* Loading Screen Container */
+    /* ── Theme tokens ─────────────────────────── */
+    :root {
+      --ls-bg: #f0f4ff;
+      --ls-bg2: #e8eeff;
+      --ls-surface: rgba(255, 255, 255, 0.72);
+      --ls-border: rgba(79, 142, 247, 0.18);
+      --ls-primary: #4f8ef7;
+      --ls-secondary: #06b6d4;
+      --ls-accent: #818cf8;
+      --ls-text: #0f172a;
+      --ls-muted: #64748b;
+      --ls-glow: rgba(79, 142, 247, 0.28);
+      --ls-ring: rgba(79, 142, 247, 0.15);
+    }
+
+    /* Dark tokens — applied by JS before first paint */
+    body.dark-mode,
+    [data-ls-dark="1"] {
+      --ls-bg: #0b0e1a;
+      --ls-bg2: #0f1322;
+      --ls-surface: rgba(22, 27, 46, 0.85);
+      --ls-border: rgba(129, 140, 248, 0.18);
+      --ls-primary: #818cf8;
+      --ls-secondary: #22d3ee;
+      --ls-accent: #a78bfa;
+      --ls-text: #e8eaf0;
+      --ls-muted: #6b7485;
+      --ls-glow: rgba(129, 140, 248, 0.25);
+      --ls-ring: rgba(129, 140, 248, 0.12);
+    }
+
+    /* OS dark fallback (before JS fires) */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ls-bg: #0b0e1a;
+        --ls-bg2: #0f1322;
+        --ls-surface: rgba(22, 27, 46, 0.85);
+        --ls-border: rgba(129, 140, 248, 0.18);
+        --ls-primary: #818cf8;
+        --ls-secondary: #22d3ee;
+        --ls-accent: #a78bfa;
+        --ls-text: #e8eaf0;
+        --ls-muted: #6b7485;
+        --ls-glow: rgba(129, 140, 248, 0.25);
+        --ls-ring: rgba(129, 140, 248, 0.12);
+      }
+    }
+
+    /* ── Container ───────────────────────────── */
     .loading-screen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #f8faff;
-      transition: opacity 0.5s ease-out, visibility 0.5s ease-out, background-color 0.3s ease;
+      background: var(--ls-bg);
+      overflow: hidden;
+      transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.55s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Dark mode support for loading screen */
-    @media (prefers-color-scheme: dark) {
-      .loading-screen {
-        background: #121622;
+    /* Mesh background */
+    .loading-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 20% 15%, var(--ls-ring) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 80% 85%, var(--ls-ring) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 55% 50%, rgba(129, 140, 248, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Floating orbs */
+    .loading-screen::after {
+      content: '';
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--ls-glow) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ls-pulse-orb 3.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes ls-pulse-orb {
+
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+      }
+
+      50% {
+        transform: translate(-50%, -50%) scale(1.18);
+        opacity: 1;
       }
     }
 
-    /* Hide loading screen when app is loaded */
     .loading-screen.hidden {
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
     }
 
-    /* Loading Content Container */
+    /* ── Card ────────────────────────────────── */
     .loading-content {
+      position: relative;
+      z-index: 2;
       text-align: center;
-      padding: 2rem;
+      padding: 3rem 2.5rem 2.8rem;
+      border-radius: 32px;
+      background: var(--ls-surface);
+      border: 1px solid var(--ls-border);
+      backdrop-filter: blur(28px) saturate(1.6);
+      -webkit-backdrop-filter: blur(28px) saturate(1.6);
+      box-shadow:
+        0 2px 0 rgba(255, 255, 255, 0.06) inset,
+        0 24px 64px rgba(0, 0, 0, 0.12),
+        0 0 0 1px var(--ls-ring);
+      min-width: 260px;
+      animation: ls-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
-    /* Logo Animation - بدون أي border أو border-radius أو shadow */
+    @keyframes ls-card-in {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.94);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ── Logo ────────────────────────────────── */
     .loading-logo {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 1.5rem;
-      animation: floatLogo 2s ease-in-out infinite;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 1.4rem;
+      position: relative;
     }
 
-    /* Logo Image - بدون أي تأثيرات */
+    /* spinning ring behind logo */
+    .loading-logo::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2.5px solid transparent;
+      border-top-color: var(--ls-primary);
+      border-right-color: var(--ls-secondary);
+      animation: ls-spin-ring 1.6s linear infinite;
+    }
+
+    /* subtle halo */
+    .loading-logo::after {
+      content: '';
+      position: absolute;
+      inset: -18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--ls-border);
+      animation: ls-spin-ring 4s linear infinite reverse;
+    }
+
+    @keyframes ls-spin-ring {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     .loading-logo img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
-    }
-
-    /* Name Animation Container */
-    .loading-name {
-      margin-bottom: 2rem;
-      overflow: hidden;
-    }
-
-    /* Animated Text */
-    .animated-text {
-      font-size: 3rem;
-      font-weight: 700;
-      display: inline-block;
-      white-space: nowrap;
-      animation: slideIn 1s ease-out;
-      color: #4f8ef7;
-      letter-spacing: 2px;
-    }
-
-    /* Dark mode adjustment for text */
-    @media (prefers-color-scheme: dark) {
-      .animated-text {
-        color: #9d7bf7;
-      }
-    }
-
-    /* Loading Spinner */
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 2rem;
-    }
-
-    .spinner-dot {
-      width: 16px;
-      height: 16px;
       border-radius: 50%;
-      background: #4f8ef7;
-      animation: bounceDot 1.4s ease-in-out infinite;
+      animation: ls-logo-float 2.8s ease-in-out infinite;
     }
 
-    .spinner-dot:nth-child(1) {
-      animation-delay: -0.32s;
-    }
-
-    .spinner-dot:nth-child(2) {
-      animation-delay: -0.16s;
-    }
-
-    .spinner-dot:nth-child(3) {
-      animation-delay: 0;
-    }
-
-    /* Dark mode adjustments for spinner */
-    @media (prefers-color-scheme: dark) {
-      .spinner-dot {
-        background: #9d7bf7;
-      }
-    }
-
-    /* Keyframe Animations */
-    @keyframes floatLogo {
+    @keyframes ls-logo-float {
 
       0%,
       100% {
@@ -319,50 +394,259 @@
       }
 
       50% {
-        transform: translateY(-15px) scale(1.05);
+        transform: translateY(-6px) scale(1.04);
       }
     }
 
-    @keyframes slideIn {
-      0% {
-        transform: translateY(100%);
+    /* ── Brand name ──────────────────────────── */
+    .loading-name {
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+    }
+
+    .animated-text {
+      font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: inline-block;
+      background: linear-gradient(135deg, var(--ls-primary) 0%, var(--ls-secondary) 55%, var(--ls-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: ls-text-in 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+      background-size: 200% 200%;
+      animation:
+        ls-text-in 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both,
+        ls-text-shimmer 4s 1s ease-in-out infinite;
+    }
+
+    @keyframes ls-text-in {
+      from {
         opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes ls-text-shimmer {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    /* ── Tagline ─────────────────────────────── */
+    .loading-tagline {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--ls-muted);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      animation: ls-text-in 0.8s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* ── Progress bar ────────────────────────── */
+    .loading-progress-wrap {
+      width: 180px;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--ls-ring);
+      margin: 0 auto 1.6rem;
+      overflow: hidden;
+      animation: ls-text-in 0.8s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--ls-primary), var(--ls-secondary), var(--ls-accent));
+      animation: ls-progress 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    @keyframes ls-progress {
+      0% {
+        width: 0%;
+        margin-left: 0;
+      }
+
+      50% {
+        width: 75%;
+        margin-left: 10%;
       }
 
       100% {
-        transform: translateY(0);
+        width: 0%;
+        margin-left: 100%;
+      }
+    }
+
+    /* ── Dots ────────────────────────────────── */
+    .loading-dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      animation: ls-text-in 0.8s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .loading-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ls-primary);
+      animation: ls-dot-bounce 1.3s ease-in-out infinite;
+    }
+
+    .loading-dot:nth-child(1) {
+      animation-delay: 0s;
+      background: var(--ls-primary);
+    }
+
+    .loading-dot:nth-child(2) {
+      animation-delay: 0.18s;
+      background: var(--ls-secondary);
+    }
+
+    .loading-dot:nth-child(3) {
+      animation-delay: 0.36s;
+      background: var(--ls-accent);
+    }
+
+    @keyframes ls-dot-bounce {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.55;
+      }
+
+      30% {
+        transform: translateY(-10px) scale(1.2);
         opacity: 1;
       }
     }
 
-    @keyframes bounceDot {
+    /* ── Floating particles (decorative) ─────── */
+    .ls-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
 
-      0%,
-      80%,
+    .ls-p {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: ls-particle-rise linear infinite;
+    }
+
+    .ls-p:nth-child(1) {
+      width: 4px;
+      height: 4px;
+      left: 12%;
+      background: var(--ls-primary);
+      animation-duration: 6s;
+      animation-delay: 0s;
+    }
+
+    .ls-p:nth-child(2) {
+      width: 3px;
+      height: 3px;
+      left: 28%;
+      background: var(--ls-secondary);
+      animation-duration: 7.5s;
+      animation-delay: 1.2s;
+    }
+
+    .ls-p:nth-child(3) {
+      width: 5px;
+      height: 5px;
+      left: 45%;
+      background: var(--ls-accent);
+      animation-duration: 5.5s;
+      animation-delay: 2.1s;
+    }
+
+    .ls-p:nth-child(4) {
+      width: 3px;
+      height: 3px;
+      left: 62%;
+      background: var(--ls-primary);
+      animation-duration: 8s;
+      animation-delay: 0.6s;
+    }
+
+    .ls-p:nth-child(5) {
+      width: 4px;
+      height: 4px;
+      left: 78%;
+      background: var(--ls-secondary);
+      animation-duration: 6.5s;
+      animation-delay: 1.8s;
+    }
+
+    .ls-p:nth-child(6) {
+      width: 3px;
+      height: 3px;
+      left: 88%;
+      background: var(--ls-accent);
+      animation-duration: 7s;
+      animation-delay: 3s;
+    }
+
+    @keyframes ls-particle-rise {
+      0% {
+        transform: translateY(100vh) scale(0.5);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.7;
+      }
+
+      90% {
+        opacity: 0.4;
+      }
+
       100% {
-        transform: scale(0);
-      }
-
-      40% {
-        transform: scale(1);
+        transform: translateY(-10vh) scale(1.2);
+        opacity: 0;
       }
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .loading-logo {
-        width: 100px;
-        height: 100px;
-      }
-
-      .animated-text {
-        font-size: 2.5rem;
-      }
-    }
-
+    /* ── Responsive ──────────────────────────── */
     @media (max-width: 480px) {
+      .loading-content {
+        padding: 2.4rem 1.8rem 2.2rem;
+        border-radius: 26px;
+        min-width: 220px;
+      }
+
+      .loading-logo {
+        width: 76px;
+        height: 76px;
+      }
+
       .animated-text {
         font-size: 2rem;
+      }
+
+      .loading-progress-wrap {
+        width: 140px;
       }
     }
   </style>
@@ -371,20 +655,43 @@
 
 <body>
   <!-- ═══════════════════════════════════════════
-       LOADING SCREEN WITH LOGO AND NAME
+       LOADING SCREEN — Premium v2
   ═══════════════════════════════════════════ -->
   <div class="loading-screen" id="loadingScreen">
+    <!-- Floating particles -->
+    <div class="ls-particles">
+      <div class="ls-p"></div>
+      <div class="ls-p"></div>
+      <div class="ls-p"></div>
+      <div class="ls-p"></div>
+      <div class="ls-p"></div>
+      <div class="ls-p"></div>
+    </div>
+
     <div class="loading-content">
+      <!-- Logo with spinning ring -->
       <div class="loading-logo">
-        <img src="SayHello.png" alt="SayHello Logo">
+        <img src="SayHello.png" alt="SayHello Logo" width="88" height="88">
       </div>
+
+      <!-- Brand name -->
       <div class="loading-name">
         <span class="animated-text">SayHello</span>
       </div>
-      <div class="loading-spinner">
-        <div class="spinner-dot"></div>
-        <div class="spinner-dot"></div>
-        <div class="spinner-dot"></div>
+
+      <!-- Tagline -->
+      <p class="loading-tagline">Meet New People Instantly</p>
+
+      <!-- Progress bar -->
+      <div class="loading-progress-wrap">
+        <div class="loading-progress-bar"></div>
+      </div>
+
+      <!-- Bounce dots -->
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
       </div>
     </div>
   </div>
@@ -412,7 +719,7 @@
           color: #e8eaf0;
         }
       }
-      
+
       /* No border, border-radius, or shadow on the logo */
       .noscript-msg img {
         display: block;
@@ -432,64 +739,53 @@
   </noscript>
 
   <!-- ═══════════════════════════════════════════
-       SCRIPT TO HIDE LOADING SCREEN
+       LOADING SCREEN CONTROLLER
+       • Reads dark-mode from localStorage instantly
+       • Hides when Angular bootstraps
   ═══════════════════════════════════════════ -->
   <script>
     (function () {
-      // Hide loading screen when Angular is bootstrapped
-      function hideLoadingScreen() {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-          loadingScreen.classList.add('hidden');
+      try {
+        var stored = localStorage.getItem('darkMode');
+        var osDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = stored === 'true' || stored === 'dark-mode' ||
+          (stored === null && osDark);
+        if (isDark) {
+          document.documentElement.setAttribute('data-ls-dark', '1');
+          document.body.classList.add('dark-mode');
         }
+      } catch (e) { }
+
+      // ── Hide when Angular bootstraps ─────────────
+      function hide() {
+        var el = document.getElementById('loadingScreen');
+        if (el) el.classList.add('hidden');
       }
 
-      // Check if Angular has bootstrapped
-      function checkAngularBootstrapped() {
-        // Check for Angular root component or known Angular markers
-        const appRoot = document.querySelector('app-root');
-        if (appRoot && appRoot.children.length > 0) {
-          hideLoadingScreen();
-          return true;
-        }
+      function checkBootstrapped() {
+        var root = document.querySelector('app-root');
+        if (root && root.children.length > 0) { hide(); return true; }
         return false;
       }
 
-      // Try to hide immediately if already bootstrapped
-      if (checkAngularBootstrapped()) {
-        return;
-      }
+      if (checkBootstrapped()) return;
 
-      // Listen for Angular bootstrap events
       document.addEventListener('DOMContentLoaded', function () {
-        // Try after DOM is loaded
-        if (!checkAngularBootstrapped()) {
-          // Set up a mutation observer to watch for Angular bootstrapping
-          const observer = new MutationObserver(function (mutations) {
-            if (checkAngularBootstrapped()) {
-              observer.disconnect();
-            }
-          });
+        if (checkBootstrapped()) return;
 
-          // Start observing
-          observer.observe(document.body, {
-            childList: true,
-            subtree: true
-          });
+        var obs = new MutationObserver(function () {
+          if (checkBootstrapped()) obs.disconnect();
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
 
-          // Fallback timeout - hide after 5 seconds maximum
-          setTimeout(function () {
-            observer.disconnect();
-            hideLoadingScreen();
-          }, 5000);
-        }
+        // Hard fallback
+        setTimeout(function () { obs.disconnect(); hide(); }, 6000);
       });
 
-      // Also try on window load
       window.addEventListener('load', function () {
         setTimeout(function () {
-          checkAngularBootstrapped() || hideLoadingScreen();
-        }, 500);
+          if (!checkBootstrapped()) hide();
+        }, 600);
       });
     })();
   </script>

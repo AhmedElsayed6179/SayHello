@@ -1,6 +1,7 @@
 import {
   Component, NgZone, OnInit, OnDestroy,
-  ViewChild, ElementRef, ChangeDetectorRef, HostListener
+  ViewChild, ElementRef, ChangeDetectorRef, HostListener,
+  CUSTOM_ELEMENTS_SCHEMA
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +28,7 @@ interface ChatMessage {
   selector: 'app-videocall',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './videocall.html',
   styleUrls: ['./videocall.scss']
 })
@@ -65,6 +67,7 @@ export class Videocall implements OnInit, OnDestroy {
   // Chat — CLOSED by default
   isChatOpen = false;
   unreadCount = 0;
+  showEmoji = false;
 
   // PiP
   readonly isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -161,6 +164,7 @@ export class Videocall implements OnInit, OnDestroy {
 
   async startCall() {
     this.showWelcome = false;
+    history.pushState({ chatActive: true }, '');
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
@@ -377,6 +381,27 @@ export class Videocall implements OnInit, OnDestroy {
 
   onTyping() { if (this.connected) this.socket.emit('typing'); }
   reactToMessage(msg: ChatMessage, reaction: string) { if (msg.id) this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName }); }
+
+  onEmojiSelect(event: any) { this.message += event.detail.unicode; this.showEmoji = false; }
+  toggleEmoji() { this.showEmoji = !this.showEmoji; }
+
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    Swal.fire({
+      icon: 'warning',
+      title: this.translate.instant('CHAT.CONFIRM'),
+      text: this.translate.instant('CHAT.STOP') + '?',
+      showCancelButton: true,
+      confirmButtonText: this.translate.instant('HOME.ERROR_OK'),
+      cancelButtonText: this.translate.instant('CHAT.Cancel'),
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.exitCall();
+      } else {
+        history.pushState({ chatActive: true }, '');
+      }
+    });
+  }
 
   onNextClick() {
     if (!this.confirmNext) { this.confirmNext = true; clearTimeout(this.confirmTimeout); this.confirmTimeout = setTimeout(() => { this.confirmNext = false; this.cd.detectChanges(); }, 2000); return; }

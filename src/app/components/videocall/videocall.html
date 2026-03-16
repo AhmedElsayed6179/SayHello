@@ -162,11 +162,15 @@
       </div>
 
       <div class="vc-chat-input-wrapper" [class.rtl]="isRtl">
+        <button class="vc-emoji-btn" type="button" (click)="toggleEmoji()" [disabled]="!connected">
+          <i class="far fa-smile-wink"></i>
+        </button>
         <input type="text" class="vc-chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()"
           (input)="onTyping()" [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
         <button class="vc-send-btn" (click)="sendMessage()" [disabled]="!connected">
           <i class="fa-solid fa-paper-plane"></i>
         </button>
+        <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" class="vc-emoji-picker"></emoji-picker>
       </div>
     </div>
 
