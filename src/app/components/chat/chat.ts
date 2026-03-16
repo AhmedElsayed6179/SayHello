@@ -57,6 +57,8 @@ export class Chat implements OnInit, OnDestroy {
   recordedSeconds = 0;
   private micStream: MediaStream | null = null;
   private recordStartTime = 0;
+  private pausedAt = 0;          // timestamp when pause started
+  private totalPausedMs = 0;     // cumulative paused duration in ms
   partnerDisconnected = false;
 
   constructor(
@@ -144,10 +146,6 @@ export class Chat implements OnInit, OnDestroy {
     }));
 
     this.socket.on('newVoice', (msg: any) => this.zone.run(() => {
-      // If this is our own voice echo (already added as local msg), just confirm sent
-      const existing = this.messages.find(m => m.id === msg.id);
-      if (existing) { existing.status = 'sent'; this.cd.detectChanges(); return; }
-
       const chatMsg: ChatMessage = {
         id: msg.id, sender: 'user', senderName: msg.sender,
         audioUrl: msg.url, duration: msg.duration,
@@ -155,8 +153,6 @@ export class Chat implements OnInit, OnDestroy {
         time: this.formatTime(msg.time), status: 'sent'
       };
       this.messages.push(chatMsg); this.cd.detectChanges(); this.scrollToBottom();
-      // Auto-send seen for incoming voice
-      this.socket.emit('messageSeen', { messageId: msg.id });
       setTimeout(() => {
         const list = this.audioEls.toArray();
         if (!list.length) return;
@@ -202,6 +198,7 @@ export class Chat implements OnInit, OnDestroy {
     }
     this.recordedSeconds = 0; this.recordTime = '0:00';
     this.audioChunks = []; this.isCanceled = false; this.isRecordingPaused = false;
+    this.pausedAt = 0; this.totalPausedMs = 0;
     this.cd.detectChanges();
     if (!this.micStream) this.micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     this.mediaRecorder = new MediaRecorder(this.micStream);
@@ -247,9 +244,13 @@ export class Chat implements OnInit, OnDestroy {
   togglePauseResume() {
     if (!this.mediaRecorder) return;
     if (this.isRecordingPaused) {
+      // Resume — accumulate how long we were paused
+      this.totalPausedMs += Date.now() - this.pausedAt;
       this.mediaRecorder.resume(); this.isRecordingPaused = false;
       this.startRecordTimer(); this.startRecordingPing(); this.socket.emit('resumeRecording');
     } else {
+      // Pause — record the moment we paused
+      this.pausedAt = Date.now();
       this.mediaRecorder.pause(); this.isRecordingPaused = true;
       this.stopRecordTimer(); this.stopRecordingPing(); this.socket.emit('pauseRecording');
     }
@@ -259,8 +260,8 @@ export class Chat implements OnInit, OnDestroy {
     clearInterval(this.recordInterval);
     this.recordInterval = setInterval(() => {
       if (this.isRecordingPaused) return;
-      const ms = Date.now() - this.recordStartTime;
-      this.recordedSeconds = Math.floor(ms / 1000);
+      const activeMs = Date.now() - this.recordStartTime - this.totalPausedMs;
+      this.recordedSeconds = Math.floor(activeMs / 1000);
       const m = Math.floor(this.recordedSeconds / 60);
       const s = (this.recordedSeconds % 60).toString().padStart(2, '0');
       this.recordTime = `${m}:${s}`; this.cd.detectChanges();
@@ -274,49 +275,12 @@ export class Chat implements OnInit, OnDestroy {
     const fd = new FormData();
     fd.append('voice', blob, 'voice.webm');
     fd.append('room', (this.socket as any).room);
-
-    // Add an optimistic local message with status 'sending'
-    const id = this.generateUniqueId();
-    const localAudioUrl = URL.createObjectURL(blob);
-    const localMsg: ChatMessage = {
-      id, sender: 'user', senderName: this.myName,
-      audioUrl: localAudioUrl, duration,
-      remainingTime: this.formatSeconds(duration), isPlaying: false,
-      time: this.formatTime(new Date().toISOString()), status: 'sending'
-    };
-    this.messages.push(localMsg);
-    this.scrollToBottom(); this.cd.detectChanges();
-
-    // Bind audio element after render
-    setTimeout(() => {
-      const list = this.audioEls.toArray();
-      if (!list.length) return;
-      const last = list[list.length - 1];
-      localMsg.audioRef = last.nativeElement;
-      localMsg.audioRef.onended = () => this.zone.run(() => {
-        localMsg.isPlaying = false;
-        localMsg.remainingTime = this.formatSeconds(localMsg.duration!);
-        localMsg.audioRef!.currentTime = 0; this.cd.detectChanges();
-      });
-      localMsg.audioRef.ontimeupdate = () => {
-        const rem = Math.max(localMsg.duration! - Math.floor(localMsg.audioRef!.currentTime), 0);
-        this.zone.run(() => { localMsg.remainingTime = this.formatSeconds(rem); this.cd.detectChanges(); });
-      };
-    }, 50);
-
     fetch(`${environment.SayHello_Server}/upload-voice`, { method: 'POST', body: fd })
       .then(r => r.json())
       .then(d => {
-        // Update status to 'sent' and emit to server
-        localMsg.status = 'sent';
-        localMsg.audioUrl = d.url;   // swap blob URL → server URL
+        const id = this.generateUniqueId();
         this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
         this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
-        this.cd.detectChanges();
-      })
-      .catch(() => {
-        localMsg.status = 'sent'; // fallback — don't leave stuck on 'sending'
-        this.cd.detectChanges();
       });
   }
 

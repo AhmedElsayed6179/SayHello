@@ -196,10 +196,222 @@
   }
   </script>
 
+  <!-- ═══════════════════════════════════════════
+       LOADING ANIMATION STYLES
+  ═══════════════════════════════════════════ -->
+  <style>
+    /* Loading Screen Container */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8faff;
+      transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    }
+
+    /* Dark mode support for loading screen */
+    @media (prefers-color-scheme: dark) {
+      .loading-screen {
+        background: #121622;
+      }
+    }
+
+    /* Hide loading screen when app is loaded */
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* Loading Content Container */
+    .loading-content {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    /* Logo Animation */
+    .loading-logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      border-radius: 24px;
+      animation: floatLogo 2s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
+      box-shadow: 0 10px 30px rgba(79, 142, 247, 0.2);
+    }
+
+    /* Logo Image */
+    .loading-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 24px;
+    }
+
+    /* Name Animation Container */
+    .loading-name {
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    /* Animated Text */
+    .animated-text {
+      font-size: 3rem;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+      animation: slideIn 1s ease-out, glow 2s ease-in-out infinite;
+      background: linear-gradient(45deg, #4f8ef7, #9d7bf7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 2rem;
+    }
+
+    .spinner-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #4f8ef7;
+      animation: bounceDot 1.4s ease-in-out infinite;
+    }
+
+    .spinner-dot:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .spinner-dot:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    .spinner-dot:nth-child(3) {
+      animation-delay: 0;
+    }
+
+    /* Dark mode adjustments for spinner */
+    @media (prefers-color-scheme: dark) {
+      .spinner-dot {
+        background: #9d7bf7;
+      }
+    }
+
+    /* Keyframe Animations */
+    @keyframes floatLogo {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateY(-15px) scale(1.05);
+      }
+    }
+
+    @keyframes pulseGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 10px 30px rgba(79, 142, 247, 0.2);
+      }
+
+      50% {
+        box-shadow: 0 20px 40px rgba(79, 142, 247, 0.4);
+      }
+    }
+
+    @keyframes slideIn {
+      0% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes glow {
+
+      0%,
+      100% {
+        filter: brightness(1);
+      }
+
+      50% {
+        filter: brightness(1.2);
+      }
+    }
+
+    @keyframes bounceDot {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+      }
+
+      40% {
+        transform: scale(1);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .loading-logo {
+        width: 100px;
+        height: 100px;
+      }
+
+      .animated-text {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .animated-text {
+        font-size: 2rem;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
+  <!-- ═══════════════════════════════════════════
+       LOADING SCREEN WITH LOGO AND NAME
+  ═══════════════════════════════════════════ -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+      <div class="loading-logo">
+        <img src="SayHello.png" alt="SayHello Logo">
+      </div>
+      <div class="loading-name">
+        <span class="animated-text">SayHello</span>
+      </div>
+      <div class="loading-spinner">
+        <div class="spinner-dot"></div>
+        <div class="spinner-dot"></div>
+        <div class="spinner-dot"></div>
+      </div>
+    </div>
+  </div>
+
   <app-root></app-root>
+
   <noscript>
     <style>
       .noscript-msg {
@@ -213,6 +425,13 @@
         background: #f8faff;
         color: #0f172a;
       }
+
+      @media (prefers-color-scheme: dark) {
+        .noscript-msg {
+          background: #121622;
+          color: #e8eaf0;
+        }
+      }
     </style>
     <div class="noscript-msg">
       <div>
@@ -223,6 +442,69 @@
       </div>
     </div>
   </noscript>
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPT TO HIDE LOADING SCREEN
+  ═══════════════════════════════════════════ -->
+  <script>
+    (function () {
+      // Hide loading screen when Angular is bootstrapped
+      function hideLoadingScreen() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+          loadingScreen.classList.add('hidden');
+        }
+      }
+
+      // Check if Angular has bootstrapped
+      function checkAngularBootstrapped() {
+        // Check for Angular root component or known Angular markers
+        const appRoot = document.querySelector('app-root');
+        if (appRoot && appRoot.children.length > 0) {
+          hideLoadingScreen();
+          return true;
+        }
+        return false;
+      }
+
+      // Try to hide immediately if already bootstrapped
+      if (checkAngularBootstrapped()) {
+        return;
+      }
+
+      // Listen for Angular bootstrap events
+      document.addEventListener('DOMContentLoaded', function () {
+        // Try after DOM is loaded
+        if (!checkAngularBootstrapped()) {
+          // Set up a mutation observer to watch for Angular bootstrapping
+          const observer = new MutationObserver(function (mutations) {
+            if (checkAngularBootstrapped()) {
+              observer.disconnect();
+            }
+          });
+
+          // Start observing
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+
+          // Fallback timeout - hide after 5 seconds maximum
+          setTimeout(function () {
+            observer.disconnect();
+            hideLoadingScreen();
+          }, 5000);
+        }
+      });
+
+      // Also try on window load
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          checkAngularBootstrapped() || hideLoadingScreen();
+        }, 500);
+      });
+    })();
+  </script>
 </body>
 
 </html>
