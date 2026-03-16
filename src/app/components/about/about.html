@@ -1,0 +1,223 @@
+<div class="about-wrapper" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="about-hero">
+    <div class="about-hero-bg">
+      <div class="about-blob blob-1"></div>
+      <div class="about-blob blob-2"></div>
+      <div class="about-blob blob-3"></div>
+    </div>
+    <div class="about-hero-content">
+      <span class="section-tag">{{ 'ABOUT.TAG' | translate }}</span>
+      <h1>{{ 'ABOUT.HERO_TITLE' | translate }}</h1>
+      <p class="about-hero-desc">{{ 'ABOUT.HERO_DESC' | translate }}</p>
+      <div class="hero-badges">
+        <span class="hero-badge" *ngFor="let b of heroBadges">
+          <i [class]="b.icon"></i> {{ b.label | translate }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ MISSION ═══════════════ -->
+  <section class="about-mission">
+    <div class="mission-card">
+      <div class="mission-icon">
+        <i class="fas fa-heart"></i>
+      </div>
+      <div class="mission-text">
+        <h2>{{ 'ABOUT.MISSION_TITLE' | translate }}</h2>
+        <p>{{ 'ABOUT.MISSION_DESC' | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ WHAT IS SAYHELLO ═══════════════ -->
+  <section class="about-what">
+    <div class="section-header">
+      <span class="section-tag">{{ 'ABOUT.STORY_TAG' | translate }}</span>
+      <h2>{{ 'ABOUT.STORY_TITLE' | translate }}</h2>
+    </div>
+    <div class="what-grid">
+      <div class="what-text">
+        <p>{{ 'ABOUT.STORY_P1' | translate }}</p>
+        <p>{{ 'ABOUT.STORY_P2' | translate }}</p>
+        <p>{{ 'ABOUT.STORY_P3' | translate }}</p>
+      </div>
+      <div class="what-stats">
+        <div class="what-stat" *ngFor="let stat of stats">
+          <strong>{{ stat.value }}</strong>
+          <span>{{ stat.label | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ KEY FEATURES ═══════════════ -->
+  <section class="about-features">
+    <div class="section-header">
+      <span class="section-tag">{{ 'HOME.FEATURES_TAG' | translate }}</span>
+      <h2>{{ 'HOME.FEATURES_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.FEATURES_DESC' | translate }}</p>
+    </div>
+    <div class="features-bento">
+      <div class="bento-card bento-large bento-chat">
+        <div class="bento-glow"></div>
+        <div class="bento-icon"><i class="fas fa-comments"></i></div>
+        <h3>{{ 'HOME.TEXT_CHAT' | translate }}</h3>
+        <p>{{ 'HOME.TEXT_CHAT_DESC' | translate }}</p>
+        <ul class="bento-list">
+          <li *ngFor="let f of chatFeatures"><i class="fas fa-check"></i> {{ f | translate }}</li>
+        </ul>
+      </div>
+      <div class="bento-card bento-large bento-video">
+        <div class="bento-glow bento-glow-video"></div>
+        <div class="bento-icon bento-icon-video"><i class="fas fa-video"></i></div>
+        <h3>{{ 'HOME.VIDEO_CALL' | translate }}</h3>
+        <p>{{ 'HOME.VIDEO_CALL_DESC' | translate }}</p>
+        <ul class="bento-list">
+          <li *ngFor="let f of videoFeatures"><i class="fas fa-check"></i> {{ f | translate }}</li>
+        </ul>
+      </div>
+      <div class="bento-card bento-small bento-anon">
+        <div class="bento-icon"><i class="fas fa-user-secret"></i></div>
+        <h3>{{ 'HOME.TRUST_ANON_TITLE' | translate }}</h3>
+        <p>{{ 'HOME.TRUST_ANON_DESC' | translate }}</p>
+      </div>
+      <div class="bento-card bento-small bento-enc">
+        <div class="bento-icon bento-icon-enc"><i class="fas fa-lock"></i></div>
+        <h3>{{ 'HOME.TRUST_ENC_TITLE' | translate }}</h3>
+        <p>{{ 'HOME.TRUST_ENC_DESC' | translate }}</p>
+      </div>
+      <div class="bento-card bento-small bento-free">
+        <div class="bento-icon bento-icon-free"><i class="fas fa-infinity"></i></div>
+        <h3>{{ 'HOME.STAT_FREE' | translate }}</h3>
+        <p>{{ 'ABOUT.VAL6_DESC' | translate }}</p>
+      </div>
+      <div class="bento-card bento-small bento-global">
+        <div class="bento-icon bento-icon-global"><i class="fas fa-globe"></i></div>
+        <h3>{{ 'ABOUT.VAL3_TITLE' | translate }}</h3>
+        <p>{{ 'ABOUT.VAL3_DESC' | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+  <section class="about-how">
+    <div class="section-header">
+      <span class="section-tag">{{ 'HOME.HOW_TAG' | translate }}</span>
+      <h2>{{ 'HOME.HOW_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.HOW_DESC' | translate }}</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step" *ngFor="let step of howSteps; let i = index">
+        <div class="how-step-num">{{ i + 1 }}</div>
+        <div class="how-step-content">
+          <div class="how-step-icon"><i [class]="step.icon"></i></div>
+          <h4>{{ step.title | translate }}</h4>
+          <p>{{ step.desc | translate }}</p>
+        </div>
+        <div class="how-connector" *ngIf="i < howSteps.length - 1"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ VALUES ═══════════════ -->
+  <section class="about-values">
+    <div class="section-header">
+      <span class="section-tag">{{ 'ABOUT.VALUES_TAG' | translate }}</span>
+      <h2>{{ 'ABOUT.VALUES_TITLE' | translate }}</h2>
+      <p>{{ 'ABOUT.VALUES_DESC' | translate }}</p>
+    </div>
+    <div class="values-grid">
+      <div class="value-card" *ngFor="let val of values">
+        <div class="value-icon-wrap" [style.background]="val.bg">
+          <i [class]="val.icon" [style.color]="val.color"></i>
+        </div>
+        <h3>{{ val.title | translate }}</h3>
+        <p>{{ val.desc | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ TRUST ═══════════════ -->
+  <section class="about-trust">
+    <div class="trust-inner">
+      <div class="trust-text-side">
+        <span class="section-tag">{{ 'HOME.TRUST_TAG' | translate }}</span>
+        <h2>{{ 'HOME.TRUST_TITLE' | translate }}</h2>
+        <p>{{ 'HOME.TRUST_DESC' | translate }}</p>
+        <a routerLink="/privacy" class="trust-link">
+          <i class="fas fa-shield-alt"></i>
+          {{ 'HOME.READ_PRIVACY' | translate }}
+        </a>
+      </div>
+      <div class="trust-visual-side">
+        <div class="trust-mockup">
+          <div class="tm-header">
+            <div class="tm-dot green"></div>
+            <span>{{ 'HOME.TRUST_SECURE' | translate }}</span>
+            <i class="fas fa-lock tm-lock"></i>
+          </div>
+          <div class="tm-body">
+            <div class="tm-msg tm-right"><span>{{ 'HOME.TRUST_MSG1' | translate }}</span></div>
+            <div class="tm-msg tm-left"><span>{{ 'HOME.TRUST_MSG2' | translate }}</span></div>
+            <div class="tm-msg tm-right"><span>{{ 'HOME.TRUST_MSG3' | translate }}</span></div>
+          </div>
+          <div class="tm-footer">
+            <i class="fas fa-shield-alt"></i>
+            {{ 'HOME.TRUST_ENCRYPTED' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CREATOR ═══════════════ -->
+  <section class="about-creator">
+    <div class="section-header">
+      <span class="section-tag">{{ 'ABOUT.CREATOR_TAG' | translate }}</span>
+      <h2>{{ 'ABOUT.CREATOR_TITLE' | translate }}</h2>
+    </div>
+    <div class="creator-card">
+      <div class="creator-avatar-wrap">
+        <div class="creator-avatar-ring"></div>
+        <div class="creator-avatar">
+          <img src="assets/avatar.jpg" alt="Ahmed Mohamed"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+          <div class="avatar-fallback" style="display:none">
+            <i class="fas fa-user"></i>
+          </div>
+        </div>
+        <div class="creator-badge"><i class="fas fa-code"></i></div>
+      </div>
+      <div class="creator-info">
+        <h3>{{ 'ABOUT.CREATOR_NAME' | translate }}</h3>
+        <span class="creator-role">{{ 'ABOUT.CREATOR_ROLE' | translate }}</span>
+        <p>{{ 'ABOUT.CREATOR_BIO' | translate }}</p>
+        <div class="creator-links">
+          <a href="https://github.com" target="_blank" class="creator-link github">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="https://linkedin.com" target="_blank" class="creator-link linkedin">
+            <i class="fab fa-linkedin"></i> LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CTA ═══════════════ -->
+  <section class="about-cta">
+    <div class="about-cta-inner">
+      <div class="cta-glow"></div>
+      <h2>{{ 'ABOUT.CTA_TITLE' | translate }}</h2>
+      <p>{{ 'ABOUT.CTA_DESC' | translate }}</p>
+      <a routerLink="/" class="cta-btn">
+        <i class="fas fa-bolt"></i>
+        {{ 'ABOUT.CTA_BTN' | translate }}
+      </a>
+    </div>
+  </section>
+
+</div>

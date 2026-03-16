@@ -1,30 +1,55 @@
 <footer class="footer py-4" [ngClass]="isDarkMode ? 'dark-mode' : ''">
-  <div class="container text-center">
-    <div class="footer-brand mb-3">
-      <h5 class="mb-1">&copy; {{ today | date:'yyyy' }} SayHello</h5>
-      <p class="mb-0 small">
-        {{ 'FOOTER.Website_by' | translate }} :
-        <a href="#" target="_blank">{{ 'FOOTER.My_Name' | translate }}</a>
+  <div class="container">
+
+    <div class="footer-top">
+      <!-- Brand -->
+      <div class="footer-brand">
+        <h5>&copy; {{ today | date:'yyyy' }} SayHello</h5>
+        <p>
+          {{ 'FOOTER.Website_by' | translate }} :
+          <a routerLink="/about" target="_blank">{{ 'FOOTER.My_Name' | translate }}</a>
+        </p>
+      </div>
+
+      <!-- Nav Links -->
+      <nav class="footer-nav">
+        <a routerLink="/about">
+          <i class="fas fa-user-circle"></i>
+          {{ 'FOOTER.ABOUT' | translate }}
+        </a>
+        <a routerLink="/privacy">
+          <i class="fas fa-shield-alt"></i>
+          {{ 'FOOTER.PRIVACY' | translate }}
+        </a>
+      </nav>
+
+      <!-- Social Icons -->
+      <div class="social-icons d-flex justify-content-center gap-3">
+        <a href="https://facebook.com" target="_blank" aria-label="Facebook" class="social-btn fb">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://x.com" target="_blank" aria-label="Twitter" class="social-btn tw">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="social-btn ig">
+          <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://tiktok.com" target="_blank" aria-label="TikTok" class="social-btn li">
+          <i class="fab fa-tiktok"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="small text mb-0">
+        {{ 'FOOTER.COPYRIGHT' | translate }}
       </p>
+      <div class="footer-legal-links">
+        <a routerLink="/privacy">{{ 'FOOTER.PRIVACY' | translate }}</a>
+        <span>·</span>
+        <a routerLink="/about">{{ 'FOOTER.ABOUT' | translate }}</a>
+      </div>
     </div>
 
-    <div class="social-icons d-flex justify-content-center gap-3 mb-2">
-      <a href="https://facebook.com" target="_blank" aria-label="Facebook" class="social-btn fb">
-        <i class="fab fa-facebook-f"></i>
-      </a>
-      <a href="https://x.com" target="_blank" aria-label="Twitter" class="social-btn tw">
-        <i class="fab fa-twitter"></i>
-      </a>
-      <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="social-btn ig">
-        <i class="fab fa-instagram"></i>
-      </a>
-      <a href="https://tiktok.com" target="_blank" aria-label="TikTok" class="social-btn li">
-        <i class="fab fa-tiktok"></i>
-      </a>
-    </div>
-
-    <p class="small text mb-0">
-      {{ 'FOOTER.COPYRIGHT' | translate }}
-    </p>
   </div>
 </footer>

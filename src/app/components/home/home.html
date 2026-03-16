@@ -32,8 +32,98 @@
     </div>
   </section>
 
+  <!-- ═══════════════ VIDEO DEMO SECTION ═══════════════ -->
+  <section class="video-section reveal">
+    <div class="section-header">
+      <span class="section-tag">{{ 'HOME.VIDEO_SECTION_TAG' | translate }}</span>
+      <h2>{{ 'HOME.VIDEO_SECTION_TITLE' | translate }}</h2>
+      <p>{{ 'HOME.VIDEO_SECTION_DESC' | translate }}</p>
+    </div>
+
+    <div class="video-container" [class.video-playing]="isVideoPlaying">
+      <div class="video-glow-bg"></div>
+
+      <!-- Play overlay -->
+      <div class="video-play-overlay" *ngIf="!isVideoPlaying" (click)="playVideo()">
+        <div class="video-thumbnail-animation">
+          <svg viewBox="0 0 700 394" xmlns="http://www.w3.org/2000/svg" class="app-preview-svg">
+            <defs>
+              <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0d0f14" />
+                <stop offset="100%" stop-color="#161a24" />
+              </linearGradient>
+              <linearGradient id="accentGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#4f8ef7" />
+                <stop offset="100%" stop-color="#06b6d4" />
+              </linearGradient>
+            </defs>
+            <rect width="700" height="394" rx="16" fill="url(#bgGrad)" />
+            <circle cx="120" cy="80" r="130" fill="#4f8ef7" opacity="0.06" />
+            <circle cx="580" cy="320" r="100" fill="#06b6d4" opacity="0.06" />
+            <rect x="60" y="50" width="580" height="294" rx="14" fill="rgba(30,37,53,0.95)"
+              stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+            <rect x="60" y="50" width="580" height="48" rx="14" fill="url(#accentGrad)" opacity="0.9" />
+            <rect x="60" y="78" width="580" height="20" fill="url(#accentGrad)" opacity="0.9" />
+            <circle cx="90" cy="74" r="9" fill="rgba(255,255,255,0.3)" />
+            <rect x="108" y="68" width="120" height="12" rx="6" fill="rgba(255,255,255,0.5)" />
+            <rect x="554" y="68" width="50" height="12" rx="6" fill="rgba(255,255,255,0.25)" />
+            <rect x="88" y="118" width="200" height="36" rx="10" fill="#4f8ef7" opacity="0.9" />
+            <rect x="92" y="126" width="160" height="8" rx="4" fill="rgba(255,255,255,0.7)" />
+            <rect x="92" y="138" width="100" height="8" rx="4" fill="rgba(255,255,255,0.4)" />
+            <rect x="412" y="168" width="220" height="36" rx="10" fill="rgba(255,255,255,0.07)"
+              stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+            <rect x="420" y="176" width="170" height="8" rx="4" fill="rgba(255,255,255,0.4)" />
+            <rect x="420" y="188" width="110" height="8" rx="4" fill="rgba(255,255,255,0.25)" />
+            <rect x="88" y="218" width="240" height="36" rx="10" fill="#4f8ef7" opacity="0.9" />
+            <rect x="92" y="226" width="190" height="8" rx="4" fill="rgba(255,255,255,0.7)" />
+            <rect x="92" y="238" width="130" height="8" rx="4" fill="rgba(255,255,255,0.4)" />
+            <rect x="412" y="270" width="80" height="28" rx="14" fill="rgba(255,255,255,0.06)"
+              stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+            <circle cx="432" cy="284" r="4" fill="#4f8ef7">
+              <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0s" />
+            </circle>
+            <circle cx="448" cy="284" r="4" fill="#4f8ef7">
+              <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0.4s" />
+            </circle>
+            <circle cx="464" cy="284" r="4" fill="#4f8ef7">
+              <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0.8s" />
+            </circle>
+            <rect x="76" y="316" width="548" height="14" rx="7" fill="rgba(255,255,255,0.04)"
+              stroke="rgba(255,255,255,0.07)" stroke-width="1" />
+            <circle cx="620" cy="74" r="5" fill="#10b981">
+              <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
+            </circle>
+          </svg>
+          <div class="play-btn-wrap">
+            <div class="play-pulse-ring"></div>
+            <div class="play-pulse-ring delay"></div>
+            <button class="play-btn" aria-label="Play demo">
+              <i class="fas fa-play"></i>
+            </button>
+          </div>
+          <div class="video-label">{{ 'HOME.VIDEO_PLAY_LABEL' | translate }}</div>
+        </div>
+      </div>
+
+      <!-- Actual video -->
+      <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" loop muted playsinline preload="none">
+        <source src="assets/videos/demo.mp4" type="video/mp4">
+      </video>
+
+      <!-- Controls -->
+      <div class="video-controls-bar" *ngIf="isVideoPlaying">
+        <button class="vid-ctrl-btn" (click)="toggleMute()" [title]="isMuted ? 'Unmute' : 'Mute'">
+          <i [class]="isMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'"></i>
+        </button>
+        <button class="vid-ctrl-btn" (click)="stopVideo()" title="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══════════════ FEATURES SECTION ═══════════════ -->
-  <section class="features-section" [attr.dir]="currentDir">
+  <section class="features-section reveal" [attr.dir]="currentDir">
     <div class="section-header">
       <span class="section-tag">{{ 'HOME.FEATURES_TAG' | translate }}</span>
       <h2>{{ 'HOME.FEATURES_TITLE' | translate }}</h2>
@@ -41,7 +131,7 @@
     </div>
 
     <div class="sections-wrapper row g-4">
-      <div class="col-lg-4 col-md-6" *ngFor="let section of sections">
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-{{i + 1}}" *ngFor="let section of sections; let i = index">
         <div class="card h-100 shadow-sm p-4 section-card">
           <div class="card-icon-wrap">
             <i [class]="section.icon + ' section-icon'"></i>
@@ -57,7 +147,7 @@
   </section>
 
   <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
-  <section class="how-section">
+  <section class="how-section reveal">
     <div class="section-header">
       <span class="section-tag">{{ 'HOME.HOW_TAG' | translate }}</span>
       <h2>{{ 'HOME.HOW_TITLE' | translate }}</h2>
@@ -65,7 +155,7 @@
     </div>
 
     <div class="steps-row">
-      <div class="step-item" *ngFor="let step of howSteps; let i = index">
+      <div class="step-item reveal reveal-delay-{{i + 1}}" *ngFor="let step of howSteps; let i = index">
         <div class="step-num">{{ i + 1 }}</div>
         <div class="step-connector" *ngIf="i < howSteps.length - 1"></div>
         <div class="step-icon-box">
@@ -78,7 +168,7 @@
   </section>
 
   <!-- ═══════════════ MODES SECTION ═══════════════ -->
-  <section class="modes-section">
+  <section class="modes-section reveal">
     <div class="section-header">
       <span class="section-tag">{{ 'HOME.MODES_TAG' | translate }}</span>
       <h2>{{ 'HOME.MODES_TITLE' | translate }}</h2>
@@ -86,7 +176,7 @@
 
     <div class="modes-grid">
       <!-- Text Chat -->
-      <div class="mode-showcase-card chat-card">
+      <div class="mode-showcase-card chat-card reveal-left">
         <div class="mode-card-glow"></div>
         <div class="mode-card-badge">{{ 'HOME.FREE' | translate }}</div>
         <div class="mode-card-icon">
@@ -107,7 +197,7 @@
       </div>
 
       <!-- Video Call -->
-      <div class="mode-showcase-card video-card">
+      <div class="mode-showcase-card video-card reveal-right">
         <div class="mode-card-glow video-glow"></div>
         <div class="mode-card-badge video-badge-green">{{ 'HOME.NEW' | translate }}</div>
         <div class="mode-card-icon video-icon">
@@ -132,7 +222,7 @@
   <!-- ═══════════════ TRUST / SAFETY SECTION ═══════════════ -->
   <section class="trust-section">
     <div class="trust-inner">
-      <div class="trust-text">
+      <div class="trust-text reveal-left">
         <span class="section-tag">{{ 'HOME.TRUST_TAG' | translate }}</span>
         <h2>{{ 'HOME.TRUST_TITLE' | translate }}</h2>
         <p>{{ 'HOME.TRUST_DESC' | translate }}</p>
@@ -147,8 +237,12 @@
             </div>
           </div>
         </div>
+        <a routerLink="/privacy" class="trust-privacy-link">
+          <i class="fas fa-external-link-alt"></i>
+          {{ 'HOME.READ_PRIVACY' | translate }}
+        </a>
       </div>
-      <div class="trust-visual">
+      <div class="trust-visual reveal-right">
         <div class="trust-card-mockup">
           <div class="tm-header">
             <div class="tm-dot green"></div>
@@ -175,8 +269,25 @@
     </div>
   </section>
 
+  <!-- ═══════════════ ABOUT TEASER ═══════════════ -->
+  <section class="about-teaser-section reveal">
+    <div class="about-teaser-inner">
+      <div class="about-teaser-icon">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="about-teaser-text">
+        <h3>{{ 'HOME.ABOUT_TEASER_TITLE' | translate }}</h3>
+        <p>{{ 'HOME.ABOUT_TEASER_DESC' | translate }}</p>
+      </div>
+      <a routerLink="/about" class="about-teaser-btn">
+        {{ 'HOME.ABOUT_TEASER_BTN' | translate }}
+        <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
   <!-- ═══════════════ CTA SECTION ═══════════════ -->
-  <section class="cta-section">
+  <section class="cta-section reveal">
     <div class="cta-inner">
       <div class="cta-glow"></div>
       <h2>{{ 'HOME.CTA_TITLE' | translate }}</h2>

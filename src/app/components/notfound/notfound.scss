@@ -1,49 +1,218 @@
 @use '../../variables/index' as *;
 
-// ══════════════════════════════════════
-// 404 PAGE
-// ══════════════════════════════════════
-
-.text-danger {
-  background: linear-gradient(135deg, $danger, $accent) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  font-size: clamp(4rem, 12vw, 7rem) !important;
-  font-family: 'Outfit', 'Segoe UI', sans-serif;
-  font-weight: 900;
-  letter-spacing: -2px;
-}
+// ══════════════════════════════════════════════
+// 404 NOT FOUND — Premium Redesign
+// ══════════════════════════════════════════════
 
 .notfound-wrapper {
-  h2 {
-    font-family: 'Outfit', 'Segoe UI', sans-serif;
-    font-weight: 700;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+// ── Background ────────────────────────────────
+.nf-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.nf-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+
+  &.nf-blob-1 {
+    width: 600px;
+    height: 600px;
+    top: -200px;
+    left: -150px;
+    background: radial-gradient(circle, rgba(79, 142, 247, 0.14) 0%, transparent 70%);
+    animation: nfBlobFloat 9s ease-in-out infinite;
+  }
+
+  &.nf-blob-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -150px;
+    right: -120px;
+    background: radial-gradient(circle, rgba(244, 63, 94, 0.1) 0%, transparent 70%);
+    animation: nfBlobFloat 12s ease-in-out infinite reverse;
+  }
+}
+
+@keyframes nfBlobFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-30px) scale(1.04); }
+}
+
+// ── Content ───────────────────────────────────
+.nf-content {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  width: 100%;
+  animation: nfReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes nfReveal {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Glitch 404 ────────────────────────────────
+.nf-code-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.nf-code {
+  display: block;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-weight: 900;
+  font-size: clamp(5rem, 18vw, 10rem);
+  letter-spacing: -4px;
+  background: $gradient-primary;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  user-select: none;
+  line-height: 1;
+}
+
+// Glitch layers
+.nf-code-glitch,
+.nf-code-glitch2 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.nf-code-glitch {
+  background: linear-gradient(135deg, #f43f5e, #fb7185);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+  animation: glitch1 4s infinite;
+  opacity: 0.7;
+}
+
+.nf-code-glitch2 {
+  background: linear-gradient(135deg, #06b6d4, #4f8ef7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+  animation: glitch2 4s infinite;
+  opacity: 0.6;
+}
+
+@keyframes glitch1 {
+  0%, 90%, 100% { transform: translateX(0); opacity: 0; }
+  92%            { transform: translateX(-4px); opacity: 0.7; }
+  94%            { transform: translateX(4px); opacity: 0.7; }
+  96%            { transform: translateX(-2px); opacity: 0.7; }
+  98%            { transform: translateX(0); opacity: 0; }
+}
+
+@keyframes glitch2 {
+  0%, 88%, 100% { transform: translateX(0); opacity: 0; }
+  90%            { transform: translateX(5px); opacity: 0.6; }
+  93%            { transform: translateX(-3px); opacity: 0.6; }
+  96%            { transform: translateX(2px); opacity: 0.6; }
+  98%            { transform: translateX(0); opacity: 0; }
+}
+
+// ── Icon ──────────────────────────────────────
+.nf-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  background: rgba(79, 142, 247, 0.1);
+  border: 1px solid rgba(79, 142, 247, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: $primary;
+  margin-bottom: 1.5rem;
+  animation: iconSpin 8s ease-in-out infinite;
+
+  .dark-mode & {
+    background: rgba(79, 142, 247, 0.12);
+    border-color: rgba(79, 142, 247, 0.25);
+  }
+}
+
+@keyframes iconSpin {
+  0%, 100% { transform: rotate(-15deg); }
+  50%       { transform: rotate(15deg); }
+}
+
+// ── Typography ────────────────────────────────
+.nf-content h1 {
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  letter-spacing: -0.03em;
+  color: $light-text;
+  margin-bottom: 0.8rem;
+
+  .dark-mode & { color: $dark-text; }
+}
+
+.nf-content p {
+  font-size: 1rem;
+  color: $light-text-muted;
+  line-height: 1.7;
+  max-width: 400px;
+  margin: 0 auto 2.2rem;
+
+  .dark-mode & { color: $dark-text-muted; }
+}
+
+// ── Button ────────────────────────────────────
+.nf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 18px;
+  background: $gradient-brand;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 6px 22px rgba(79, 142, 247, 0.4);
+  transition: all 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(79, 142, 247, 0.55);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  &:active { transform: translateY(0); }
+
+  i { font-size: 0.9rem; }
+}
+
+// ── Mobile ────────────────────────────────────
+@media (max-width: $mobile) {
+  .nf-icon {
+    width: 60px;
+    height: 60px;
     font-size: 1.5rem;
-    color: $light-text;
-
-    .dark-mode & { color: $dark-text; }
-  }
-
-  .lead {
-    color: $light-text-muted;
-    font-size: 1rem;
-
-    .dark-mode & { color: $dark-text-muted; }
-  }
-
-  .btn-primary {
-    background: $gradient-brand !important;
-    border: none !important;
-    border-radius: 16px !important;
-    padding: 14px 32px !important;
-    font-weight: 700;
-    box-shadow: 0 4px 18px $primary-glow;
-    transition: all 0.25s;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px $primary-glow;
-    }
   }
 }

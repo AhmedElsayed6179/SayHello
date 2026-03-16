@@ -1,35 +1,110 @@
-<section class="app-download-section py-5" [ngClass]="{'dark-mode': isDarkMode, 'light-mode': !isDarkMode}">
-  <div class="container text-center">
+<section class="app-download-section" [ngClass]="{'dark-mode': isDarkMode, 'light-mode': !isDarkMode}">
 
-    <h2 class="section-title mb-4 d-flex align-items-center justify-content-center gap-2">
-      {{ 'DOWNLOAD.TITLE' | translate }}
-      <i class="bi bi-cloud-arrow-down"></i>
-    </h2>
-    <p class="section-desc mb-5">{{ 'DOWNLOAD.DESCRIPTION' | translate }}</p>
+  <!-- Background blobs -->
+  <div class="dl-bg">
+    <div class="dl-blob dl-blob-1"></div>
+    <div class="dl-blob dl-blob-2"></div>
+    <div class="dl-blob dl-blob-3"></div>
+  </div>
 
-    <div class="d-flex justify-content-center gap-4 flex-wrap">
+  <div class="dl-container">
+
+    <!-- Header -->
+    <div class="dl-header">
+      <span class="section-tag">{{ 'DOWNLOAD.TITLE' | translate }}</span>
+      <h1 class="dl-title">
+        <span class="dl-title-icon"><i class="fas fa-mobile-alt"></i></span>
+        {{ 'DOWNLOAD.TITLE' | translate }}
+      </h1>
+      <p class="dl-desc">{{ 'DOWNLOAD.DESCRIPTION' | translate }}</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="dl-cards">
 
       <!-- Android Card -->
-      <div class="app-card rounded shadow-lg text-center p-4">
-        <i class="bi bi-android mb-3"></i>
-        <h5>{{ 'DOWNLOAD.ANDROID_TITLE' | translate }}</h5>
-        <a href="https://www.dropbox.com/scl/fi/65ukwy0g7ptw8upzc9tan/SayHello.apk?rlkey=364mq9z7j5pvmko13p4lmagbb&st=3e89z4e9&dl=1"
-          class="btn btn-success btn-lg mt-3" download>
+      <div class="dl-card dl-card-android">
+        <div class="dl-card-glow android-glow"></div>
+        <div class="dl-card-badge dl-badge-available">
+          <span class="badge-dot"></span>
           {{ 'DOWNLOAD.ANDROID_BUTTON' | translate }}
-        </a>
+        </div>
+        <div class="dl-os-icon android-icon">
+          <i class="fab fa-android"></i>
+        </div>
+        <div class="dl-card-body">
+          <h2>{{ 'DOWNLOAD.ANDROID_TITLE' | translate }}</h2>
+          <p class="dl-version">APK · v1.0.0</p>
+          <div class="dl-card-features">
+            <span><i class="fas fa-check-circle"></i> {{ 'HOME.TRUST_ANON_TITLE' | translate }}</span>
+            <span><i class="fas fa-check-circle"></i> {{ 'HOME.TRUST_ENC_TITLE' | translate }}</span>
+            <span><i class="fas fa-check-circle"></i> {{ 'HOME.STAT_FREE' | translate }}</span>
+          </div>
+          <a
+            href="https://www.dropbox.com/scl/fi/65ukwy0g7ptw8upzc9tan/SayHello.apk?rlkey=364mq9z7j5pvmko13p4lmagbb&st=3e89z4e9&dl=1"
+            class="dl-btn dl-btn-android"
+            download>
+            <i class="fas fa-download"></i>
+            {{ 'DOWNLOAD.ANDROID_BUTTON' | translate }}
+          </a>
+          <p class="dl-req">Android 6.0+</p>
+        </div>
       </div>
 
       <!-- iOS Card -->
-      <div class="app-card rounded shadow-lg text-center p-4">
-        <i class="bi bi-apple mb-3"></i>
-        <h5>{{ 'DOWNLOAD.IOS_TITLE' | translate }}</h5>
-        <p class="ios-coming">{{ 'DOWNLOAD.IOS_COMING' | translate }}</p>
+      <div class="dl-card dl-card-ios">
+        <div class="dl-card-glow ios-glow"></div>
+        <div class="dl-card-badge dl-badge-soon">
+          {{ 'DOWNLOAD.IOS_COMING' | translate }}
+        </div>
+        <div class="dl-os-icon ios-icon">
+          <i class="fab fa-apple"></i>
+        </div>
+        <div class="dl-card-body">
+          <h2>{{ 'DOWNLOAD.IOS_TITLE' | translate }}</h2>
+          <p class="dl-version">App Store · Coming Soon</p>
+          <div class="dl-card-features">
+            <span><i class="fas fa-clock"></i> {{ 'DOWNLOAD.IOS_COMING' | translate }}</span>
+            <span><i class="fas fa-check-circle"></i> {{ 'HOME.TRUST_ANON_TITLE' | translate }}</span>
+            <span><i class="fas fa-check-circle"></i> {{ 'HOME.STAT_FREE' | translate }}</span>
+          </div>
+          <button class="dl-btn dl-btn-ios" disabled>
+            <i class="fab fa-apple"></i>
+            App Store
+          </button>
+          <p class="dl-req">iOS 14.0+</p>
+        </div>
       </div>
 
     </div>
 
-    <div class="ios-instructions mt-4 p-3 rounded shadow-sm">
-      <p class="mb-0">{{ 'DOWNLOAD.IOS_ADD_HOME' | translate }}</p>
+    <!-- PWA Tip Banner -->
+    <div class="dl-pwa-banner">
+      <div class="dl-pwa-icon">
+        <i class="fas fa-share-alt"></i>
+      </div>
+      <div class="dl-pwa-text">
+        <strong>iOS Tip:</strong>
+        {{ 'DOWNLOAD.IOS_ADD_HOME' | translate }}
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="dl-stats">
+      <div class="dl-stat-item">
+        <strong>10K+</strong>
+        <span>{{ 'HOME.STAT_USERS' | translate }}</span>
+      </div>
+      <div class="dl-stat-divider"></div>
+      <div class="dl-stat-item">
+        <strong>50+</strong>
+        <span>{{ 'HOME.STAT_COUNTRIES' | translate }}</span>
+      </div>
+      <div class="dl-stat-divider"></div>
+      <div class="dl-stat-item">
+        <strong>100%</strong>
+        <span>{{ 'HOME.STAT_FREE' | translate }}</span>
+      </div>
     </div>
 
   </div>

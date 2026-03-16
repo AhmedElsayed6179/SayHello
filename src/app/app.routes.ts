@@ -1,16 +1,39 @@
 import { Routes } from '@angular/router';
-import { Home } from './components/home/home';
-import { Chat } from './components/chat/chat';
-import { Notfound } from './components/notfound/notfound';
-import { AppDownload } from './components/app-download/app-download';
-import { Videocall } from './components/videocall/videocall';
 import { WebOnlyGuard } from './guards/web-only-guard';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'Home', redirectTo: '', pathMatch: 'full' },
-  { path: 'chat', component: Chat },
-  { path: 'videocall', component: Videocall },
-  { path: 'App-Download', component: AppDownload, canActivate: [WebOnlyGuard] },
-  { path: '**', component: Notfound }
+  {
+    path: '',
+    loadComponent: () => import('./components/home/home').then(m => m.Home),
+  },
+  {
+    path: 'Home',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
+  {
+    path: 'chat',
+    loadComponent: () => import('./components/chat/chat').then(m => m.Chat),
+  },
+  {
+    path: 'videocall',
+    loadComponent: () => import('./components/videocall/videocall').then(m => m.Videocall),
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./components/about/about').then(m => m.About),
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./components/privacy/privacy').then(m => m.Privacy),
+  },
+  {
+    path: 'App-Download',
+    loadComponent: () => import('./components/app-download/app-download').then(m => m.AppDownload),
+    canActivate: [WebOnlyGuard],
+  },
+  {
+    path: '**',
+    loadComponent: () => import('./components/notfound/notfound').then(m => m.Notfound),
+  },
 ];

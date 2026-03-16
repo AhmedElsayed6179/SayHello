@@ -1,0 +1,133 @@
+<div class="privacy-wrapper" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'">
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="privacy-hero">
+    <div class="privacy-hero-bg">
+      <div class="priv-blob b1"></div>
+      <div class="priv-blob b2"></div>
+    </div>
+    <div class="privacy-hero-content">
+      <div class="shield-icon-big">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <span class="section-tag">{{ 'PRIVACY.TAG' | translate }}</span>
+      <h1>{{ 'PRIVACY.HERO_TITLE' | translate }}</h1>
+      <p class="privacy-hero-desc">{{ 'PRIVACY.HERO_DESC' | translate }}</p>
+      <div class="privacy-meta">
+        <span><i class="fas fa-calendar-alt"></i> {{ 'PRIVACY.UPDATED' | translate }}</span>
+        <span><i class="fas fa-clock"></i> {{ 'PRIVACY.READ_TIME' | translate }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ QUICK SUMMARY ═══════════════ -->
+  <section class="privacy-summary">
+    <div class="summary-grid">
+      <div class="summary-card" *ngFor="let item of summaryItems">
+        <div class="summary-icon" [style.background]="item.bg">
+          <i [class]="item.icon" [style.color]="item.color"></i>
+        </div>
+        <h4>{{ item.title | translate }}</h4>
+        <p>{{ item.desc | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CONTENT ═══════════════ -->
+  <section class="privacy-content">
+    <div class="privacy-layout">
+
+      <!-- Sidebar TOC -->
+      <nav class="privacy-toc">
+        <span class="toc-label">{{ 'PRIVACY.TOC_LABEL' | translate }}</span>
+        <ul>
+          <li *ngFor="let item of tocItems; let i = index">
+            <a [href]="'#section-' + i" (click)="scrollTo($event, 'section-' + i)">
+              <span class="toc-num">{{ i + 1 }}</span>
+              {{ item | translate }}
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main Content -->
+      <div class="privacy-sections">
+
+        <div class="privacy-section" id="section-0">
+          <div class="section-num">01</div>
+          <h2>{{ 'PRIVACY.S1_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S1_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.S1_P2' | translate }}</p>
+        </div>
+
+        <div class="privacy-section" id="section-1">
+          <div class="section-num">02</div>
+          <h2>{{ 'PRIVACY.S2_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S2_P1' | translate }}</p>
+          <ul class="privacy-list">
+            <li *ngFor="let item of s2items">
+              <i class="fas fa-check-circle"></i>
+              {{ item | translate }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="privacy-section" id="section-2">
+          <div class="section-num">03</div>
+          <h2>{{ 'PRIVACY.S3_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S3_P1' | translate }}</p>
+          <div class="highlight-box">
+            <i class="fas fa-info-circle"></i>
+            <p>{{ 'PRIVACY.S3_HIGHLIGHT' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="privacy-section" id="section-3">
+          <div class="section-num">04</div>
+          <h2>{{ 'PRIVACY.S4_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S4_P1' | translate }}</p>
+          <ul class="privacy-list">
+            <li *ngFor="let item of s4items">
+              <i class="fas fa-check-circle"></i>
+              {{ item | translate }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="privacy-section" id="section-4">
+          <div class="section-num">05</div>
+          <h2>{{ 'PRIVACY.S5_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S5_P1' | translate }}</p>
+          <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>{{ 'PRIVACY.S5_WARNING' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="privacy-section" id="section-5">
+          <div class="section-num">06</div>
+          <h2>{{ 'PRIVACY.S6_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S6_P1' | translate }}</p>
+          <p>{{ 'PRIVACY.S6_P2' | translate }}</p>
+        </div>
+
+        <div class="privacy-section" id="section-6">
+          <div class="section-num">07</div>
+          <h2>{{ 'PRIVACY.S7_TITLE' | translate }}</h2>
+          <p>{{ 'PRIVACY.S7_P1' | translate }}</p>
+        </div>
+
+        <!-- Contact Box -->
+        <div class="privacy-contact">
+          <i class="fas fa-envelope"></i>
+          <div>
+            <h4>{{ 'PRIVACY.CONTACT_TITLE' | translate }}</h4>
+            <p>{{ 'PRIVACY.CONTACT_DESC' | translate }}</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>

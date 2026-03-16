@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
@@ -8,79 +9,47 @@ import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-home',
-  imports: [TranslatePipe, CommonModule, ReactiveFormsModule],
+  imports: [TranslatePipe, CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
-export class Home {
+export class Home implements AfterViewInit, OnDestroy {
+  @ViewChild('demoVideo') demoVideoRef!: ElementRef<HTMLVideoElement>;
+
   usernameForm: FormGroup;
   sections: any[] = [];
   showModeSelector = false;
   private pendingName = '';
+  private observer!: IntersectionObserver;
 
-  // ── Hero Stats ────────────────────────────────
+  // ── Video state ────────────────────────────────
+  isVideoPlaying = false;
+  isMuted = true;
+
+  // ── Hero Stats ─────────────────────────────────
   heroStats = [
     { value: '10K+', label: 'HOME.STAT_USERS' },
     { value: '50+', label: 'HOME.STAT_COUNTRIES' },
     { value: '100%', label: 'HOME.STAT_FREE' },
   ];
 
-  // ── How It Works Steps ────────────────────────
+  // ── How It Works Steps ─────────────────────────
   howSteps = [
-    {
-      icon: 'fas fa-user-edit',
-      title: 'HOME.STEP1_TITLE',
-      desc: 'HOME.STEP1_DESC',
-    },
-    {
-      icon: 'fas fa-random',
-      title: 'HOME.STEP2_TITLE',
-      desc: 'HOME.STEP2_DESC',
-    },
-    {
-      icon: 'fas fa-comments',
-      title: 'HOME.STEP3_TITLE',
-      desc: 'HOME.STEP3_DESC',
-    },
-    {
-      icon: 'fas fa-forward',
-      title: 'HOME.STEP4_TITLE',
-      desc: 'HOME.STEP4_DESC',
-    },
+    { icon: 'fas fa-user-edit', title: 'HOME.STEP1_TITLE', desc: 'HOME.STEP1_DESC' },
+    { icon: 'fas fa-random', title: 'HOME.STEP2_TITLE', desc: 'HOME.STEP2_DESC' },
+    { icon: 'fas fa-comments', title: 'HOME.STEP3_TITLE', desc: 'HOME.STEP3_DESC' },
+    { icon: 'fas fa-forward', title: 'HOME.STEP4_TITLE', desc: 'HOME.STEP4_DESC' },
   ];
 
-  // ── Mode Features ─────────────────────────────
-  chatFeatures = [
-    'HOME.CHAT_F1',
-    'HOME.CHAT_F2',
-    'HOME.CHAT_F3',
-    'HOME.CHAT_F4',
-  ];
+  // ── Mode Features ──────────────────────────────
+  chatFeatures = ['HOME.CHAT_F1', 'HOME.CHAT_F2', 'HOME.CHAT_F3', 'HOME.CHAT_F4'];
+  videoFeatures = ['HOME.VIDEO_F1', 'HOME.VIDEO_F2', 'HOME.VIDEO_F3', 'HOME.VIDEO_F4'];
 
-  videoFeatures = [
-    'HOME.VIDEO_F1',
-    'HOME.VIDEO_F2',
-    'HOME.VIDEO_F3',
-    'HOME.VIDEO_F4',
-  ];
-
-  // ── Trust Items ───────────────────────────────
+  // ── Trust Items ────────────────────────────────
   trustItems = [
-    {
-      icon: 'fas fa-user-secret',
-      title: 'HOME.TRUST_ANON_TITLE',
-      desc: 'HOME.TRUST_ANON_DESC',
-    },
-    {
-      icon: 'fas fa-lock',
-      title: 'HOME.TRUST_ENC_TITLE',
-      desc: 'HOME.TRUST_ENC_DESC',
-    },
-    {
-      icon: 'fas fa-ban',
-      title: 'HOME.TRUST_NODATA_TITLE',
-      desc: 'HOME.TRUST_NODATA_DESC',
-    },
+    { icon: 'fas fa-user-secret', title: 'HOME.TRUST_ANON_TITLE', desc: 'HOME.TRUST_ANON_DESC' },
+    { icon: 'fas fa-lock', title: 'HOME.TRUST_ENC_TITLE', desc: 'HOME.TRUST_ENC_DESC' },
+    { icon: 'fas fa-ban', title: 'HOME.TRUST_NODATA_TITLE', desc: 'HOME.TRUST_NODATA_DESC' },
   ];
 
   constructor(private router: Router, private translate: TranslateService) {
@@ -101,35 +70,48 @@ export class Home {
         icon: 'fas fa-bolt',
         title: 'SECTIONS.ONE.TITLE',
         desc: 'SECTIONS.ONE.DESC',
-        details: [
-          'SECTIONS.ONE.DETAIL1',
-          'SECTIONS.ONE.DETAIL2',
-          'SECTIONS.ONE.DETAIL3',
-        ],
+        details: ['SECTIONS.ONE.DETAIL1', 'SECTIONS.ONE.DETAIL2', 'SECTIONS.ONE.DETAIL3'],
       },
       {
         icon: 'fas fa-globe',
         title: 'SECTIONS.TWO.TITLE',
         desc: 'SECTIONS.TWO.DESC',
-        details: [
-          'SECTIONS.TWO.DETAIL1',
-          'SECTIONS.TWO.DETAIL2',
-          'SECTIONS.TWO.DETAIL3',
-        ],
+        details: ['SECTIONS.TWO.DETAIL1', 'SECTIONS.TWO.DETAIL2', 'SECTIONS.TWO.DETAIL3'],
       },
       {
         icon: 'fas fa-shield-alt',
         title: 'SECTIONS.THREE.TITLE',
         desc: 'SECTIONS.THREE.DESC',
-        details: [
-          'SECTIONS.THREE.DETAIL1',
-          'SECTIONS.THREE.DETAIL2',
-          'SECTIONS.THREE.DETAIL3',
-        ],
+        details: ['SECTIONS.THREE.DETAIL1', 'SECTIONS.THREE.DETAIL2', 'SECTIONS.THREE.DETAIL3'],
       },
     ];
   }
 
+  // ── Scroll Reveal ──────────────────────────────
+  ngAfterViewInit(): void {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            this.observer.unobserve(entry.target); // fire once
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    // Observe all elements with reveal classes
+    document
+      .querySelectorAll('.reveal, .reveal-left, .reveal-right')
+      .forEach((el) => this.observer.observe(el));
+  }
+
+  ngOnDestroy(): void {
+    this.observer?.disconnect();
+  }
+
+  // ── Helpers ────────────────────────────────────
   get currentDir() {
     return this.translate.currentLang === 'ar' ? 'rtl' : 'ltr';
   }
@@ -138,11 +120,42 @@ export class Home {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Called from mode showcase cards directly
+  // ── Video ──────────────────────────────────────
+  playVideo() {
+    this.isVideoPlaying = true;
+    setTimeout(() => {
+      const video = this.demoVideoRef?.nativeElement;
+      if (video) {
+        video.muted = true;
+        this.isMuted = true;
+        video.play().catch(() => { });
+      }
+    }, 50);
+  }
+
+  stopVideo() {
+    this.isVideoPlaying = false;
+    const video = this.demoVideoRef?.nativeElement;
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  }
+
+  toggleMute() {
+    const video = this.demoVideoRef?.nativeElement;
+    if (video) {
+      video.muted = !video.muted;
+      this.isMuted = video.muted;
+    }
+  }
+
+  onVideoEnded() { }
+
+  // ── Chat Navigation ────────────────────────────
   openModeWithName(mode: 'chat' | 'video') {
     const nameVal = this.usernameForm.value.username?.trim();
     if (!nameVal || this.usernameForm.invalid) {
-      // Scroll to top and focus input
       window.scrollTo({ top: 0, behavior: 'smooth' });
       Swal.fire({
         icon: 'info',
@@ -161,14 +174,10 @@ export class Home {
     if (this.usernameForm.invalid) {
       const errors = this.usernameForm.controls['username'].errors;
       let message = '';
-      if (errors?.['required'])
-        message = this.translate.instant('HOME.ERROR_REQUIRED');
-      else if (errors?.['minlength'])
-        message = this.translate.instant('HOME.ERROR_MINLENGTH');
-      else if (errors?.['maxlength'])
-        message = this.translate.instant('HOME.ERROR_MAXLENGTH');
-      else if (errors?.['pattern'])
-        message = this.translate.instant('HOME.ERROR_PATTERN');
+      if (errors?.['required']) message = this.translate.instant('HOME.ERROR_REQUIRED');
+      else if (errors?.['minlength']) message = this.translate.instant('HOME.ERROR_MINLENGTH');
+      else if (errors?.['maxlength']) message = this.translate.instant('HOME.ERROR_MAXLENGTH');
+      else if (errors?.['pattern']) message = this.translate.instant('HOME.ERROR_PATTERN');
 
       Swal.fire({
         icon: 'error',
@@ -200,25 +209,18 @@ export class Home {
       body: JSON.stringify({ name }),
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to start chat');
+        if (!res.ok) throw new Error('server');
         return res.json();
       })
       .then((data) => {
         const token = data.token;
         if (mode === 'video') {
-          this.router.navigate(['/videocall'], {
-            queryParams: { token },
-            state: { name },
-          });
+          this.router.navigate(['/videocall'], { queryParams: { token }, state: { name } });
         } else {
-          this.router.navigate(['/chat'], {
-            queryParams: { token },
-            state: { name },
-          });
+          this.router.navigate(['/chat'], { queryParams: { token }, state: { name } });
         }
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         Swal.fire({
           icon: 'error',
           title: this.translate.instant('HOME.ERROR_INTERNET'),
