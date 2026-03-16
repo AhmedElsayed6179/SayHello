@@ -3,73 +3,226 @@
 
 <head>
   <meta charset="utf-8">
-  <title>SayHello</title>
+  <title>SayHello — Meet New People Instantly</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="SayHello.png">
 
-  <!-- Canonical -->
-  <link rel="canonical" href="https://sayhello.up.railway.app" />
+  <!-- ═══════════════════════════════════════════
+       VIEWPORT & CORE
+  ═══════════════════════════════════════════ -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-  <!-- Theme color -->
-  <meta name="theme-color" content="#000000" />
+  <!-- ═══════════════════════════════════════════
+       PERFORMANCE — DNS Prefetch & Preconnect
+  ═══════════════════════════════════════════ -->
+  <link rel="preconnect" href="https://sayhello.up.railway.app" crossorigin>
+  <link rel="dns-prefetch" href="https://sayhello.up.railway.app">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
-  <!-- Google Site Verification -->
-  <meta name="google-site-verification" content="EPjytqIO40FtaEG1BBVC7XLZ4lHAwmmT8TUIZAj13-A" />
+  <!-- ═══════════════════════════════════════════
+       FAVICON & ICONS
+  ═══════════════════════════════════════════ -->
+  <link rel="icon" type="image/png" sizes="32x32" href="SayHello.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="SayHello.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="SayHello.png">
 
-  <!-- Description -->
-  <meta name="description"
-    content="SayHello is a fast and secure random chat platform that lets you connect with new people from around the world instantly, without registration and with full privacy." />
-
-  <!-- Open Graph (Facebook, WhatsApp) -->
-  <meta property="og:site_name" content="SayHello" />
-  <meta name="application-name" content="SayHello" />
-  <meta property="og:title" content="SayHello" />
-  <meta property="og:description"
-    content="Connect instantly with new people using SayHello — a secure and anonymous random chat platform with no sign-up required." />
-  <meta property="og:image" content="https://sayhello.up.railway.app/SayHello.png" />
-  <meta property="og:url" content="https://sayhello.up.railway.app" />
-  <meta property="og:type" content="website" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SayHello" />
-  <meta name="twitter:description"
-    content="Connect instantly with new people using SayHello — a secure and anonymous random chat platform with no sign-up required." />
-  <meta name="twitter:image" content="https://sayhello.up.railway.app/SayHello.png" />
-
-  <!-- Web ManiFest -->
+  <!-- ═══════════════════════════════════════════
+       PWA
+  ═══════════════════════════════════════════ -->
   <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#4f8ef7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121622" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SayHello">
 
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- ═══════════════════════════════════════════
+       SEO — Core
+  ═══════════════════════════════════════════ -->
+  <link rel="canonical" href="https://sayhello.up.railway.app/">
+  <meta name="description"
+    content="SayHello is a fast, secure, and anonymous random chat platform. Connect instantly with strangers worldwide — no registration, no tracking, just real conversations.">
+  <meta name="keywords"
+    content="random chat, anonymous chat, stranger chat, online chat, meet people, SayHello, free chat, no registration chat">
+  <meta name="author" content="SayHello">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="google-site-verification" content="EPjytqIO40FtaEG1BBVC7XLZ4lHAwmmT8TUIZAj13-A">
 
-  <!-- JSON-LD Structured Data for SEO -->
+  <!-- ═══════════════════════════════════════════
+       SEO — Open Graph (Facebook / WhatsApp / LinkedIn)
+  ═══════════════════════════════════════════ -->
+  <meta property="og:site_name" content="SayHello">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sayhello.up.railway.app/">
+  <meta property="og:title" content="SayHello — Meet New People Instantly">
+  <meta property="og:description"
+    content="Connect with strangers worldwide in seconds. SayHello is a free, anonymous, no-sign-up random chat platform built for real conversations.">
+  <meta property="og:image" content="https://sayhello.up.railway.app/SayHello.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SayHello logo">
+  <meta property="og:locale" content="en_US">
+
+  <!-- ═══════════════════════════════════════════
+       SEO — Twitter / X Card
+  ═══════════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@SayHelloChat">
+  <meta name="twitter:title" content="SayHello — Meet New People Instantly">
+  <meta name="twitter:description"
+    content="Connect with strangers worldwide in seconds. Free, anonymous, no sign-up required.">
+  <meta name="twitter:image" content="https://sayhello.up.railway.app/SayHello.png">
+  <meta name="twitter:image:alt" content="SayHello logo">
+
+  <!-- ═══════════════════════════════════════════
+       PERFORMANCE — Critical CSS (inline)
+       Prevents flash of unstyled content
+  ═══════════════════════════════════════════ -->
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f8faff;
+      color: #0f172a;
+      min-height: 100dvh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale
+    }
+
+    @media(prefers-color-scheme:dark) {
+      body {
+        background: #121622;
+        color: #e8eaf0
+      }
+    }
+
+    /* App root placeholder — prevents layout shift */
+    app-root {
+      display: block;
+      min-height: 100dvh
+    }
+  </style>
+
+  <!-- ═══════════════════════════════════════════
+       FONTS — Bootstrap Icons (deferred)
+  ═══════════════════════════════════════════ -->
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  </noscript>
+
+  <!-- ═══════════════════════════════════════════
+       STRUCTURED DATA — WebSite
+  ═══════════════════════════════════════════ -->
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "SayHello",
-  "alternateName": "SayHello Chat",
-  "url": "https://sayhello.up.railway.app"
-}
-</script>
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SayHello",
+    "alternateName": ["SayHello Chat", "Say Hello"],
+    "url": "https://sayhello.up.railway.app",
+    "description": "A fast, secure, and anonymous random chat platform. Connect with strangers worldwide — no registration required.",
+    "inLanguage": ["en", "ar"],
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://sayhello.up.railway.app/?q={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
 
+  <!-- ═══════════════════════════════════════════
+       STRUCTURED DATA — Organization
+  ═══════════════════════════════════════════ -->
   <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "SayHello",
-  "url": "https://sayhello.up.railway.app",
-  "logo": "https://sayhello.up.railway.app/SayHello.png"
-}
-</script>
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SayHello",
+    "url": "https://sayhello.up.railway.app",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://sayhello.up.railway.app/SayHello.png",
+      "width": 512,
+      "height": 512
+    },
+    "sameAs": []
+  }
+  </script>
+
+  <!-- ═══════════════════════════════════════════
+       STRUCTURED DATA — WebApplication
+  ═══════════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SayHello",
+    "url": "https://sayhello.up.railway.app",
+    "applicationCategory": "CommunicationApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript. Requires a modern browser.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Anonymous random chat platform — meet new people worldwide instantly with no sign-up.",
+    "featureList": [
+      "Anonymous random chat",
+      "Voice messages",
+      "Real-time messaging",
+      "No registration required",
+      "Dark mode support",
+      "RTL language support"
+    ]
+  }
+  </script>
+
 </head>
 
 <body>
   <app-root></app-root>
-  <noscript>Please enable JavaScript to continue using this application.</noscript>
+  <noscript>
+    <style>
+      .noscript-msg {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 2rem;
+        background: #f8faff;
+        color: #0f172a;
+      }
+    </style>
+    <div class="noscript-msg">
+      <div>
+        <img src="SayHello.png" alt="SayHello" width="80" height="80" style="margin-bottom:1rem;border-radius:16px">
+        <p style="font-size:1.1rem;font-weight:600">JavaScript is required to use SayHello.</p>
+        <p style="margin-top:.5rem;opacity:.7">Please enable JavaScript in your browser settings and refresh the page.
+        </p>
+      </div>
+    </div>
+  </noscript>
 </body>
 
 </html>
