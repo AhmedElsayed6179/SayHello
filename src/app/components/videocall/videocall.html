@@ -50,28 +50,16 @@
         </div>
 
         <!-- Remote video element -->
-        <video
-          #remoteVideo
-          class="vc-remote-video"
-          [class.visible]="remoteStreamActive"
-          autoplay
-          playsinline>
+        <video #remoteVideo class="vc-remote-video" [class.visible]="remoteStreamActive" autoplay playsinline>
         </video>
       </div>
 
       <!-- Local PiP -->
-      <div class="vc-local-pip"
-           #localPip
-           *ngIf="localVideoReady"
-           [ngStyle]="pipStyle"
-           (mousedown)="onPipMouseDown($event)"
-           (touchstart)="onPipTouchStart($event)">
+      <div class="vc-local-pip" *ngIf="localVideoReady"
+        [ngStyle]="{ width: pipWidth + 'px', height: pipHeight + 'px' }">
         <video #localVideo class="vc-local-video" autoplay playsinline muted></video>
         <div class="pip-mic-off" *ngIf="!isMicOn">
           <i class="fas fa-microphone-slash"></i>
-        </div>
-        <div class="pip-drag-hint">
-          <i class="fas fa-arrows-alt"></i>
         </div>
       </div>
 
@@ -79,33 +67,25 @@
       <div class="vc-controls">
 
         <!-- ✅ Mic button - مترجم -->
-        <button class="vc-ctrl-btn"
-          [class.off]="!isMicOn"
-          (click)="toggleMic()">
+        <button class="vc-ctrl-btn" [class.off]="!isMicOn" (click)="toggleMic()">
           <i class="fas" [ngClass]="isMicOn ? 'fa-microphone' : 'fa-microphone-slash'"></i>
           <span>{{ isMicOn ? ('VIDEOCALL.MIC_MUTE' | translate) : ('VIDEOCALL.MIC_UNMUTE' | translate) }}</span>
         </button>
 
         <!-- ✅ Camera button - مترجم -->
-        <button class="vc-ctrl-btn"
-          [class.off]="!isCameraOn"
-          (click)="toggleCamera()">
+        <button class="vc-ctrl-btn" [class.off]="!isCameraOn" (click)="toggleCamera()">
           <i class="fas" [ngClass]="isCameraOn ? 'fa-video' : 'fa-video-slash'"></i>
           <span>{{ isCameraOn ? ('VIDEOCALL.CAM_STOP' | translate) : ('VIDEOCALL.CAM_START' | translate) }}</span>
         </button>
 
         <!-- Next button -->
-        <button class="vc-ctrl-btn next-btn"
-          [class.confirm]="confirmNext"
-          (click)="onNextClick()">
+        <button class="vc-ctrl-btn next-btn" [class.confirm]="confirmNext" (click)="onNextClick()">
           <i class="fas" [ngClass]="confirmNext ? 'fa-check' : 'fa-forward'"></i>
           <span>{{ confirmNext ? confirmText : ('CHAT.NEXT' | translate) }}</span>
         </button>
 
         <!-- End call button -->
-        <button class="vc-ctrl-btn end-btn"
-          [class.confirm]="exitConfirm"
-          (click)="onExitClick()">
+        <button class="vc-ctrl-btn end-btn" [class.confirm]="exitConfirm" (click)="onExitClick()">
           <i class="fas" [ngClass]="exitConfirm ? 'fa-exclamation' : 'fa-phone-slash'"></i>
           <span>{{ exitConfirm ? confirmText : ('CHAT.STOP' | translate) }}</span>
         </button>
@@ -130,9 +110,7 @@
 
       <!-- Messages -->
       <div #chatBox class="vc-chat-box">
-        <div *ngFor="let msg of messages"
-          class="vc-msg-wrapper"
-          [ngClass]="{
+        <div *ngFor="let msg of messages" class="vc-msg-wrapper" [ngClass]="{
             'vc-system-msg': msg.sender === 'system',
             'vc-msg-right': msg.senderName === myName && msg.sender === 'user',
             'vc-msg-left':  msg.senderName !== myName && msg.sender === 'user'
@@ -151,8 +129,7 @@
               </span>
               <div class="vc-bubble-wrapper">
                 <span class="vc-bubble" (click)="reactToMessage(msg, '❤️')">{{ msg.text }}</span>
-                <div class="vc-reaction"
-                  *ngIf="msg.reactions && msg.reactions['❤️'] && msg.reactions['❤️'].length">
+                <div class="vc-reaction" *ngIf="msg.reactions && msg.reactions['❤️'] && msg.reactions['❤️'].length">
                   ❤️ {{ msg.reactions['❤️'].length }}
                 </div>
               </div>
@@ -169,14 +146,8 @@
 
       <!-- Input -->
       <div class="vc-chat-input-wrapper" [class.rtl]="isRtl">
-        <input
-          type="text"
-          class="vc-chat-input"
-          [(ngModel)]="message"
-          (keyup.enter)="sendMessage()"
-          (input)="onTyping()"
-          [disabled]="!connected"
-          [placeholder]="'CHAT.PLACEHOLDER' | translate" />
+        <input type="text" class="vc-chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()"
+          (input)="onTyping()" [disabled]="!connected" [placeholder]="'CHAT.PLACEHOLDER' | translate" />
         <button class="vc-send-btn" (click)="sendMessage()" [disabled]="!connected">
           <i class="fa-solid fa-paper-plane"></i>
         </button>

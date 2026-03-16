@@ -302,26 +302,26 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   }
 }
 
-// ── Local PiP — drag-enabled ───────────────────
+// ── Local PiP ──────────────────────────────────
+// width/height تيجي من [ngStyle] في الـ TS بناءً على الجهاز
 .vc-local-pip {
-  // position/size/bottom/right come from [ngStyle] binding in TS
-  position: absolute !important;
+  position: absolute;
+  bottom: calc(#{$vc-ctrl-height} + 20px);
+  right: 20px;
   border-radius: 18px;
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   z-index: 10;
+  cursor: move;
+  transition: box-shadow 0.2s;
   background: #000;
-  user-select: none;
-  touch-action: none; // prevent scroll while dragging on touch
 
   &:hover {
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.8),
       0 0 0 2px $vc-primary;
   }
-
-  // snap transition handled via [ngStyle] in TS
 }
 
 .vc-local-video {
@@ -332,25 +332,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   background: #000;
   transform: scaleX(-1);
   display: block;
-  pointer-events: none;
-}
-
-// ── drag hint icon (shows on hover) ────────────
-.pip-drag-hint {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.65rem;
-  opacity: 0;
-  transition: opacity 0.2s;
-  pointer-events: none;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-
-  .vc-local-pip:hover & {
-    opacity: 1;
-  }
 }
 
 .pip-mic-off {
@@ -949,7 +930,6 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 // RESPONSIVE — Video quality & dimensions
 // ════════════════════════════════════════════════
 
-// ── Tablet ────────────────────────────────────
 @media (max-width: 768px) {
   .vc-controls {
     gap: 6px;
@@ -965,9 +945,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
       display: none;
     }
   }
+
+  .vc-local-pip {
+    bottom: calc(70px + 12px);
+    right: 10px;
+    border-radius: 14px;
+  }
 }
 
-// ── Mobile portrait ────────────────────────────
 @media (max-width: 480px) {
   .vc-controls {
     gap: 5px;
@@ -983,9 +968,15 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
       font-size: 0.95rem;
     }
   }
+
+  .vc-local-pip {
+    bottom: calc(64px + 8px);
+    right: 8px;
+    border-radius: 12px;
+    border-width: 1.5px;
+  }
 }
 
-// ── Mobile landscape — swap to 16:9 ───────────
 @media (max-width: 768px) and (orientation: landscape) {
   .vc-controls {
     height: 56px;
@@ -997,6 +988,12 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     i {
       font-size: 0.85rem;
     }
+  }
+
+  .vc-local-pip {
+    bottom: calc(56px + 8px);
+    right: 8px;
+    border-radius: 10px;
   }
 }
 
