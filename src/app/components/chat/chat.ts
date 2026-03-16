@@ -1,7 +1,7 @@
 import {
   Component, NgZone, OnInit, OnDestroy, HostListener,
   ViewChild, ElementRef, ChangeDetectorRef,
-  CUSTOM_ELEMENTS_SCHEMA, ViewChildren, QueryList
+  ViewChildren, QueryList
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,12 +12,12 @@ import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
 import { ChatMessage } from '../../models/chat-message';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, FormsModule, TranslateModule, PickerModule],
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss']
 })
@@ -374,7 +374,7 @@ export class Chat implements OnInit, OnDestroy {
     }
     this.toggleEmoji();
   }
-  onEmojiSelect(event: any) { this.message += event.detail.unicode; this.showEmoji = false; }
+  onEmojiSelect(event: any) { this.message += event.emoji?.native ?? event.emoji?.colons ?? ''; this.showEmoji = false; }
 
   onStartVoiceClick() {
     if (!this.connected) {

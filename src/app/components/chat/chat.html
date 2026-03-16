@@ -162,11 +162,18 @@
       </button>
     </div>
 
-    <emoji-picker *ngIf="showEmoji" (emoji-click)="onEmojiSelect($event)" [ngStyle]="{
-      'bottom.px': 120,
-      'left.px':  isRtl ? null : 3,
-      'right.px': isRtl ? 0    : null
-    }" class="emoji-picker"></emoji-picker>
+        <emoji-mart *ngIf="showEmoji"
+          class="emoji-picker"
+          [darkMode]="isDarkMode"
+          [isNative]="true"
+          [showPreview]="false"
+          [ngStyle]="{
+            'bottom.px': 120,
+            'left.px':  isRtl ? null : 3,
+            'right.px': isRtl ? 0    : null
+          }"
+          (emojiSelect)="onEmojiSelect($event)">
+        </emoji-mart>
 
     <!-- Mobile overlay backdrop — closes picker on tap -->
     <div *ngIf="showEmoji" class="emoji-overlay" (click)="showEmoji = false"></div>

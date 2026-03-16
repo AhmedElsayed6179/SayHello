@@ -783,44 +783,27 @@ input[type='range'] {
 
 // ── Emoji Picker (emoji-picker-element) ────────
 // CSS custom properties that pierce the Shadow DOM
-emoji-picker {
-  // ── Layout & sizing
-  --num-columns: 8;
-  --emoji-size: 1.7rem;
-  --emoji-padding: 0.35rem;
-  --input-font-size: 0.9rem;
-  --border-radius: 18px;
-  --border-size: 1px;
-  --skintone-border-radius: 10px;
+// ══════════════════════════════════════════════
+// ngx-emoji-mart — Chat
+// ══════════════════════════════════════════════
 
-  // ── Light mode defaults
-  --background: #ffffff;
-  --input-border-color: rgba(79, 142, 247, 0.22);
-  --input-border-radius: 12px;
-  --input-padding: 0.5rem 0.8rem;
-  --input-placeholder-color: #94a3b8;
-  --input-font-color: #0f172a;
-  --outline-color: rgba(79, 142, 247, 0.4);
-  --category-font-color: #64748b;
-  --category-font-size: 0.7rem;
-  --indicator-color: #4f8ef7;
-  --indicator-height: 3px;
-  --button-hover-background: rgba(79, 142, 247, 0.1);
-  --button-active-background: rgba(79, 142, 247, 0.2);
-
-  width: 340px;
-  height: 380px;
+// Override the inner element sizing & colours
+emoji-mart {
+  --em-rgb-accent: 79, 142, 247;
+  --em-color-border: rgba(79, 142, 247, 0.14);
+  --em-color-border-over: rgba(79, 142, 247, 0.3);
+  font-family: 'Outfit', 'Segoe UI', sans-serif !important;
+  width: 340px !important;
+  height: 380px !important;
+  border-radius: 18px !important;
+  overflow: hidden;
 }
 
-.dark-mode emoji-picker {
-  --background: #1a1f35;
-  --input-border-color: rgba(129, 140, 248, 0.25);
-  --input-font-color: #e8eaf0;
-  --input-placeholder-color: #6b7485;
-  --category-font-color: #6b7485;
-  --indicator-color: #818cf8;
-  --button-hover-background: rgba(129, 140, 248, 0.12);
-  --button-active-background: rgba(129, 140, 248, 0.22);
+.dark-mode emoji-mart {
+  --em-rgb-background: 26, 31, 53;
+  --em-rgb-input: 26, 31, 53;
+  --em-color-border: rgba(129, 140, 248, 0.2);
+  --em-rgb-color: 232, 234, 240;
 }
 
 // ── Wrapper host element
@@ -869,15 +852,12 @@ emoji-picker {
 
 // ═══ Mobile: full-width bottom sheet ═══════════
 @media (max-width: 640px) {
-  emoji-picker {
-    --num-columns: 7;
-    --emoji-size: 2rem;
-    --emoji-padding: 0.45rem;
-    --input-font-size: 1rem;
-    width: 100%;
-    height: auto;
-    min-height: 320px;
-    max-height: 52vh;
+  emoji-mart {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 320px !important;
+    max-height: 52vh !important;
+    border-radius: 0 !important;
   }
 
   // dim backdrop
@@ -937,54 +917,12 @@ emoji-picker {
     background: rgba(0, 0, 0, 0.14);
     border-radius: 99px;
     margin: 10px auto 2px;
+    position: relative;
+    z-index: 1;
   }
 
   .dark-mode .emoji-picker::before {
     background: rgba(255, 255, 255, 0.18);
-  }
-}
-
-// Emoji close button — hidden on desktop, shown on mobile
-.emoji-close-btn {
-  display: none;
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
-  justify-content: flex-end;
-  padding: 4px 12px 2px;
-  background: inherit;
-
-  button {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.1);
-    color: #333;
-    transition:
-      background 0.18s,
-      transform 0.15s;
-
-    .dark-mode & {
-      background: rgba(255, 255, 255, 0.1);
-      color: #eee;
-    }
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.18);
-      transform: scale(1.1);
-    }
-  }
-
-  @media (max-width: 640px) {
-    display: flex !important;
   }
 }
 

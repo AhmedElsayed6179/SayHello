@@ -1,7 +1,6 @@
 import {
   Component, NgZone, OnInit, OnDestroy,
-  ViewChild, ElementRef, ChangeDetectorRef, HostListener,
-  CUSTOM_ELEMENTS_SCHEMA
+  ViewChild, ElementRef, ChangeDetectorRef, HostListener
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +10,7 @@ import { io, Socket } from 'socket.io-client';
 import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 interface ChatMessage {
   id?: string;
@@ -27,8 +27,7 @@ interface ChatMessage {
 @Component({
   selector: 'app-videocall',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule, FormsModule, TranslateModule, PickerModule],
   templateUrl: './videocall.html',
   styleUrls: ['./videocall.scss']
 })
@@ -420,7 +419,7 @@ export class Videocall implements OnInit, OnDestroy {
   onTyping() { if (this.connected) this.socket.emit('typing'); }
   reactToMessage(msg: ChatMessage, reaction: string) { if (msg.id) this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName }); }
 
-  onEmojiSelect(event: any) { this.message += event.detail.unicode; this.showEmoji = false; }
+  onEmojiSelect(event: any) { this.message += event.emoji?.native ?? event.emoji?.colons ?? ''; this.showEmoji = false; }
   toggleEmoji() { this.showEmoji = !this.showEmoji; }
 
   @HostListener('window:popstate', ['$event'])
