@@ -1248,16 +1248,27 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .vc-controls {
     gap: 6px;
     padding: 0 0.75rem;
-    height: 70px;
+    height: 74px;
     // Safe area for home-bar on iPhone
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95) 0%,
+      rgba(0, 0, 0, 0.6) 70%,
+      transparent 100%
+    );
   }
   .vc-ctrl-btn {
-    min-width: 46px;
-    padding: 8px 10px;
-    border-radius: 14px;
+    min-width: 50px;
+    min-height: 50px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    gap: 0;
     span {
       display: none;
+    }
+    i {
+      font-size: 1.15rem;
     }
   }
   // Chat sidebar takes full screen on mobile
@@ -1282,14 +1293,18 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .vc-controls {
     gap: 5px;
     padding: 0 0.5rem;
-    height: 64px;
+    height: 68px;
   }
   .vc-ctrl-btn {
-    min-width: 40px;
-    padding: 7px 8px;
-    border-radius: 12px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 9px 10px;
+    border-radius: 14px;
     i {
-      font-size: 0.95rem;
+      font-size: 1rem;
+    }
+    &.end-btn {
+      padding: 9px 14px;
     }
   }
 }
