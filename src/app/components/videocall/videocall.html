@@ -170,13 +170,21 @@
         <button class="vc-send-btn" (click)="sendMessage()" [disabled]="!connected">
           <i class="fa-solid fa-paper-plane"></i>
         </button>
-        <emoji-mart *ngIf="showEmoji"
-          class="vc-emoji-picker"
-          [darkMode]="isDarkMode"
-          [isNative]="true"
-          [showPreview]="false"
-          (emojiSelect)="onEmojiSelect($event)">
-        </emoji-mart>
+        <div *ngIf="showEmoji" class="vc-emoji-picker">
+          <div class="vc-emoji-sheet-header">
+            <span class="vc-emoji-handle"></span>
+            <span class="vc-emoji-title">{{ 'CHAT.EMOJI' | translate }}</span>
+            <button class="vc-emoji-close" (click)="showEmoji = false" type="button">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <emoji-mart
+            [darkMode]="isDarkMode"
+            [isNative]="true"
+            [showPreview]="false"
+            (emojiSelect)="onEmojiSelect($event)">
+          </emoji-mart>
+        </div>
         <!-- Mobile overlay backdrop -->
         <div *ngIf="showEmoji" class="vc-emoji-overlay" (click)="showEmoji = false"></div>
       </div>

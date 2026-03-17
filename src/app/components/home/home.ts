@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
@@ -25,6 +25,7 @@ export class Home implements AfterViewInit, OnDestroy {
   // ── Video state ────────────────────────────────
   isVideoPlaying = false;
   isMuted = true;
+  isFullscreen = false;
 
   // ── Hero Stats ─────────────────────────────────
   heroStats = [
@@ -178,6 +179,35 @@ export class Home implements AfterViewInit, OnDestroy {
   }
 
   onVideoEnded() { }
+
+  // ── Fullscreen ─────────────────────────────────
+  toggleFullscreen() {
+    const video = this.demoVideoRef?.nativeElement;
+    if (!video) return;
+
+    if (!document.fullscreenElement) {
+      video.requestFullscreen?.()
+        .then(() => { this.isFullscreen = true; })
+        .catch(() => { });
+    } else {
+      document.exitFullscreen?.()
+        .then(() => { this.isFullscreen = false; })
+        .catch(() => { });
+    }
+  }
+
+  exitFullscreen() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.()
+        .then(() => { this.isFullscreen = false; })
+        .catch(() => { });
+    }
+  }
+
+  @HostListener('document:fullscreenchange')
+  onFullscreenChange() {
+    this.isFullscreen = !!document.fullscreenElement;
+  }
 
   // ── Chat Navigation ────────────────────────────
   openModeWithName(mode: 'chat' | 'video') {

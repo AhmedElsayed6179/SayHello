@@ -106,7 +106,8 @@
       </div>
 
       <!-- Actual video — src is set dynamically by language in playVideo() -->
-      <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" loop muted playsinline preload="none">
+      <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" controls loop muted playsinline
+        controlsList="nodownload" preload="none" (dblclick)="toggleFullscreen()">
         <source [src]="demoVideoSrc" type="video/mp4">
       </video>
 
@@ -115,10 +116,19 @@
         <button class="vid-ctrl-btn" (click)="toggleMute()" [title]="isMuted ? 'Unmute' : 'Mute'">
           <i [class]="isMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up'"></i>
         </button>
+        <button class="vid-ctrl-btn vid-fullscreen-btn" (click)="toggleFullscreen()" title="Fullscreen">
+          <i [class]="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"></i>
+        </button>
         <button class="vid-ctrl-btn" (click)="stopVideo()" title="Close">
           <i class="fas fa-times"></i>
         </button>
       </div>
+
+      <!-- Fullscreen exit button (shown inside native fullscreen) -->
+      <button class="vid-fullscreen-exit-btn" *ngIf="isFullscreen && isVideoPlaying" (click)="exitFullscreen()">
+        <i class="fas fa-arrow-left"></i>
+        <span>{{ 'HOME.BACK' | translate }}</span>
+      </button>
     </div>
   </section>
 

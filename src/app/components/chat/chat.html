@@ -162,18 +162,21 @@
       </button>
     </div>
 
-        <emoji-mart *ngIf="showEmoji"
-          class="emoji-picker"
-          [darkMode]="isDarkMode"
-          [isNative]="true"
-          [showPreview]="false"
-          [ngStyle]="{
-            'bottom.px': 120,
-            'left.px':  isRtl ? null : 3,
-            'right.px': isRtl ? 0    : null
-          }"
-          (emojiSelect)="onEmojiSelect($event)">
-        </emoji-mart>
+        <div *ngIf="showEmoji" class="emoji-picker" [class.dark-mode]="isDarkMode">
+          <div class="emoji-sheet-header">
+            <span class="emoji-sheet-handle"></span>
+            <span class="emoji-sheet-title">{{ 'CHAT.EMOJI' | translate }}</span>
+            <button class="emoji-sheet-close" (click)="showEmoji = false" type="button">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <emoji-mart
+            [darkMode]="isDarkMode"
+            [isNative]="true"
+            [showPreview]="false"
+            (emojiSelect)="onEmojiSelect($event)">
+          </emoji-mart>
+        </div>
 
     <!-- Mobile overlay backdrop — closes picker on tap -->
     <div *ngIf="showEmoji" class="emoji-overlay" (click)="showEmoji = false"></div>
