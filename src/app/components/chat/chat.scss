@@ -1099,24 +1099,37 @@ body.dark-mode {
 // ── Responsive ─────────────────────────────────
 @media (max-width: $mobile) {
   .chat-container {
-    margin: 8px;
-    padding: 0.85rem;
-    border-radius: 18px;
+    margin: 0;
+    padding: 0.6rem 0.6rem 0.6rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    min-height: 100dvh;
+    box-shadow: none;
+  }
+
+  .chat-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
   }
 
   .chat-box {
-    min-height: 260px;
-    max-height: 52vh;
-    padding: 14px 12px;
+    min-height: 0;
+    flex: 1;
+    max-height: none;
+    height: calc(100dvh - 220px);
+    padding: 12px 10px;
     gap: 10px;
+    border-radius: 16px;
   }
 
   .message-content {
-    max-width: 82%;
+    max-width: 78%;
   }
 
   .voice-message {
-    max-width: 82%;
+    max-width: 78%;
   }
 
   .bubble-text {
@@ -1125,7 +1138,7 @@ body.dark-mode {
   }
 
   .voice-bubble {
-    min-width: 170px;
+    min-width: 160px;
     padding: 9px 12px;
     gap: 6px;
   }
@@ -1149,6 +1162,11 @@ body.dark-mode {
   .input-inner {
     min-height: 46px;
     padding: 0 5px;
+  }
+
+  .input-wrapper {
+    gap: 8px;
+    margin-top: 10px;
   }
 
   // emoji picker handled globally above
