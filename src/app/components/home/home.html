@@ -106,8 +106,8 @@
       </div>
 
       <!-- Actual video — src is set dynamically by language in playVideo() -->
-      <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" loop muted playsinline preload="none"
-        (dblclick)="toggleFullscreen()">
+      <video #demoVideo class="demo-video" (contextmenu)="false" controlsList="nodownload"
+        [class.hidden]="!isVideoPlaying" loop muted playsinline preload="none" (dblclick)="toggleFullscreen()">
         <source [src]="demoVideoSrc" type="video/mp4">
       </video>
 
@@ -126,7 +126,8 @@
       </div>
 
       <!-- Fullscreen exit button — desktop only (mobile uses OS controls) -->
-      <button class="vid-fullscreen-exit-btn hide-on-mobile" *ngIf="isFullscreen && isVideoPlaying" (click)="exitFullscreen()">
+      <button class="vid-fullscreen-exit-btn hide-on-mobile" *ngIf="isFullscreen && isVideoPlaying"
+        (click)="exitFullscreen()">
         <i class="fas fa-arrow-left"></i>
         <span>{{ 'HOME.BACK' | translate }}</span>
       </button>

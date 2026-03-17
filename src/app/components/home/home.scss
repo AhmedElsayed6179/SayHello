@@ -608,6 +608,8 @@ html.video-fs-open {
   opacity: 1;
   transition: opacity 0.35s ease;
   animation: videoFadeIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  user-select: none;
+  -webkit-user-drag: none;
 
   &.hidden {
     display: none;
