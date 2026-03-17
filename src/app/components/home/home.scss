@@ -416,7 +416,9 @@
       0 24px 70px rgba(79, 142, 247, 0.25);
   }
 
-  // ── CSS Fullscreen (mobile + desktop fallback) ─────
+  // ── CSS Fullscreen — desktop container fullscreen only ─────
+  // On mobile, native video.requestFullscreen() is used (like YouTube),
+  // so the OS player takes over and this CSS block is never triggered.
   &.video-fullscreen {
     position: fixed !important;
     inset: 0 !important;
@@ -428,15 +430,14 @@
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    z-index: 2147483647 !important; // max possible z-index — above navbar, modals, everything
+    z-index: 2147483647 !important;
     margin: 0 !important;
     background: #000 !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    // Ensure it paints above Angular's router outlet and any fixed navbars
     isolation: isolate;
-    transform: translateZ(0); // new stacking context on GPU layer
+    transform: translateZ(0);
 
     .demo-video {
       position: absolute;
@@ -447,7 +448,6 @@
       border-radius: 0 !important;
     }
 
-    // Controls bar repositioned for fullscreen
     .video-controls-bar {
       bottom: calc(20px + env(safe-area-inset-bottom, 0px));
       right: calc(16px + env(safe-area-inset-right, 0px));
@@ -1985,6 +1985,10 @@ html.video-fs-open {
 @media (max-width: $tablet) {
   .hero-section {
     padding: 2.5rem 0.5rem 2rem;
+  }
+
+  .hide-on-mobile {
+    display: none !important;
   }
 
   .hero-form {

@@ -112,6 +112,15 @@ export class Home implements AfterViewInit, OnDestroy {
     document
       .querySelectorAll('.reveal, .reveal-left, .reveal-right')
       .forEach((el) => this.observer.observe(el));
+
+    // iOS Safari fires 'webkitendfullscreen' on the <video> element
+    // when the user exits fullscreen via the OS controls (swipe down / done button)
+    const video = this.demoVideoRef?.nativeElement as HTMLVideoElement | null;
+    if (video) {
+      video.addEventListener('webkitendfullscreen', () => {
+        this.isFullscreen = false;
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -181,9 +190,11 @@ export class Home implements AfterViewInit, OnDestroy {
   onVideoEnded() { }
 
   // ── Fullscreen ─────────────────────────────────
-  // We use CSS fullscreen (class-based) for cross-platform support,
-  // especially iOS Safari which doesn't support requestFullscreen on divs.
-  // Native fullscreen is used as an enhancement on desktop when available.
+  // Strategy:
+  //   Mobile  → native video.requestFullscreen() / webkitEnterFullscreen()
+  //             This is exactly what YouTube does — the OS takes over,
+  //             no Angular shell / navbar can bleed through.
+  //   Desktop → container.requestFullscreen() for a cinematic experience.
 
   private isMobile(): boolean {
     return window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -198,44 +209,50 @@ export class Home implements AfterViewInit, OnDestroy {
   }
 
   enterFullscreen() {
-    const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
-    if (!container) return;
+    const video = this.demoVideoRef?.nativeElement as HTMLVideoElement | null;
+    const container = video?.closest?.('.video-container') as HTMLElement | null;
+    if (!video || !container) return;
 
     if (this.isMobile()) {
-      // CSS fullscreen — works on all mobile browsers including iOS
-      this.isFullscreen = true;
-      container.classList.add('video-fullscreen');
-      document.body.classList.add('video-fs-open');
-      document.documentElement.classList.add('video-fs-open');
-    } else {
-      // Desktop: use native Fullscreen API
-      const req = container.requestFullscreen?.() ?? (container as any).webkitRequestFullscreen?.();
-      if (req) {
-        req.then(() => { this.isFullscreen = true; }).catch(() => {
-          // fallback to CSS fullscreen
-          this.isFullscreen = true;
-          container.classList.add('video-fullscreen');
-          document.body.classList.add('video-fs-open');
-          document.documentElement.classList.add('video-fs-open');
-        });
+      // ── Mobile: ask the <video> element itself to go fullscreen ──
+      // This is the ONLY reliable way on iOS Safari + Android Chrome.
+      // The OS-level player takes over, so the Angular shell is irrelevant.
+      const req =
+        (video as any).webkitEnterFullscreen?.()   // iOS Safari
+        ?? video.requestFullscreen?.()              // Android Chrome / Firefox
+        ?? (video as any).mozRequestFullScreen?.()
+        ?? (video as any).msRequestFullscreen?.();
+
+      if (req instanceof Promise) {
+        req.then(() => { this.isFullscreen = true; }).catch(() => { });
       } else {
+        // webkitEnterFullscreen() is synchronous on iOS — no promise
         this.isFullscreen = true;
-        container.classList.add('video-fullscreen');
-        document.body.classList.add('video-fs-open');
-        document.documentElement.classList.add('video-fs-open');
+      }
+    } else {
+      // ── Desktop: fullscreen on the container div ──
+      const req =
+        container.requestFullscreen?.()
+        ?? (container as any).webkitRequestFullscreen?.()
+        ?? (container as any).mozRequestFullScreen?.()
+        ?? (container as any).msRequestFullscreen?.();
+
+      if (req instanceof Promise) {
+        req.then(() => { this.isFullscreen = true; }).catch(() => { });
       }
     }
   }
 
   exitFullscreen() {
-    const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
     this.isFullscreen = false;
+    // Clean up any CSS fullscreen remnants (shouldn't be set now, but safety net)
+    const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
     container?.classList.remove('video-fullscreen');
     document.body.classList.remove('video-fs-open');
     document.documentElement.classList.remove('video-fs-open');
 
-    if (document.fullscreenElement) {
-      document.exitFullscreen?.().catch(() => { });
+    if (document.fullscreenElement || (document as any).webkitFullscreenElement) {
+      (document.exitFullscreen?.() ?? (document as any).webkitExitFullscreen?.())?.catch?.(() => { });
     }
   }
 
@@ -255,9 +272,15 @@ export class Home implements AfterViewInit, OnDestroy {
   @HostListener('document:fullscreenchange')
   @HostListener('document:webkitfullscreenchange')
   onFullscreenChange() {
-    if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
-      const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
+    const isStillFullscreen =
+      !!document.fullscreenElement ||
+      !!(document as any).webkitFullscreenElement ||
+      !!(this.demoVideoRef?.nativeElement as any)?.webkitDisplayingFullscreen;
+
+    if (!isStillFullscreen) {
       this.isFullscreen = false;
+      // Clean up CSS fullscreen if it was ever applied
+      const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
       container?.classList.remove('video-fullscreen');
       document.body.classList.remove('video-fs-open');
       document.documentElement.classList.remove('video-fs-open');
