@@ -139,6 +139,8 @@ export class Home implements AfterViewInit, OnDestroy {
     if (video) {
       video.pause();
       video.currentTime = 0;
+      video.muted = true;
+      this.isMuted = true;
     }
   }
 
