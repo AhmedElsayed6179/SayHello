@@ -106,8 +106,8 @@
       </div>
 
       <!-- Actual video — src is set dynamically by language in playVideo() -->
-      <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" controls loop muted playsinline
-        controlsList="nodownload" preload="none" (dblclick)="toggleFullscreen()" (touchend)="onVideoTap($event)">
+      <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" loop muted playsinline preload="none"
+        (dblclick)="toggleFullscreen()" (touchend)="onVideoTap($event)">
         <source [src]="demoVideoSrc" type="video/mp4">
       </video>
 

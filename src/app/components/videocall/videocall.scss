@@ -1073,44 +1073,51 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .vc-emoji-sheet-header {
     display: flex;
     align-items: center;
-    padding: 10px 14px 8px;
+    padding: 16px 14px 10px;
     background: var(--vc-ep-header-bg);
     border-bottom: 1px solid var(--vc-ep-divider);
     flex-shrink: 0;
     position: relative;
     z-index: 2;
+    min-height: 54px;
 
     .vc-emoji-handle {
       display: block;
-      width: 36px;
+      width: 40px;
       height: 4px;
       border-radius: 99px;
       background: var(--vc-ep-handle);
       position: absolute;
-      top: 8px;
+      top: 7px;
       left: 50%;
       transform: translateX(-50%);
+      transition:
+        background 0.18s,
+        width 0.18s;
+
+      &:active {
+        width: 56px;
+        background: rgba(79, 142, 247, 0.5);
+      }
     }
 
     .vc-emoji-title {
       flex: 1;
       text-align: center;
-      font-size: 0.82rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: var(--vc-ep-header-text);
       letter-spacing: 0.3px;
-      margin-top: 10px;
     }
 
     .vc-emoji-close {
-      margin-top: 10px;
-      width: 30px;
-      height: 30px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       border: none;
       background: var(--vc-ep-close-bg);
       color: var(--vc-ep-close-color);
-      font-size: 0.82rem;
+      font-size: 0.88rem;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1118,14 +1125,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
       transition:
         background 0.18s,
         color 0.18s,
-        transform 0.18s;
+        transform 0.15s;
       flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
 
-      &:hover,
       &:active {
         background: var(--vc-ep-close-hover);
         color: #f43f5e;
-        transform: scale(1.1);
+        transform: scale(0.9);
       }
     }
   }
@@ -1133,10 +1140,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .videocall-wrapper emoji-mart {
     width: 100% !important;
     height: auto !important;
-    min-height: 300px !important;
-    max-height: 46vh !important;
+    min-height: 280px !important;
+    max-height: 44vh !important;
     border-radius: 0 !important;
     background: var(--vc-ep-bg) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    touch-action: pan-y !important;
   }
 
   .videocall-wrapper.dark-mode emoji-mart {
@@ -1151,18 +1162,21 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     top: auto !important;
     width: 100vw !important;
     max-width: 100vw !important;
-    max-height: 62vh !important;
-    border-radius: 24px 24px 0 0 !important;
+    max-height: 60vh !important;
+    border-radius: 20px 20px 0 0 !important;
     border: none !important;
     border-top: 1px solid var(--vc-ep-divider) !important;
     overflow: hidden !important;
     z-index: 99999 !important;
     background: var(--vc-ep-bg) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.22) !important;
-    animation: vcEpSlideUp 0.32s cubic-bezier(0.32, 0.72, 0, 1) both !important;
+    box-shadow:
+      0 -8px 40px rgba(0, 0, 0, 0.22),
+      0 -1px 0 rgba(255, 255, 255, 0.06) !important;
+    animation: vcEpSlideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) both !important;
     display: flex !important;
     flex-direction: column !important;
+    will-change: transform !important;
   }
 
   .dark-mode .vc-emoji-picker {
@@ -1185,8 +1199,8 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 
   @keyframes vcEpSlideUp {
     from {
-      transform: translateY(105%);
-      opacity: 0.6;
+      transform: translateY(100%);
+      opacity: 0;
     }
     to {
       transform: translateY(0);
