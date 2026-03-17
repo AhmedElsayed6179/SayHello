@@ -225,7 +225,8 @@
     "empty_message": "No puedes enviar un mensaje vacío",
     "CONFIRM": "¿Estás seguro?",
     "INFO": "Información",
-    "RECORD_CANCELED": "La grabación se canceló porque el otro usuario abandonó el chat"
+    "RECORD_CANCELED": "La grabación se canceló porque el otro usuario abandonó el chat",
+    "EMOJI": "Emoji"
   },
   "VIDEOCALL": {
     "TITLE": "Videollamada",

@@ -206,6 +206,7 @@ export class Home implements AfterViewInit, OnDestroy {
       this.isFullscreen = true;
       container.classList.add('video-fullscreen');
       document.body.classList.add('video-fs-open');
+      document.documentElement.classList.add('video-fs-open');
     } else {
       // Desktop: use native Fullscreen API
       const req = container.requestFullscreen?.() ?? (container as any).webkitRequestFullscreen?.();
@@ -215,11 +216,13 @@ export class Home implements AfterViewInit, OnDestroy {
           this.isFullscreen = true;
           container.classList.add('video-fullscreen');
           document.body.classList.add('video-fs-open');
+          document.documentElement.classList.add('video-fs-open');
         });
       } else {
         this.isFullscreen = true;
         container.classList.add('video-fullscreen');
         document.body.classList.add('video-fs-open');
+        document.documentElement.classList.add('video-fs-open');
       }
     }
   }
@@ -229,6 +232,7 @@ export class Home implements AfterViewInit, OnDestroy {
     this.isFullscreen = false;
     container?.classList.remove('video-fullscreen');
     document.body.classList.remove('video-fs-open');
+    document.documentElement.classList.remove('video-fs-open');
 
     if (document.fullscreenElement) {
       document.exitFullscreen?.().catch(() => { });
@@ -256,6 +260,7 @@ export class Home implements AfterViewInit, OnDestroy {
       this.isFullscreen = false;
       container?.classList.remove('video-fullscreen');
       document.body.classList.remove('video-fs-open');
+      document.documentElement.classList.remove('video-fs-open');
     }
   }
 

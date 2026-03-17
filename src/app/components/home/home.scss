@@ -428,12 +428,15 @@
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    z-index: 99999 !important;
+    z-index: 2147483647 !important; // max possible z-index — above navbar, modals, everything
     margin: 0 !important;
     background: #000 !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    // Ensure it paints above Angular's router outlet and any fixed navbars
+    isolation: isolate;
+    transform: translateZ(0); // new stacking context on GPU layer
 
     .demo-video {
       position: absolute;
@@ -456,6 +459,25 @@
 // Prevent body scroll when CSS fullscreen is open
 body.video-fs-open {
   overflow: hidden;
+}
+
+// Hide everything outside the video container when CSS fullscreen is active on mobile
+html.video-fs-open {
+  // Force all app-level wrappers behind our fullscreen layer
+  app-root > *:not(.video-fs-portal),
+  app-navbar,
+  app-header,
+  nav,
+  header,
+  footer,
+  .navbar,
+  .header,
+  .footer,
+  .app-shell,
+  .layout-wrapper > *:not(.router-outlet-wrapper) {
+    z-index: 0 !important;
+    position: relative;
+  }
 }
 
 .video-glow-bg {
@@ -608,7 +630,7 @@ body.video-fs-open {
   position: absolute;
   bottom: 16px;
   right: 16px;
-  z-index: 100000;
+  z-index: 2147483647;
   display: flex;
   gap: 8px;
   transition:
@@ -650,7 +672,7 @@ body.video-fs-open {
   position: absolute;
   top: calc(16px + env(safe-area-inset-top, 0px));
   left: calc(16px + env(safe-area-inset-left, 0px));
-  z-index: 100001;
+  z-index: 2147483647;
   display: flex;
   align-items: center;
   gap: 8px;

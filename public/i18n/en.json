@@ -225,7 +225,8 @@
     "empty_message": "You cannot send an empty message",
     "CONFIRM": "Are you sure?",
     "INFO": "Info",
-    "RECORD_CANCELED": "Recording was canceled because the other user left the chat"
+    "RECORD_CANCELED": "Recording was canceled because the other user left the chat",
+    "EMOJI": "Emoji"
   },
   "VIDEOCALL": {
     "TITLE": "Video Call",
