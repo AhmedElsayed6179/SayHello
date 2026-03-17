@@ -162,7 +162,7 @@
       </div>
 
       <div class="vc-chat-input-wrapper" [class.rtl]="isRtl">
-        <button class="vc-emoji-btn" type="button" (click)="toggleEmoji()" [disabled]="!connected">
+        <button class="vc-emoji-btn" [class.active]="showEmoji" type="button" (click)="toggleEmoji()" [disabled]="!connected">
           <i class="far fa-smile-wink"></i>
         </button>
         <input type="text" class="vc-chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()"

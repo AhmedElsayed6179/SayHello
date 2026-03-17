@@ -7,14 +7,11 @@
     <span></span>
   </div>
 
-  <!-- Navbar ثابت -->
   <app-navbar></app-navbar>
 
-  <!-- المحتوى الرئيسي -->
   <main class="flex-fill" id="page-content" [attr.dir]="currentLang === 'ar' ? 'rtl' : 'ltr'">
     <router-outlet></router-outlet>
   </main>
 
-  <!-- Footer دائمًا في الأسفل -->
   <app-footer id="page-footer" [attr.dir]="currentLang === 'ar' ? 'rtl' : 'ltr'"></app-footer>
 </div>

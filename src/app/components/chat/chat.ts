@@ -13,13 +13,12 @@ import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
 import { ChatMessage } from '../../models/chat-message';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-
 @Component({
   selector: 'app-chat',
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, PickerModule],
   templateUrl: './chat.html',
-  styleUrls: ['./chat.scss']
+  styleUrls: ['./chat.scss'],
 })
 export class Chat implements OnInit, OnDestroy {
   @ViewChild('chatBox') chatBox!: ElementRef;
@@ -390,9 +389,14 @@ export class Chat implements OnInit, OnDestroy {
     if (!this.connected) {
       Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.PARTNER'), text: this.translate.instant('CHAT.EMOJI_NO_PARTNER'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') }); return;
     }
-    this.toggleEmoji();
+    this.showEmoji = !this.showEmoji;
+    this.cd.detectChanges();
   }
-  onEmojiSelect(event: any) { this.message += event.emoji?.native ?? event.emoji?.colons ?? ''; this.showEmoji = false; }
+  onEmojiSelect(event: any) {
+    this.message += event.emoji?.native ?? event.emoji?.colons ?? '';
+    this.showEmoji = false;
+    this.cd.detectChanges();
+  }
 
   onStartVoiceClick() {
     if (!this.connected) {

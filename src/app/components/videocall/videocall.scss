@@ -906,6 +906,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 1rem;
   transition: all 0.18s;
   flex-shrink: 0;
+  position: relative;
 
   .dark-mode & {
     color: $vc-dark-muted;
@@ -927,27 +928,70 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     cursor: not-allowed;
     transform: none;
   }
+
+  // ── Active / open state ──
+  &.active {
+    background: rgba(79, 142, 247, 0.14) !important;
+    color: $vc-primary !important;
+    transform: scale(1.08) rotate(10deg);
+
+    .dark-mode & {
+      background: rgba(129, 140, 248, 0.18) !important;
+      color: lighten($vc-primary, 8%) !important;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 2px solid rgba(79, 142, 247, 0.35);
+      animation: vcEmojiBtnRing 1.6s ease-in-out infinite;
+    }
+  }
 }
 
-// ── Emoji Picker (ngx-emoji-mart) ────────────
-emoji-mart {
+@keyframes vcEmojiBtnRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  EMOJI PICKER — ngx-emoji-mart  |  WhatsApp Style
+//  Light + Dark  |  Mobile bottom-sheet  |  Desktop pop-in
+// ══════════════════════════════════════════════════════════
+
+// ── emoji-mart host ─────────────────────────────────────
+.videocall-wrapper emoji-mart {
   --em-rgb-accent: 79, 142, 247;
   --em-color-border: rgba(79, 142, 247, 0.14);
-  --em-color-border-over: rgba(79, 142, 247, 0.3);
+  --em-color-border-over: rgba(79, 142, 247, 0.32);
   font-family: 'Outfit', 'Segoe UI', sans-serif !important;
   width: 340px !important;
-  height: 380px !important;
-  border-radius: 18px !important;
+  height: 390px !important;
+  border-radius: 20px !important;
   overflow: hidden;
+  background: #ffffff !important;
 }
 
-.dark-mode emoji-mart {
+.videocall-wrapper.dark-mode emoji-mart {
   --em-rgb-background: 26, 31, 53;
-  --em-rgb-input: 26, 31, 53;
-  --em-color-border: rgba(129, 140, 248, 0.2);
+  --em-rgb-input: 20, 24, 40;
   --em-rgb-color: 232, 234, 240;
+  background: #1a1f35 !important;
 }
 
+// ── Desktop wrapper ─────────────────────────────────────
 .vc-emoji-picker {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -955,11 +999,12 @@ emoji-mart {
   z-index: 9999;
   border-radius: 20px;
   overflow: hidden;
+  border: none;
   box-shadow:
-    0 12px 48px rgba(0, 0, 0, 0.28),
-    0 2px 8px rgba(79, 142, 247, 0.1),
+    0 12px 48px rgba(0, 0, 0, 0.18),
+    0 2px 10px rgba(79, 142, 247, 0.1),
     0 0 0 1px rgba(79, 142, 247, 0.12);
-  animation: vcEmojiPopIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: vcEpPopIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
   .rtl & {
     left: auto;
@@ -968,15 +1013,15 @@ emoji-mart {
 
   .dark-mode & {
     box-shadow:
-      0 12px 48px rgba(0, 0, 0, 0.6),
-      0 0 0 1px rgba(129, 140, 248, 0.16);
+      0 12px 56px rgba(0, 0, 0, 0.65),
+      0 0 0 1px rgba(129, 140, 248, 0.18);
   }
 }
 
-@keyframes vcEmojiPopIn {
+@keyframes vcEpPopIn {
   from {
     opacity: 0;
-    transform: scale(0.88) translateY(10px);
+    transform: scale(0.86) translateY(12px);
   }
   to {
     opacity: 1;
@@ -984,14 +1029,26 @@ emoji-mart {
   }
 }
 
-// ═══ Mobile: full-width bottom sheet ═══════════
+// ── Overlay (hidden on desktop) ─────────────────────────
+.vc-emoji-overlay {
+  display: none;
+}
+
+// ══════════════════════════════════════════════════════════
+//  MOBILE ≤ 768px — WhatsApp Bottom Sheet
+// ══════════════════════════════════════════════════════════
 @media (max-width: 768px) {
-  emoji-mart {
+  .videocall-wrapper emoji-mart {
     width: 100% !important;
     height: auto !important;
-    min-height: 320px !important;
-    max-height: 52vh !important;
+    min-height: 310px !important;
+    max-height: 54vh !important;
     border-radius: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .videocall-wrapper.dark-mode emoji-mart {
+    background: #1a1f35 !important;
   }
 
   .vc-emoji-picker {
@@ -1002,63 +1059,85 @@ emoji-mart {
     top: auto !important;
     width: 100vw !important;
     max-width: 100vw !important;
-    max-height: 58vh !important;
+    max-height: 60vh !important;
     border-radius: 26px 26px 0 0 !important;
     border-bottom: none !important;
-    box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.4) !important;
-    z-index: 99999 !important;
-    animation: vcEmojiSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
     overflow: hidden !important;
+    z-index: 99999 !important;
+    background: #ffffff !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.28) !important;
+    animation: vcEpSlideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1) both !important;
   }
 
+  .dark-mode .vc-emoji-picker {
+    background: #1a1f35 !important;
+    box-shadow: 0 -8px 48px rgba(0, 0, 0, 0.7) !important;
+  }
+
+  // Drag-handle pill
   .vc-emoji-picker::before {
     content: '';
     display: block;
-    width: 44px;
-    height: 5px;
-    background: rgba(0, 0, 0, 0.14);
+    width: 40px;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.13);
     border-radius: 99px;
-    margin: 10px auto 2px;
+    margin: 10px auto 4px;
     position: relative;
     z-index: 1;
+    transition: background 0.3s;
   }
 
   .dark-mode .vc-emoji-picker::before {
     background: rgba(255, 255, 255, 0.18);
   }
-}
 
-@keyframes vcEmojiSlideUp {
-  from {
-    transform: translateY(100%);
+  // Hairline divider under handle
+  .vc-emoji-picker::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: rgba(79, 142, 247, 0.12);
+    position: absolute;
+    top: 28px;
+    left: 0;
+    right: 0;
+    pointer-events: none;
   }
-  to {
-    transform: translateY(0);
+
+  .dark-mode .vc-emoji-picker::after {
+    background: rgba(129, 140, 248, 0.16);
   }
-}
 
-.vc-emoji-overlay {
-  display: none;
-
-  @media (max-width: 768px) {
+  // Backdrop
+  .vc-emoji-overlay {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.42);
     z-index: 99997;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    animation: vcOverlayIn 0.22s ease;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: vcEpOverlayIn 0.22s ease both;
   }
-}
 
-@keyframes vcOverlayIn {
-  from {
-    opacity: 0;
+  @keyframes vcEpSlideUp {
+    from {
+      transform: translateY(105%);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
-  to {
-    opacity: 1;
+
+  @keyframes vcEpOverlayIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 

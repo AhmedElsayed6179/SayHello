@@ -11,7 +11,6 @@ import Swal from 'sweetalert2';
 import { ChatService } from '../../service/chat-service';
 import { environment } from '../../environments/environment.development';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
-
 interface ChatMessage {
   id?: string;
   sender: 'user' | 'system';
@@ -29,7 +28,7 @@ interface ChatMessage {
   standalone: true,
   imports: [CommonModule, FormsModule, TranslateModule, PickerModule],
   templateUrl: './videocall.html',
-  styleUrls: ['./videocall.scss']
+  styleUrls: ['./videocall.scss'],
 })
 export class Videocall implements OnInit, OnDestroy {
   @ViewChild('localVideo') localVideoRef!: ElementRef<HTMLVideoElement>;
@@ -419,8 +418,15 @@ export class Videocall implements OnInit, OnDestroy {
   onTyping() { if (this.connected) this.socket.emit('typing'); }
   reactToMessage(msg: ChatMessage, reaction: string) { if (msg.id) this.socket.emit('react', { messageId: msg.id, reaction, sender: this.myName }); }
 
-  onEmojiSelect(event: any) { this.message += event.emoji?.native ?? event.emoji?.colons ?? ''; this.showEmoji = false; }
-  toggleEmoji() { this.showEmoji = !this.showEmoji; }
+  onEmojiSelect(event: any) {
+    this.message += event.emoji?.native ?? event.emoji?.colons ?? '';
+    this.showEmoji = false;
+    this.cd.detectChanges();
+  }
+  toggleEmoji() {
+    this.showEmoji = !this.showEmoji;
+    this.cd.detectChanges();
+  }
 
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {

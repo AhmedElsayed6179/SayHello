@@ -131,7 +131,7 @@
   <div class="input-wrapper">
     <div class="input-inner" [ngClass]="isRtl ? 'rtl' : 'ltr'">
 
-      <button *ngIf="!showWelcome && !isRecording" class="emoji-btn" type="button" (click)="onOpentoggleEmoji()">
+      <button *ngIf="!showWelcome && !isRecording" class="emoji-btn" [class.active]="showEmoji" type="button" (click)="onOpentoggleEmoji()">
         <i class="far fa-smile-wink"></i>
       </button>
 
