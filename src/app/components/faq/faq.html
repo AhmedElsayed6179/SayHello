@@ -1,0 +1,215 @@
+<div class="faq-wrapper" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" [attr.dir]="currentDir">
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="faq-hero">
+    <div class="faq-hero-bg">
+      <div class="faq-blob faq-blob-1"></div>
+      <div class="faq-blob faq-blob-2"></div>
+      <div class="faq-blob faq-blob-3"></div>
+    </div>
+    <div class="faq-hero-content">
+      <span class="section-tag">
+        <i class="fas fa-question-circle"></i>
+        {{ 'FAQ.TAG' | translate }}
+      </span>
+      <h1>{{ 'FAQ.HERO_TITLE' | translate }}</h1>
+      <p class="faq-hero-desc">{{ 'FAQ.HERO_DESC' | translate }}</p>
+
+      <!-- Search bar -->
+      <div class="faq-search-wrap">
+        <i class="fas fa-search faq-search-icon"></i>
+        <input
+          type="text"
+          class="faq-search"
+          [placeholder]="'FAQ.SEARCH_PLACEHOLDER' | translate"
+          [(ngModel)]="searchQuery"
+          (input)="onSearch()" />
+        <button *ngIf="searchQuery" class="faq-search-clear" (click)="clearSearch()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CATEGORY TABS ═══════════════ -->
+  <section class="faq-tabs-section">
+    <div class="faq-tabs-wrap">
+      <button
+        *ngFor="let cat of faqCategories"
+        class="faq-tab"
+        [class.active]="activeTab === cat.key"
+        (click)="setTab(cat.key)">
+        <i [class]="cat.icon"></i>
+        {{ cat.label | translate }}
+        <span class="tab-count">{{ getCategoryCount(cat.key) }}</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FAQ ACCORDION ═══════════════ -->
+  <section class="faq-list-section">
+    <div class="faq-list-wrap">
+
+      <div *ngIf="filteredFaqs.length === 0" class="faq-empty">
+        <div class="faq-empty-icon"><i class="fas fa-search"></i></div>
+        <h3>{{ 'FAQ.NO_RESULTS' | translate }}</h3>
+        <p>{{ 'FAQ.NO_RESULTS_DESC' | translate }}</p>
+        <button class="faq-reset-btn" (click)="clearSearch(); setTab('all')">
+          {{ 'FAQ.RESET' | translate }}
+        </button>
+      </div>
+
+      <div
+        class="faq-item"
+        *ngFor="let item of filteredFaqs; let i = index"
+        [class.open]="openIndex === i">
+        <button class="faq-question" (click)="toggle(i)">
+          <div class="faq-q-left">
+            <div class="faq-q-icon" [style.background]="item.iconBg">
+              <i [class]="item.icon" [style.color]="item.iconColor"></i>
+            </div>
+            <span>{{ item.question | translate }}</span>
+          </div>
+          <div class="faq-chevron" [class.rotated]="openIndex === i">
+            <i class="fas fa-chevron-down"></i>
+          </div>
+        </button>
+        <div class="faq-answer" [class.open]="openIndex === i">
+          <div class="faq-answer-inner">
+            <p>{{ item.answer | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ CONTACT FORM ═══════════════ -->
+  <section class="faq-contact-section">
+    <div class="faq-contact-wrap">
+      <div class="faq-contact-header">
+        <div class="faq-contact-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div>
+          <span class="section-tag">{{ 'FAQ.CONTACT_TAG' | translate }}</span>
+          <h2>{{ 'FAQ.CONTACT_TITLE' | translate }}</h2>
+          <p>{{ 'FAQ.CONTACT_DESC' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Cooldown notice -->
+      <div class="faq-cooldown-banner" *ngIf="cooldownActive">
+        <i class="fas fa-clock"></i>
+        <span>{{ 'FAQ.COOLDOWN_MSG' | translate }} {{ cooldownDisplay }}</span>
+      </div>
+
+      <!-- Success message -->
+      <div class="faq-success-banner" *ngIf="formSent">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ 'FAQ.FORM_SUCCESS' | translate }}</span>
+      </div>
+
+      <!-- Form -->
+      <form class="faq-form" *ngIf="!formSent || cooldownActive" (ngSubmit)="submitForm()">
+        <div class="faq-form-row">
+          <div class="faq-field">
+            <label>{{ 'FAQ.FORM_NAME' | translate }}</label>
+            <div class="faq-input-wrap">
+              <i class="fas fa-user"></i>
+              <input
+                type="text"
+                [(ngModel)]="form.name"
+                name="name"
+                [placeholder]="'FAQ.FORM_NAME_PH' | translate"
+                [disabled]="cooldownActive"
+                required />
+            </div>
+          </div>
+          <div class="faq-field">
+            <label>{{ 'FAQ.FORM_EMAIL' | translate }}</label>
+            <div class="faq-input-wrap">
+              <i class="fas fa-envelope"></i>
+              <input
+                type="email"
+                [(ngModel)]="form.email"
+                name="email"
+                [placeholder]="'FAQ.FORM_EMAIL_PH' | translate"
+                [disabled]="cooldownActive"
+                required />
+            </div>
+          </div>
+        </div>
+        <div class="faq-field">
+          <label>{{ 'FAQ.FORM_SUBJECT' | translate }}</label>
+          <div class="faq-input-wrap">
+            <i class="fas fa-tag"></i>
+            <input
+              type="text"
+              [(ngModel)]="form.subject"
+              name="subject"
+              [placeholder]="'FAQ.FORM_SUBJECT_PH' | translate"
+              [disabled]="cooldownActive"
+              required />
+          </div>
+        </div>
+        <div class="faq-field">
+          <label>{{ 'FAQ.FORM_MSG' | translate }}</label>
+          <div class="faq-textarea-wrap">
+            <textarea
+              [(ngModel)]="form.message"
+              name="message"
+              rows="5"
+              [placeholder]="'FAQ.FORM_MSG_PH' | translate"
+              [disabled]="cooldownActive"
+              required></textarea>
+            <span class="faq-char-count" [class.over]="form.message.length > 500">
+              {{ form.message.length }}/500
+            </span>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="faq-submit-btn"
+          [disabled]="cooldownActive || isSending">
+          <ng-container *ngIf="!isSending && !cooldownActive">
+            <i class="fas fa-paper-plane"></i>
+            {{ 'FAQ.FORM_SEND' | translate }}
+          </ng-container>
+          <ng-container *ngIf="isSending">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ 'FAQ.FORM_SENDING' | translate }}
+          </ng-container>
+          <ng-container *ngIf="cooldownActive && !isSending">
+            <i class="fas fa-clock"></i>
+            {{ cooldownDisplay }}
+          </ng-container>
+        </button>
+
+        <p class="faq-form-note">{{ 'FAQ.FORM_NOTE' | translate }}</p>
+      </form>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ CTA ═══════════════ -->
+  <section class="faq-cta-section">
+    <div class="faq-cta-inner">
+      <div class="faq-cta-glow"></div>
+      <h2>{{ 'FAQ.CTA_TITLE' | translate }}</h2>
+      <p>{{ 'FAQ.CTA_DESC' | translate }}</p>
+      <div class="faq-cta-btns">
+        <a routerLink="/" class="faq-cta-btn primary-btn">
+          <i class="fas fa-bolt"></i>
+          {{ 'FAQ.CTA_BTN' | translate }}
+        </a>
+        <a routerLink="/tips" class="faq-cta-btn secondary-btn">
+          <i class="fas fa-lightbulb"></i>
+          {{ 'FAQ.TIPS_BTN' | translate }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>

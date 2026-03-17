@@ -313,6 +313,24 @@ export class Chat implements OnInit, OnDestroy {
         this.socket.emit('sendVoice', { id, url: d.url, duration, room: (this.socket as any).room });
         this.sendSound.currentTime = 0; this.sendSound.play().catch(() => { });
         this.cd.detectChanges();
+        // Assign audioRef so the sender can play back their own voice message
+        setTimeout(() => {
+          const list = this.audioEls.toArray();
+          const el = list.find(a => a.nativeElement.src === d.url || a.nativeElement.getAttribute('src') === d.url);
+          const target = el ?? list[list.length - 1];
+          if (target) {
+            ownMsg.audioRef = target.nativeElement;
+            ownMsg.audioRef.onended = () => this.zone.run(() => {
+              ownMsg.isPlaying = false;
+              ownMsg.remainingTime = this.formatSeconds(ownMsg.duration!);
+              ownMsg.audioRef!.currentTime = 0; this.cd.detectChanges();
+            });
+            ownMsg.audioRef.ontimeupdate = () => {
+              const rem = Math.max(ownMsg.duration! - Math.floor(ownMsg.audioRef!.currentTime), 0);
+              this.zone.run(() => { ownMsg.remainingTime = this.formatSeconds(rem); this.cd.detectChanges(); });
+            };
+          }
+        }, 100);
       });
   }
 

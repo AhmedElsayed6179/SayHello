@@ -1,0 +1,136 @@
+<div class="tips-wrapper" [ngClass]="isDarkMode ? 'dark-mode' : 'light-mode'" [attr.dir]="currentDir">
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="tips-hero">
+    <div class="tips-hero-bg">
+      <div class="tips-blob tips-blob-1"></div>
+      <div class="tips-blob tips-blob-2"></div>
+      <div class="tips-blob tips-blob-3"></div>
+    </div>
+    <div class="tips-hero-content">
+      <span class="section-tag">
+        <i class="fas fa-lightbulb"></i>
+        {{ 'TIPS.TAG' | translate }}
+      </span>
+      <h1>{{ 'TIPS.HERO_TITLE' | translate }}</h1>
+      <p class="tips-hero-desc">{{ 'TIPS.HERO_DESC' | translate }}</p>
+      <div class="tips-hero-badges">
+        <span class="tips-badge" *ngFor="let b of heroBadges">
+          <i [class]="b.icon"></i> {{ b.label | translate }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CATEGORY FILTER ═══════════════ -->
+  <section class="tips-filter-section">
+    <div class="tips-filter-wrap">
+      <button
+        *ngFor="let cat of categories"
+        class="filter-btn"
+        [class.active]="activeCategory === cat.key"
+        (click)="setCategory(cat.key)">
+        <i [class]="cat.icon"></i>
+        {{ cat.label | translate }}
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ TIPS GRID ═══════════════ -->
+  <section class="tips-grid-section">
+    <div class="tips-grid">
+      <div
+        class="tip-card"
+        *ngFor="let tip of filteredTips; let i = index"
+        [class.tip-card-featured]="tip.featured">
+        <div class="tip-card-glow"></div>
+        <div class="tip-num">0{{ i + 1 }}</div>
+        <div class="tip-icon-wrap" [style.background]="tip.iconBg">
+          <i [class]="tip.icon" [style.color]="tip.iconColor"></i>
+        </div>
+        <div class="tip-content">
+          <span class="tip-category-label">{{ tip.category | translate }}</span>
+          <h3>{{ tip.title | translate }}</h3>
+          <p>{{ tip.desc | translate }}</p>
+          <div class="tip-tags" *ngIf="tip.tags && tip.tags.length">
+            <span class="tip-tag" *ngFor="let tag of tip.tags">{{ tag | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ QUICK GUIDE ═══════════════ -->
+  <section class="tips-guide-section">
+    <div class="section-header">
+      <span class="section-tag">{{ 'TIPS.GUIDE_TAG' | translate }}</span>
+      <h2>{{ 'TIPS.GUIDE_TITLE' | translate }}</h2>
+      <p>{{ 'TIPS.GUIDE_DESC' | translate }}</p>
+    </div>
+    <div class="guide-steps">
+      <div class="guide-step" *ngFor="let step of guideSteps; let i = index">
+        <div class="guide-step-num">{{ i + 1 }}</div>
+        <div class="guide-step-body">
+          <div class="guide-step-icon"><i [class]="step.icon"></i></div>
+          <h4>{{ step.title | translate }}</h4>
+          <p>{{ step.desc | translate }}</p>
+        </div>
+        <div class="guide-connector" *ngIf="i < guideSteps.length - 1"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ DO & DON'T ═══════════════ -->
+  <section class="tips-dos-section">
+    <div class="section-header">
+      <span class="section-tag">{{ 'TIPS.DOS_TAG' | translate }}</span>
+      <h2>{{ 'TIPS.DOS_TITLE' | translate }}</h2>
+    </div>
+    <div class="dos-grid">
+      <div class="dos-card dos-do">
+        <div class="dos-card-header">
+          <div class="dos-icon do-icon"><i class="fas fa-check"></i></div>
+          <h3>{{ 'TIPS.DO_TITLE' | translate }}</h3>
+        </div>
+        <ul class="dos-list">
+          <li *ngFor="let item of doItems">
+            <i class="fas fa-check-circle"></i>
+            {{ item | translate }}
+          </li>
+        </ul>
+      </div>
+      <div class="dos-card dos-dont">
+        <div class="dos-card-header">
+          <div class="dos-icon dont-icon"><i class="fas fa-times"></i></div>
+          <h3>{{ 'TIPS.DONT_TITLE' | translate }}</h3>
+        </div>
+        <ul class="dos-list">
+          <li *ngFor="let item of dontItems">
+            <i class="fas fa-times-circle"></i>
+            {{ item | translate }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CTA ═══════════════ -->
+  <section class="tips-cta-section">
+    <div class="tips-cta-inner">
+      <div class="tips-cta-glow"></div>
+      <h2>{{ 'TIPS.CTA_TITLE' | translate }}</h2>
+      <p>{{ 'TIPS.CTA_DESC' | translate }}</p>
+      <div class="tips-cta-btns">
+        <a routerLink="/" class="tips-cta-btn primary-btn">
+          <i class="fas fa-bolt"></i>
+          {{ 'TIPS.CTA_BTN' | translate }}
+        </a>
+        <a routerLink="/faq" class="tips-cta-btn secondary-btn">
+          <i class="fas fa-question-circle"></i>
+          {{ 'TIPS.FAQ_BTN' | translate }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>

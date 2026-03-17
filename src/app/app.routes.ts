@@ -28,6 +28,14 @@ export const routes: Routes = [
     loadComponent: () => import('./components/privacy/privacy').then(m => m.Privacy),
   },
   {
+    path: 'tips',
+    loadComponent: () => import('./components/tips/tips').then(m => m.Tips),
+  },
+  {
+    path: 'faq',
+    loadComponent: () => import('./components/faq/faq').then(m => m.Faq),
+  },
+  {
     path: 'App-Download',
     loadComponent: () => import('./components/app-download/app-download').then(m => m.AppDownload),
     canActivate: [WebOnlyGuard],

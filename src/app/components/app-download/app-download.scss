@@ -150,6 +150,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+  align-items: stretch;
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
@@ -299,6 +300,17 @@
   font-size: 0.8rem;
   color: $light-text-muted;
   margin-bottom: 1.2rem;
+  min-height: 1.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+
+  .dl-card-ios & {
+    white-space: normal;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
 
   .dark-mode & {
     color: $dark-text-muted;

@@ -1058,6 +1058,11 @@
 
 .creator-links {
   display: flex;
+
+  @media (max-width: 600px) {
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 .creator-link {

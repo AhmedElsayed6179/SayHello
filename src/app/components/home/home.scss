@@ -1795,3 +1795,140 @@
     height: 64px;
   }
 }
+
+// ══════════════════════════════════════════════
+// TIPS & FAQ TEASER SECTION
+// ══════════════════════════════════════════════
+.tips-faq-teaser-section {
+  padding: 0 1.5rem 5rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.tips-faq-teaser-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tf-teaser-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.8rem 1.6rem;
+  border-radius: 24px;
+  border: 1px solid $light-border;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+
+  .dark-mode & {
+    background: rgba(18, 22, 32, 0.8);
+    border-color: $dark-border;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(79, 142, 247, 0.12);
+    text-decoration: none;
+    .tf-teaser-glow {
+      opacity: 1;
+    }
+    .tf-teaser-arrow {
+      transform: translateX(4px);
+    }
+  }
+
+  &.tf-tips-card {
+    border-color: rgba(251, 191, 36, 0.2);
+    &:hover {
+      border-color: rgba(251, 191, 36, 0.4);
+    }
+  }
+
+  &.tf-faq-card {
+    border-color: rgba(79, 142, 247, 0.2);
+    &:hover {
+      border-color: rgba(79, 142, 247, 0.4);
+    }
+  }
+}
+
+.tf-teaser-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 50%, rgba(251, 191, 36, 0.08), transparent 60%);
+
+  &.faq-glow {
+    background: radial-gradient(ellipse at 30% 50%, rgba(79, 142, 247, 0.08), transparent 60%);
+  }
+}
+
+.tf-teaser-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+
+  &.tips-icon {
+    background: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+  }
+
+  &.faq-icon {
+    background: rgba(79, 142, 247, 0.1);
+    color: $primary;
+    border: 1px solid rgba(79, 142, 247, 0.2);
+  }
+}
+
+.tf-teaser-body {
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: $light-text;
+    margin-bottom: 0.3rem;
+    .dark-mode & {
+      color: $dark-text;
+    }
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: $light-text-muted;
+    line-height: 1.5;
+    margin: 0;
+    .dark-mode & {
+      color: $dark-text-muted;
+    }
+  }
+}
+
+.tf-teaser-arrow {
+  color: $primary;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
