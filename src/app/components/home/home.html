@@ -105,9 +105,9 @@
         </div>
       </div>
 
-      <!-- Actual video -->
+      <!-- Actual video — src is set dynamically by language in playVideo() -->
       <video #demoVideo class="demo-video" [class.hidden]="!isVideoPlaying" loop muted playsinline preload="none">
-        <source src="videos/SayHello-demo.mp4" type="video/mp4">
+        <source [src]="demoVideoSrc" type="video/mp4">
       </video>
 
       <!-- Controls -->

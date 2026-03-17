@@ -52,6 +52,13 @@ export class Home implements AfterViewInit, OnDestroy {
     { icon: 'fas fa-ban', title: 'HOME.TRUST_NODATA_TITLE', desc: 'HOME.TRUST_NODATA_DESC' },
   ];
 
+  // ── Video source map per language ─────────────
+  private videoSrcMap: Record<string, string> = {
+    en: 'videos/SayHello-demo-en.mp4',
+    ar: 'videos/SayHello-demo-ar.mp4',
+    es: 'videos/SayHello-demo-es.mp4',
+  };
+
   constructor(private router: Router, private translate: TranslateService) {
     this.usernameForm = new FormGroup({
       username: new FormControl<string>('', {
@@ -94,14 +101,13 @@ export class Home implements AfterViewInit, OnDestroy {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('revealed');
-            this.observer.unobserve(entry.target); // fire once
+            this.observer.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.12 }
     );
 
-    // Observe all elements with reveal classes
     document
       .querySelectorAll('.reveal, .reveal-left, .reveal-right')
       .forEach((el) => this.observer.observe(el));
@@ -120,12 +126,31 @@ export class Home implements AfterViewInit, OnDestroy {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  // ── Language-aware video source ────────────────
+  /**
+   * Returns the video source URL for the current language.
+   * Falls back to English if no specific video exists for the language.
+   */
+  get demoVideoSrc(): string {
+    const lang = this.translate.currentLang || 'en';
+    return this.videoSrcMap[lang] ?? this.videoSrcMap['en'];
+  }
+
   // ── Video ──────────────────────────────────────
   playVideo() {
     this.isVideoPlaying = true;
     setTimeout(() => {
       const video = this.demoVideoRef?.nativeElement;
       if (video) {
+        const langSrc = this.demoVideoSrc;
+        if (video.getAttribute('data-lang-src') !== langSrc) {
+          video.setAttribute('data-lang-src', langSrc);
+          const sourceEl = video.querySelector('source');
+          if (sourceEl) {
+            sourceEl.setAttribute('src', langSrc);
+          }
+          video.load();
+        }
         video.muted = true;
         this.isMuted = true;
         video.play().catch(() => { });

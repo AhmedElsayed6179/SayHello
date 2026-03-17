@@ -345,7 +345,8 @@
   opacity: 0.15;
   position: absolute;
   top: 1.2rem;
-  right: 1.6rem;
+  // Logical property: auto-flips to left in RTL, right in LTR
+  inset-inline-end: 1.6rem;
   pointer-events: none;
 }
 
