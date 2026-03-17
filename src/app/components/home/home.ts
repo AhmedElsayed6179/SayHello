@@ -181,32 +181,87 @@ export class Home implements AfterViewInit, OnDestroy {
   onVideoEnded() { }
 
   // ── Fullscreen ─────────────────────────────────
-  toggleFullscreen() {
-    const video = this.demoVideoRef?.nativeElement;
-    if (!video) return;
+  // We use CSS fullscreen (class-based) for cross-platform support,
+  // especially iOS Safari which doesn't support requestFullscreen on divs.
+  // Native fullscreen is used as an enhancement on desktop when available.
 
-    if (!document.fullscreenElement) {
-      video.requestFullscreen?.()
-        .then(() => { this.isFullscreen = true; })
-        .catch(() => { });
+  private isMobile(): boolean {
+    return window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  }
+
+  toggleFullscreen() {
+    if (this.isFullscreen) {
+      this.exitFullscreen();
     } else {
-      document.exitFullscreen?.()
-        .then(() => { this.isFullscreen = false; })
-        .catch(() => { });
+      this.enterFullscreen();
+    }
+  }
+
+  enterFullscreen() {
+    const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
+    if (!container) return;
+
+    if (this.isMobile()) {
+      // CSS fullscreen — works on all mobile browsers including iOS
+      this.isFullscreen = true;
+      container.classList.add('video-fullscreen');
+      document.body.classList.add('video-fs-open');
+    } else {
+      // Desktop: use native Fullscreen API
+      const req = container.requestFullscreen?.() ?? (container as any).webkitRequestFullscreen?.();
+      if (req) {
+        req.then(() => { this.isFullscreen = true; }).catch(() => {
+          // fallback to CSS fullscreen
+          this.isFullscreen = true;
+          container.classList.add('video-fullscreen');
+          document.body.classList.add('video-fs-open');
+        });
+      } else {
+        this.isFullscreen = true;
+        container.classList.add('video-fullscreen');
+        document.body.classList.add('video-fs-open');
+      }
     }
   }
 
   exitFullscreen() {
+    const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
+    this.isFullscreen = false;
+    container?.classList.remove('video-fullscreen');
+    document.body.classList.remove('video-fs-open');
+
     if (document.fullscreenElement) {
-      document.exitFullscreen?.()
-        .then(() => { this.isFullscreen = false; })
-        .catch(() => { });
+      document.exitFullscreen?.().catch(() => { });
     }
   }
 
+  // Double-tap detection for mobile (dblclick doesn't fire on touch)
+  private lastTap = 0;
+  onVideoTap(event: Event) {
+    if (!this.isVideoPlaying) return;
+    const now = Date.now();
+    const delta = now - this.lastTap;
+    if (delta < 350 && delta > 0) {
+      event.preventDefault();
+      this.toggleFullscreen();
+    }
+    this.lastTap = now;
+  }
+
   @HostListener('document:fullscreenchange')
+  @HostListener('document:webkitfullscreenchange')
   onFullscreenChange() {
-    this.isFullscreen = !!document.fullscreenElement;
+    if (!document.fullscreenElement && !(document as any).webkitFullscreenElement) {
+      const container = this.demoVideoRef?.nativeElement?.closest?.('.video-container') as HTMLElement | null;
+      this.isFullscreen = false;
+      container?.classList.remove('video-fullscreen');
+      document.body.classList.remove('video-fs-open');
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscKey() {
+    if (this.isFullscreen) this.exitFullscreen();
   }
 
   // ── Chat Navigation ────────────────────────────
@@ -295,5 +350,3 @@ export class Home implements AfterViewInit, OnDestroy {
     return document.body.classList.contains('dark-mode');
   }
 }
-
-
