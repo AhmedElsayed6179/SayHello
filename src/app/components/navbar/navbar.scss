@@ -24,14 +24,14 @@
     background: rgba(255, 255, 255, 0.92) !important;
     border-bottom: 1px solid $light-border;
     box-shadow:
-      0 2px 24px rgba(79, 142, 247, 0.1),
+      0 2px 24px rgba(26, 79, 168, 0.1),
       0 1px 0 rgba(255, 255, 255, 0.8) inset;
   }
 
   &.light-nav {
     background: rgba(255, 255, 255, 0.92) !important;
     border-bottom: 1px solid $light-border;
-    box-shadow: 0 2px 24px rgba(79, 142, 247, 0.08);
+    box-shadow: 0 2px 24px rgba(26, 79, 168, 0.08);
   }
 }
 
@@ -69,8 +69,8 @@
   }
 
   body:not(.dark-mode) & {
-    border: 1.5px solid rgba(79, 142, 247, 0.3) !important;
-    background: rgba(79, 142, 247, 0.07);
+    border: 1.5px solid rgba(26, 79, 168, 0.3) !important;
+    background: rgba(26, 79, 168, 0.07);
   }
 
   &:focus {
@@ -102,7 +102,7 @@
       border: 1.5px solid $light-border;
       &:hover {
         background: darken(#eef1f8, 5%);
-        border-color: rgba(79, 142, 247, 0.3);
+        border-color: rgba(26, 79, 168, 0.3);
       }
     }
     .select-arrow {
@@ -116,7 +116,7 @@
       color: $dark-text;
       border: 1.5px solid $dark-border;
       &:hover {
-        background: lighten(#1e2535, 5%);
+        background: lighten(#1e1e1e, 8%);
       }
     }
     .select-arrow {
@@ -207,11 +207,11 @@
   background: $gradient-brand !important;
   color: #fff !important;
   border: none;
-  box-shadow: 0 4px 14px rgba(79, 142, 247, 0.35);
+  box-shadow: 0 4px 14px rgba(26, 79, 168, 0.35);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(79, 142, 247, 0.45);
+    box-shadow: 0 8px 20px rgba(26, 79, 168, 0.45);
     color: #fff !important;
   }
   &:active {
@@ -257,9 +257,9 @@
     // ✅ Light mode panel — was missing/broken
     body:not(.dark-mode) & {
       background: rgba(255, 255, 255, 0.98);
-      border: 1.5px solid rgba(79, 142, 247, 0.18);
+      border: 1.5px solid rgba(26, 79, 168, 0.18);
       box-shadow:
-        0 20px 60px rgba(79, 142, 247, 0.15),
+        0 20px 60px rgba(26, 79, 168, 0.15),
         0 1px 0 rgba(255, 255, 255, 1) inset;
     }
 
@@ -297,7 +297,7 @@
     .btn-lang {
       background: #f4f6fb;
       color: #0f172a;
-      border: 1.5px solid rgba(79, 142, 247, 0.2);
+      border: 1.5px solid rgba(26, 79, 168, 0.2);
       font-size: 0.92rem;
       padding: 11px 36px 11px 14px;
     }
@@ -320,7 +320,7 @@
     body:not(.dark-mode) & {
       background: #f4f6fb !important;
       color: #0f172a !important;
-      border: 1.5px solid rgba(79, 142, 247, 0.18) !important;
+      border: 1.5px solid rgba(26, 79, 168, 0.18) !important;
     }
   }
 

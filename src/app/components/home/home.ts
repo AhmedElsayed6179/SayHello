@@ -70,21 +70,21 @@ export class Home implements AfterViewInit, OnDestroy {
           Validators.maxLength(20),
           Validators.pattern(/^[a-zA-Z\u0600-\u06FF]+( [a-zA-Z\u0600-\u06FF]+)*$/),
         ],
-updateOn: 'blur'
+        updateOn: 'blur'
       }),
     });
 
-this.usernameForm.get('username')?.valueChanges.subscribe((value) => {
-    if (value) {
-      const normalized = value
-        .replace(/\s+/g, ' ')
-        .trim();
+    this.usernameForm.get('username')?.valueChanges.subscribe((value) => {
+      if (value) {
+        const normalized = value
+          .replace(/\s+/g, ' ')
+          .trim();
 
-      if (value !== normalized) {
-        this.usernameForm.get('username')?.setValue(normalized, { emitEvent: false });
+        if (value !== normalized) {
+          this.usernameForm.get('username')?.setValue(normalized, { emitEvent: false });
+        }
       }
-    }
-  });
+    });
 
     this.sections = [
       {
@@ -342,8 +342,8 @@ this.usernameForm.get('username')?.valueChanges.subscribe((value) => {
     }
 
     const name = this.usernameForm.value.username
-  .replace(/\s+/g, ' ')
-  .trim();
+      .replace(/\s+/g, ' ')
+      .trim();
 
     if (!name) return;
 

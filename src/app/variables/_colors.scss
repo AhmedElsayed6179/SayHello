@@ -4,10 +4,10 @@
 // ════════════════════════════════════════════════
 
 // ── Brand Palette ─────────────────────────────
-$primary:        #4f8ef7;
-$primary-dark:   #2563eb;
-$primary-glow:   rgba(79, 142, 247, 0.35);
-$primary-light:  #818cf8;
+$primary:        #1a4fa8;   // deep blue (light mode primary)
+$primary-dark:   #124190;
+$primary-glow:   rgba(26, 79, 168, 0.30);
+$primary-light:  #2563eb;
 $secondary:      #06b6d4;
 $secondary-glow: rgba(6, 182, 212, 0.3);
 $accent:         #a78bfa;
@@ -19,15 +19,15 @@ $warning:        #fbbf24;
 $info:           #38bdf8;
 
 // ── Dark Theme ────────────────────────────────
-$dark-bg:         #0d0f14;
-$dark-bg-light:   #161a24;
-$dark-bg-lighter: #1e2535;
-$dark-bg-card:    #161b28;
-$dark-bg-glass:   rgba(22, 26, 36, 0.75);
+$dark-bg:         #0a0a0a;
+$dark-bg-light:   #141414;
+$dark-bg-lighter: #1e1e1e;
+$dark-bg-card:    #111111;
+$dark-bg-glass:   rgba(14, 14, 14, 0.85);
 $dark-text:       #e8eaf0;
-$dark-text-muted: #8b93a8;
-$dark-border:     rgba(255,255,255,0.08);
-$dark-border-accent: rgba(79,142,247,0.25);
+$dark-text-muted: #888888;
+$dark-border:     rgba(255,255,255,0.07);
+$dark-border-accent: rgba(100,100,100,0.30);
 
 // ── Light Theme ───────────────────────────────
 $light-bg:        #ffffff;
@@ -47,9 +47,9 @@ $shape-4: #f472b6;
 $shape-5: #34d399;
 
 // ── Gradients ─────────────────────────────────
-$gradient-primary:    linear-gradient(135deg, #4f8ef7 0%, #818cf8 50%, #a78bfa 100%);
-$gradient-brand:      linear-gradient(135deg, #4f8ef7, #06b6d4);
+$gradient-primary:    linear-gradient(135deg, #1a4fa8 0%, #2563eb 50%, #1e40af 100%);
+$gradient-brand:      linear-gradient(135deg, #1a4fa8, #1d6ecf);
 $gradient-light:      linear-gradient(145deg, #f0f4ff 0%, #faf8ff 40%, #f0fbff 100%);
-$gradient-dark:       linear-gradient(145deg, #080b12 0%, #0d1220 50%, #0a1018 100%);
+$gradient-dark:       linear-gradient(145deg, #070707 0%, #0d0d0d 50%, #080808 100%);
 $gradient-card-light: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(248,250,255,0.95));
-$gradient-card-dark:  linear-gradient(145deg, rgba(22,26,36,0.9), rgba(18,22,32,0.95));
+$gradient-card-dark:  linear-gradient(145deg, rgba(18,18,18,0.9), rgba(12,12,12,0.95));

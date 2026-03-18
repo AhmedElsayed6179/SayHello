@@ -108,7 +108,7 @@
       </div>
 
       <div #chatBox class="vc-chat-box">
-        <div *ngFor="let msg of messages" class="vc-msg-wrapper" [ngClass]="{
+        <div *ngFor="let msg of messages; let i = index" class="vc-msg-wrapper" [ngClass]="{
             'vc-system-msg': msg.sender === 'system',
             'vc-msg-right': msg.senderName === myName && msg.sender === 'user',
             'vc-msg-left':  msg.senderName !== myName && msg.sender === 'user'
@@ -120,7 +120,7 @@
 
           <ng-container *ngIf="msg.sender === 'user'">
             <div class="vc-msg-content">
-              <span class="vc-sender-name">
+              <span class="vc-sender-name" *ngIf="isFirstInGroup(msg, i)">
                 {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName || '') }}
               </span>
               <div class="vc-bubble-wrapper">

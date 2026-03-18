@@ -489,6 +489,15 @@ export class Videocall implements OnInit, OnDestroy {
   }
 
   getDisplayName(name: string): string { return (name || '').replace(/-\d{6}$/, ''); }
+
+  /** WhatsApp-style grouping: show sender name only on first message in a consecutive group */
+  isFirstInGroup(msg: any, index: number): boolean {
+    if (msg.sender !== 'user') return false;
+    if (index === 0) return true;
+    const prev = this.messages[index - 1];
+    if (prev.sender !== 'user') return true;
+    return prev.senderName !== msg.senderName;
+  }
   get confirmText(): string { return this.translate.instant('CHAT.CONFIRM'); }
   get isDarkMode(): boolean { return document.body.classList.contains('dark-mode'); }
   get isRtl(): boolean { return this.translate.currentLang === 'ar'; }

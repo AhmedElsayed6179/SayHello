@@ -20,7 +20,7 @@
     </div>
 
     @if (!showWelcome) {
-    <div *ngFor="let msg of messages" class="message-wrapper" [ngClass]="{
+    <div *ngFor="let msg of messages; let i = index" class="message-wrapper" [ngClass]="{
           'system-msg':    msg.sender === 'system',
           'message-right': msg.senderName === myName && msg.sender === 'user',
           'message-left':  msg.senderName !== myName && msg.sender === 'user'
@@ -34,7 +34,7 @@
       <!-- Text messages -->
       <ng-container *ngIf="msg.sender === 'user' && !msg.audioUrl">
         <div class="message-content">
-          <span class="sender-name">
+          <span class="sender-name" *ngIf="isFirstInGroup(msg, i)">
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
           <div class="bubble-wrapper">
@@ -72,7 +72,7 @@
       <!-- Voice messages -->
       <ng-container *ngIf="msg.sender === 'user' && msg.audioUrl">
         <div class="voice-message" [ngClass]="msg.senderName === myName ? 'voice-right' : 'voice-left'">
-          <span class="sender-name">
+          <span class="sender-name" *ngIf="isFirstInGroup(msg, i)">
             {{ msg.senderName === myName ? ('CHAT.YOU' | translate) : getDisplayName(msg.senderName) }}
           </span>
           <div class="voice-bubble" style="cursor:pointer;position:relative;"

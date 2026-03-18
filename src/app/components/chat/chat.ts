@@ -472,6 +472,15 @@ export class Chat implements OnInit, OnDestroy {
   formatSeconds(s: number): string { const m = Math.floor(s / 60); const ss = (s % 60).toString().padStart(2, '0'); return `${m}:${ss}`; }
   generateUniqueId(): string { return 'msg-' + Math.random().toString(36).substr(2, 9); }
   getDisplayName(n: string | undefined): string { return (n || '').split('-')[0]; }
+
+  /** WhatsApp-style grouping: show sender name only on first message in a consecutive group */
+  isFirstInGroup(msg: ChatMessage, index: number): boolean {
+    if (msg.sender !== 'user') return false;
+    if (index === 0) return true;
+    const prev = this.messages[index - 1];
+    if (prev.sender !== 'user') return true;
+    return prev.senderName !== msg.senderName;
+  }
   private isMediaRecorderSupported(): boolean { return typeof MediaRecorder !== 'undefined'; }
 
   get confirmText(): string { return this.translate.instant('CHAT.CONFIRM'); }
