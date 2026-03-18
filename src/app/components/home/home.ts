@@ -328,7 +328,10 @@ export class Home implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const name = this.usernameForm.value.username.trim();
+    const name = this.usernameForm.value.username
+  .replace(/\s+/g, ' ')
+  .trim();
+
     if (!name) return;
 
     const randomSuffix = Math.floor(100000 + Math.random() * 900000);
