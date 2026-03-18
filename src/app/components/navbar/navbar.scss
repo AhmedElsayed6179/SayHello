@@ -187,6 +187,10 @@
   strong {
     color: $primary;
     font-size: 1rem;
+
+    body.dark-mode & {
+      color: $dark-text;
+    }
   }
 
   &:hover {

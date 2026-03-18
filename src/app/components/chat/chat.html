@@ -131,13 +131,19 @@
   <div class="input-wrapper">
     <div class="input-inner" [ngClass]="isRtl ? 'rtl' : 'ltr'">
 
-      <button *ngIf="!showWelcome && !isRecording" class="emoji-btn" [class.active]="showEmoji" type="button" (click)="onOpentoggleEmoji()">
+      <button *ngIf="!showWelcome && !isRecording" class="emoji-btn" [class.active]="showEmoji" type="button"
+        (click)="onOpentoggleEmoji()">
         <i class="far fa-smile-wink"></i>
       </button>
 
+      <!-- Live waveform bars - visible only while recording -->
+      <div *ngIf="isRecording && !showWelcome" class="recording-wave-bars">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+
       <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
         [disabled]="!connected || isRecording"
-        [placeholder]="isRecording ? '' : (showWelcome ? ('CHAT.WELCOME_PLACEHOLDER'|translate) : ('CHAT.PLACEHOLDER'|translate))" />
+        [placeholder]="isRecording ? ('CHAT.RECORDING_PLACEHOLDER' | translate) : (showWelcome ? ('CHAT.WELCOME_PLACEHOLDER'|translate) : ('CHAT.PLACEHOLDER'|translate))" />
 
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">
@@ -162,21 +168,17 @@
       </button>
     </div>
 
-        <div *ngIf="showEmoji" class="emoji-picker" [class.dark-mode]="isDarkMode">
-          <div class="emoji-sheet-header">
-            <span class="emoji-sheet-handle"></span>
-            <span class="emoji-sheet-title">{{ 'CHAT.EMOJI' | translate }}</span>
-            <button class="emoji-sheet-close" (click)="showEmoji = false" type="button">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <emoji-mart
-            [darkMode]="isDarkMode"
-            [isNative]="true"
-            [showPreview]="false"
-            (emojiSelect)="onEmojiSelect($event)">
-          </emoji-mart>
-        </div>
+    <div *ngIf="showEmoji" class="emoji-picker" [class.dark-mode]="isDarkMode">
+      <div class="emoji-sheet-header">
+        <span class="emoji-sheet-handle"></span>
+        <span class="emoji-sheet-title">{{ 'CHAT.EMOJI' | translate }}</span>
+        <button class="emoji-sheet-close" (click)="showEmoji = false" type="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <emoji-mart [darkMode]="isDarkMode" [isNative]="true" [showPreview]="false" (emojiSelect)="onEmojiSelect($event)">
+      </emoji-mart>
+    </div>
 
     <!-- Mobile overlay backdrop — closes picker on tap -->
     <div *ngIf="showEmoji" class="emoji-overlay" (click)="showEmoji = false"></div>
