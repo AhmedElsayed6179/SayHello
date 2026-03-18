@@ -1,9 +1,5 @@
 @use '../../variables/index' as *;
 
-// ══════════════════════════════════════
-// NAVBAR — Glass-morphism + Blur
-// ══════════════════════════════════════
-
 .navbar {
   direction: ltr !important;
   backdrop-filter: blur(20px) saturate(180%);
