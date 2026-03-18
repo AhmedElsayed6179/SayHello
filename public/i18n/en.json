@@ -227,7 +227,7 @@
     "INFO": "Info",
     "RECORD_CANCELED": "Recording was canceled because the other user left the chat",
     "EMOJI": "Emoji",
-    "RECORDING_PLACEHOLDER": "Recording voice message..."
+    "RECORDING_PLACEHOLDER": "Recording..."
   },
   "VIDEOCALL": {
     "TITLE": "Video Call",

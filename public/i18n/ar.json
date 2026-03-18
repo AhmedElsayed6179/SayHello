@@ -227,7 +227,7 @@
     "INFO": "تنبيه",
     "RECORD_CANCELED": "تم إلغاء التسجيل لأن الطرف الآخر غادر المحادثة",
     "EMOJI": "الإيموجي",
-    "RECORDING_PLACEHOLDER": "جارٍ تسجيل مقطع صوتي..."
+    "RECORDING_PLACEHOLDER": "جارٍ تسجيل..."
   },
   "VIDEOCALL": {
     "TITLE": "مكالمة فيديو",
