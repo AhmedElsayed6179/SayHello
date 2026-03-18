@@ -59,6 +59,7 @@ export class Chat implements OnInit, OnDestroy {
   private pausedAt = 0;          // timestamp when pause started
   private totalPausedMs = 0;     // cumulative paused duration in ms
   partnerDisconnected = false;
+  private partnerSentAnything = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -99,6 +100,7 @@ export class Chat implements OnInit, OnDestroy {
 
     this.socket.on('connected', () => this.zone.run(() => {
       this.connected = true; this.waiting = false;
+      this.partnerSentAnything = false;
       const wi = this.messages.findIndex(m => m.key === 'CHAT.WAITING');
       if (wi !== -1) { this.messages.splice(wi, 1); this.waitingMessageShown = false; }
       this.addSystemMessage('CHAT.CONNECTED');
@@ -118,13 +120,25 @@ export class Chat implements OnInit, OnDestroy {
       if (this.isRecording) {
         this.isCanceled = true; this.mediaRecorder?.stop();
         this.stopRecordTimer(); this.stopRecordingPing(); this.stopMicStream(); this.isRecording = false;
+        if (!this.partnerSentAnything) {
+          // Partner left mid-recording without sending anything → auto-next after dismissing alert
+          Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.INFO'), text: this.translate.instant('CHAT.RECORD_CANCELED'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') })
+            .then(() => this.nextChat());
+          return;
+        }
         Swal.fire({ icon: 'info', title: this.translate.instant('CHAT.INFO'), text: this.translate.instant('CHAT.RECORD_CANCELED'), confirmButtonText: this.translate.instant('HOME.ERROR_OK') });
+      }
+      // Auto-next: partner left without sending anything
+      if (!this.partnerSentAnything) {
+        setTimeout(() => this.nextChat(), 800);
+        return;
       }
       this.addSystemMessage('CHAT.PARTNER_LEFT'); this.cd.detectChanges();
     }));
 
     // ── Incoming messages ──
     this.socket.on('newMessage', (msg: any) => this.zone.run(() => {
+      this.partnerSentAnything = true;
       if (!this.messages.find(m => m.id === msg.id)) {
         this.messages.push({
           id: msg.id, sender: 'user', senderName: msg.sender,
@@ -150,6 +164,7 @@ export class Chat implements OnInit, OnDestroy {
     }));
 
     this.socket.on('newVoice', (msg: any) => this.zone.run(() => {
+      if (msg.sender !== this.myName) this.partnerSentAnything = true;
       const isOwnMsg = msg.sender === this.myName;
 
       // Own voice: just upgrade status of existing message (already added in uploadVoice)
