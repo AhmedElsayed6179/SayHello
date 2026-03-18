@@ -136,14 +136,14 @@
         <i class="far fa-smile-wink"></i>
       </button>
 
-      <!-- Live waveform bars - visible only while recording -->
-      <div *ngIf="isRecording && !showWelcome" class="recording-wave-bars">
+      <!-- Live waveform bars - visible only while actively recording (not paused) -->
+      <div *ngIf="isRecording && !showWelcome && !isRecordingPaused" class="recording-wave-bars">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
 
       <input type="text" class="chat-input" [(ngModel)]="message" (keyup.enter)="sendMessage()" (input)="onTyping()"
         [disabled]="!connected || isRecording"
-        [placeholder]="isRecording ? ('CHAT.RECORDING_PLACEHOLDER' | translate) : (showWelcome ? ('CHAT.WELCOME_PLACEHOLDER'|translate) : ('CHAT.PLACEHOLDER'|translate))" />
+        [placeholder]="isRecording && !isRecordingPaused ? ('CHAT.RECORDING_PLACEHOLDER' | translate) : (showWelcome ? ('CHAT.WELCOME_PLACEHOLDER'|translate) : ('CHAT.PLACEHOLDER'|translate))" />
 
       <ng-container *ngIf="isRecording">
         <div class="cancel-container">

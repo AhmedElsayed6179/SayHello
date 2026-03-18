@@ -1289,14 +1289,64 @@ body.dark-mode {
 // RECORDING STATE — WhatsApp-style Live Bar
 // ══════════════════════════════════════════════
 
-// ── Input bar glows red while recording ────────
+// ── Red dot pulse on the left ─────────────────
+.input-inner:has(.cancel-container)::before {
+  content: '';
+  display: block;
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  border-radius: 50%;
+  background: $danger;
+  margin-left: 10px;
+  flex-shrink: 0;
+  align-self: center;
+  animation: micDotPulse 1.2s ease-in-out infinite;
+  transition: background 0.3s ease;
+}
+
+// Paused → dot turns yellow/amber, no pulse
+.input-inner:has(.cancel-container):has(.pause-btn .fa-play)::before {
+  background: $warning;
+  animation: none;
+  opacity: 0.85;
+}
+
+@keyframes micDotPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.5);
+  }
+  50% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 5px rgba(244, 63, 94, 0);
+  }
+}
+
+// ── Border glow — red while recording ─────────
 .input-inner:has(.cancel-container) {
   border-color: $danger !important;
   background: rgba(244, 63, 94, 0.03) !important;
   animation: recordingBorderPulse 1.8s ease-in-out infinite;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease;
 
   .dark-mode & {
     background: rgba(244, 63, 94, 0.05) !important;
+  }
+}
+
+// Paused → border turns amber, no animation
+.input-inner:has(.cancel-container):has(.pause-btn .fa-play) {
+  border-color: $warning !important;
+  background: rgba(251, 191, 36, 0.04) !important;
+  animation: none !important;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.14) !important;
+
+  .dark-mode & {
+    background: rgba(251, 191, 36, 0.06) !important;
   }
 }
 
@@ -1314,17 +1364,16 @@ body.dark-mode {
   }
 }
 
-// ── Placeholder turns red + pulses while recording
-.input-inner:has(.cancel-container) .chat-input {
-  &::placeholder {
-    color: $danger !important;
-    font-weight: 600;
-    font-style: italic;
-    letter-spacing: 0.25px;
-    animation: recordingTextFade 1.6s ease-in-out infinite;
-  }
+// ── Placeholder — red pulsing while recording ──
+.input-inner:has(.cancel-container) .chat-input::placeholder {
+  color: $danger !important;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.25px;
+  animation: recordingTextFade 1.6s ease-in-out infinite;
 }
 
+// Paused → placeholder empty (handled in HTML via isRecordingPaused)
 @keyframes recordingTextFade {
   0%,
   100% {
@@ -1335,16 +1384,13 @@ body.dark-mode {
   }
 }
 
-// ── Live waveform bars inside the input bar ────
-// Add <div class="recording-wave-bars"><span></span><span></span><span></span><span></span><span></span></div>
-// right before the .chat-input when isRecording
+// ── Live waveform bars ─────────────────────────
 .recording-wave-bars {
   display: flex;
   align-items: center;
   gap: 3px;
   flex-shrink: 0;
   padding: 0 6px 0 2px;
-  height: 100%;
 
   span {
     display: block;
@@ -1392,41 +1438,11 @@ body.dark-mode {
   }
 }
 
-// ── Red mic pulse dot (decorative, shown via ::before on input-inner) ──
-.input-inner:has(.cancel-container)::before {
-  content: '';
-  display: block;
-  width: 9px;
-  height: 9px;
-  min-width: 9px;
-  border-radius: 50%;
-  background: $danger;
-  margin-left: 10px;
-  animation: micDotPulse 1.2s ease-in-out infinite;
-  flex-shrink: 0;
-  align-self: center;
-}
-
-@keyframes micDotPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.5);
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.85;
-    box-shadow: 0 0 0 5px rgba(244, 63, 94, 0);
-  }
-}
-
-// ── Mobile: tighten spacing slightly ───────────
+// ── Mobile tweaks ──────────────────────────────
 @media (max-width: 640px) {
   .recording-wave-bars {
     padding: 0 4px 0 0;
     gap: 2.5px;
-
     span {
       width: 2.5px;
     }

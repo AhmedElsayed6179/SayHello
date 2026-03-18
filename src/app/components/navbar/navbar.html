@@ -38,7 +38,7 @@
         'color': isDarkMode ? '#f1f1f1' : '#212529'
       }" style="font-size: 0.95rem;">
         <span class="me-1">👤</span>
-        <strong>{{ connectedUsers$ | async }}</strong>
+        <strong [ngStyle]="{'color': isDarkMode ? '#e8eaf0' : '#1a3a8f'}">{{ connectedUsers$ | async }}</strong>
       </div>
     </div>
   </div>
