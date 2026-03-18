@@ -89,7 +89,7 @@
     font-weight: 600;
     text-decoration: none;
     color: $light-text-muted;
-    background: rgba(26, 79, 168, 0.06);
+    background: rgba(26, 58, 143, 0.06);
     border: 1px solid $light-border;
     transition: all 0.22s ease;
 
@@ -101,8 +101,8 @@
 
     &:hover {
       color: $primary;
-      background: rgba(26, 79, 168, 0.1);
-      border-color: rgba(26, 79, 168, 0.25);
+      background: rgba(26, 58, 143, 0.1);
+      border-color: rgba(26, 58, 143, 0.25);
       transform: translateY(-2px);
     }
 

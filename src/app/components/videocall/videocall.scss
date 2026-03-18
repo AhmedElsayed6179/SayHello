@@ -2,7 +2,7 @@
 //  VideoCall — Premium Redesign v2
 // ═══════════════════════════════════════════════
 $vc-primary: #1a4fa8;
-$vc-secondary: #06b6d4;
+$vc-secondary: #1d6ecf;
 $vc-accent: #a78bfa;
 $vc-danger: #f43f5e;
 $vc-success: #10b981;
@@ -69,7 +69,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   .light-mode & {
     background: $vc-light-card;
     border: 1px solid $vc-light-border;
-    box-shadow: 0 24px 60px rgba(26, 79, 168, 0.12);
+    box-shadow: 0 24px 60px rgba(26, 58, 143, 0.12);
   }
   h2 {
     font-weight: 800;
@@ -103,7 +103,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   margin: 0 auto 1.8rem;
   font-size: 2rem;
   color: #fff;
-  box-shadow: 0 8px 28px rgba(26, 79, 168, 0.45);
+  box-shadow: 0 8px 28px rgba(26, 58, 143, 0.45);
 }
 .vc-welcome-perms {
   display: flex;
@@ -148,10 +148,10 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  box-shadow: 0 4px 18px rgba(26, 79, 168, 0.4);
+  box-shadow: 0 4px 18px rgba(26, 58, 143, 0.4);
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(26, 79, 168, 0.5);
+    box-shadow: 0 8px 28px rgba(26, 58, 143, 0.5);
   }
   &:active {
     transform: translateY(0);
@@ -208,14 +208,14 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  background: rgba(26, 79, 168, 0.12);
-  border: 2px solid rgba(26, 79, 168, 0.2);
+  background: rgba(26, 58, 143, 0.12);
+  border: 2px solid rgba(26, 58, 143, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.2rem;
   font-size: 2.4rem;
-  color: rgba(26, 79, 168, 0.5);
+  color: rgba(26, 58, 143, 0.5);
 }
 .waiting-dots {
   display: flex;
@@ -277,7 +277,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   border: 2.5px solid rgba(255, 255, 255, 0.25);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.65),
-    0 0 0 1px rgba(26, 79, 168, 0.15);
+    0 0 0 1px rgba(26, 58, 143, 0.15);
   z-index: 9999;
   cursor: grab;
   touch-action: none; // disable scroll-on-drag on mobile
@@ -288,7 +288,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   user-select: none;
 
   &:hover {
-    border-color: rgba(26, 79, 168, 0.6);
+    border-color: rgba(26, 58, 143, 0.6);
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.8),
       0 0 0 2px $vc-primary;
@@ -424,10 +424,10 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     }
   }
   &.next-btn {
-    background: rgba(26, 79, 168, 0.2);
-    border-color: rgba(26, 79, 168, 0.3);
+    background: rgba(26, 58, 143, 0.2);
+    border-color: rgba(26, 58, 143, 0.3);
     &:hover {
-      background: rgba(26, 79, 168, 0.35);
+      background: rgba(26, 58, 143, 0.35);
     }
     &.confirm {
       background: $vc-success;
@@ -666,7 +666,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   background: linear-gradient(135deg, $vc-primary, $vc-secondary);
   color: #fff;
   border-bottom-right-radius: 5px;
-  box-shadow: 0 3px 12px rgba(26, 79, 168, 0.3);
+  box-shadow: 0 3px 12px rgba(26, 58, 143, 0.3);
 }
 .vc-msg-left .vc-bubble {
   border-bottom-left-radius: 5px;
@@ -839,7 +839,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     border-color: $vc-dark-border;
     &:focus {
       border-color: $vc-primary;
-      box-shadow: 0 0 0 3px rgba(26, 79, 168, 0.15);
+      box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.15);
     }
     &::placeholder {
       color: $vc-dark-muted;
@@ -851,7 +851,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
     border-color: $vc-light-border;
     &:focus {
       border-color: $vc-primary;
-      box-shadow: 0 0 0 3px rgba(26, 79, 168, 0.12);
+      box-shadow: 0 0 0 3px rgba(26, 58, 143, 0.12);
     }
     &::placeholder {
       color: $vc-light-muted;
@@ -875,11 +875,11 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   font-size: 0.9rem;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 3px 10px rgba(26, 79, 168, 0.35);
+  box-shadow: 0 3px 10px rgba(26, 58, 143, 0.35);
   transition: all 0.2s;
   &:hover {
     transform: scale(1.1);
-    box-shadow: 0 5px 16px rgba(26, 79, 168, 0.45);
+    box-shadow: 0 5px 16px rgba(26, 58, 143, 0.45);
   }
   &:active {
     transform: scale(0.93);
@@ -931,7 +931,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 
   // ── Active / open state ──
   &.active {
-    background: rgba(26, 79, 168, 0.14) !important;
+    background: rgba(26, 58, 143, 0.14) !important;
     color: $vc-primary !important;
     transform: scale(1.08) rotate(10deg);
 
@@ -945,7 +945,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
       position: absolute;
       inset: -3px;
       border-radius: 50%;
-      border: 2px solid rgba(26, 79, 168, 0.35);
+      border: 2px solid rgba(26, 58, 143, 0.35);
       animation: vcEmojiBtnRing 1.6s ease-in-out infinite;
     }
   }
@@ -974,11 +974,11 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 // ── CSS Variables ────────────────────────────────────────
 .videocall-wrapper {
   --vc-ep-bg: #ffffff;
-  --vc-ep-border: rgba(26, 79, 168, 0.14);
+  --vc-ep-border: rgba(26, 58, 143, 0.14);
   --vc-ep-header-bg: #f8f9fc;
   --vc-ep-header-text: #0f172a;
   --vc-ep-handle: rgba(0, 0, 0, 0.15);
-  --vc-ep-divider: rgba(26, 79, 168, 0.12);
+  --vc-ep-divider: rgba(26, 58, 143, 0.12);
   --vc-ep-close-bg: rgba(0, 0, 0, 0.07);
   --vc-ep-close-hover: rgba(244, 63, 94, 0.12);
   --vc-ep-close-color: #64748b;
@@ -999,8 +999,8 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 // ── emoji-mart host ─────────────────────────────────────
 .videocall-wrapper emoji-mart {
   --em-rgb-accent: 79, 142, 247;
-  --em-color-border: rgba(26, 79, 168, 0.14);
-  --em-color-border-over: rgba(26, 79, 168, 0.32);
+  --em-color-border: rgba(26, 58, 143, 0.14);
+  --em-color-border-over: rgba(26, 58, 143, 0.32);
   font-family: 'Outfit', 'Segoe UI', sans-serif !important;
   width: 340px !important;
   height: 390px !important;
@@ -1032,8 +1032,8 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
   border: 1px solid var(--vc-ep-border);
   box-shadow:
     0 12px 48px rgba(0, 0, 0, 0.18),
-    0 2px 10px rgba(26, 79, 168, 0.1),
-    0 0 0 1px rgba(26, 79, 168, 0.12);
+    0 2px 10px rgba(26, 58, 143, 0.1),
+    0 0 0 1px rgba(26, 58, 143, 0.12);
   animation: vcEpPopIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   display: flex;
   flex-direction: column;
@@ -1097,7 +1097,7 @@ $vc-gradient: linear-gradient(135deg, $vc-primary, $vc-secondary);
 
       &:active {
         width: 56px;
-        background: rgba(26, 79, 168, 0.5);
+        background: rgba(26, 58, 143, 0.5);
       }
     }
 

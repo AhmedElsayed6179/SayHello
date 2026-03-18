@@ -4,12 +4,12 @@
 // ════════════════════════════════════════════════
 
 // ── Brand Palette ─────────────────────────────
-$primary:        #1a4fa8;   // deep blue (light mode primary)
-$primary-dark:   #124190;
-$primary-glow:   rgba(26, 79, 168, 0.30);
-$primary-light:  #2563eb;
-$secondary:      #06b6d4;
-$secondary-glow: rgba(6, 182, 212, 0.3);
+$primary:        #1a3a8f;
+$primary-dark:   #112d7a;
+$primary-glow:   rgba(26, 58, 143, 0.35);
+$primary-light:  #2251c5;
+$secondary:      #1d6ecf;
+$secondary-glow: rgba(29, 110, 207, 0.3);
 $accent:         #a78bfa;
 $success:        #10b981;
 $success-dark:   #059669;
@@ -19,15 +19,15 @@ $warning:        #fbbf24;
 $info:           #38bdf8;
 
 // ── Dark Theme ────────────────────────────────
-$dark-bg:         #0a0a0a;
-$dark-bg-light:   #141414;
-$dark-bg-lighter: #1e1e1e;
-$dark-bg-card:    #111111;
-$dark-bg-glass:   rgba(14, 14, 14, 0.85);
+$dark-bg:         #090909;
+$dark-bg-light:   #111111;
+$dark-bg-lighter: #1a1a1a;
+$dark-bg-card:    #101010;
+$dark-bg-glass:   rgba(10, 10, 10, 0.85);
 $dark-text:       #e8eaf0;
-$dark-text-muted: #888888;
-$dark-border:     rgba(255,255,255,0.07);
-$dark-border-accent: rgba(100,100,100,0.30);
+$dark-text-muted: #8b93a8;
+$dark-border:     rgba(255,255,255,0.08);
+$dark-border-accent: rgba(26,58,143,0.25);
 
 // ── Light Theme ───────────────────────────────
 $light-bg:        #ffffff;
@@ -40,16 +40,16 @@ $light-border:    rgba(0,0,0,0.08);
 $light-border-accent: rgba(79,142,247,0.3);
 
 // ── Animated BG Shapes ────────────────────────
-$shape-1: #818cf8;
-$shape-2: #06b6d4;
-$shape-3: #a78bfa;
+$shape-1: #1e4db7;
+$shape-2: #1d6ecf;
+$shape-3: #1a3a8f;
 $shape-4: #f472b6;
 $shape-5: #34d399;
 
 // ── Gradients ─────────────────────────────────
-$gradient-primary:    linear-gradient(135deg, #1a4fa8 0%, #2563eb 50%, #1e40af 100%);
-$gradient-brand:      linear-gradient(135deg, #1a4fa8, #1d6ecf);
+$gradient-primary:    linear-gradient(135deg, #1a3a8f 0%, #1e4db7 50%, #2251c5 100%);
+$gradient-brand:      linear-gradient(135deg, #1a3a8f, #1d6ecf);
 $gradient-light:      linear-gradient(145deg, #f0f4ff 0%, #faf8ff 40%, #f0fbff 100%);
-$gradient-dark:       linear-gradient(145deg, #070707 0%, #0d0d0d 50%, #080808 100%);
+$gradient-dark:       linear-gradient(145deg, #060606 0%, #0a0a0a 50%, #080808 100%);
 $gradient-card-light: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(248,250,255,0.95));
-$gradient-card-dark:  linear-gradient(145deg, rgba(18,18,18,0.9), rgba(12,12,12,0.95));
+$gradient-card-dark:  linear-gradient(145deg, rgba(12,12,12,0.9), rgba(8,8,8,0.95));

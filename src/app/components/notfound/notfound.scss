@@ -33,7 +33,7 @@
     height: 600px;
     top: -200px;
     left: -150px;
-    background: radial-gradient(circle, rgba(26, 79, 168, 0.14) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(26, 58, 143, 0.14) 0%, transparent 70%);
     animation: nfBlobFloat 9s ease-in-out infinite;
   }
 
@@ -108,7 +108,7 @@
 }
 
 .nf-code-glitch2 {
-  background: linear-gradient(135deg, #1d6ecf, #1a4fa8);
+  background: linear-gradient(135deg, #1d6ecf, #1a3a8f);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -138,8 +138,8 @@
   width: 72px;
   height: 72px;
   border-radius: 22px;
-  background: rgba(26, 79, 168, 0.1);
-  border: 1px solid rgba(26, 79, 168, 0.2);
+  background: rgba(26, 58, 143, 0.1);
+  border: 1px solid rgba(26, 58, 143, 0.2);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -149,8 +149,8 @@
   animation: iconSpin 8s ease-in-out infinite;
 
   .dark-mode & {
-    background: rgba(26, 79, 168, 0.12);
-    border-color: rgba(26, 79, 168, 0.25);
+    background: rgba(26, 58, 143, 0.12);
+    border-color: rgba(26, 58, 143, 0.25);
   }
 }
 
@@ -193,12 +193,12 @@
   font-weight: 700;
   font-size: 1rem;
   text-decoration: none;
-  box-shadow: 0 6px 22px rgba(26, 79, 168, 0.4);
+  box-shadow: 0 6px 22px rgba(26, 58, 143, 0.4);
   transition: all 0.25s ease;
 
   &:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(26, 79, 168, 0.55);
+    box-shadow: 0 12px 32px rgba(26, 58, 143, 0.55);
     color: #fff;
     text-decoration: none;
   }
@@ -216,3 +216,4 @@
     font-size: 1.5rem;
   }
 }
+

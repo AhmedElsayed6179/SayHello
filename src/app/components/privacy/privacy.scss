@@ -19,9 +19,9 @@
   letter-spacing: 0.8px;
   text-transform: uppercase;
   margin-bottom: 0.8rem;
-  background: rgba(26, 79, 168, 0.1);
+  background: rgba(26, 58, 143, 0.1);
   color: $primary;
-  border: 1px solid rgba(26, 79, 168, 0.2);
+  border: 1px solid rgba(26, 58, 143, 0.2);
 }
 
 // ══════════════════════════════════════════════════════
@@ -37,8 +37,14 @@
 }
 
 @keyframes heroReveal {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .privacy-hero-bg {
@@ -55,17 +61,23 @@
   opacity: 0.15;
 
   &.b1 {
-    width: 400px; height: 400px;
+    width: 400px;
+    height: 400px;
     background: $primary;
-    top: -160px; left: -100px;
+    top: -160px;
+    left: -100px;
   }
   &.b2 {
-    width: 300px; height: 300px;
+    width: 300px;
+    height: 300px;
     background: $accent;
-    top: -80px; right: -80px;
+    top: -80px;
+    right: -80px;
   }
 
-  .dark-mode & { opacity: 0.22; }
+  .dark-mode & {
+    opacity: 0.22;
+  }
 }
 
 .privacy-hero-content {
@@ -74,7 +86,8 @@
 }
 
 .shield-icon-big {
-  width: 88px; height: 88px;
+  width: 88px;
+  height: 88px;
   border-radius: 28px;
   background: $gradient-brand;
   display: flex;
@@ -83,13 +96,18 @@
   font-size: 2.4rem;
   color: #fff;
   margin: 0 auto 1.5rem;
-  box-shadow: 0 12px 36px rgba(26, 79, 168, 0.45);
+  box-shadow: 0 12px 36px rgba(26, 58, 143, 0.45);
   animation: shieldPulse 3s ease infinite;
 }
 
 @keyframes shieldPulse {
-  0%, 100% { box-shadow: 0 12px 36px rgba(26, 79, 168, 0.45); }
-  50%       { box-shadow: 0 16px 48px rgba(26, 79, 168, 0.65); }
+  0%,
+  100% {
+    box-shadow: 0 12px 36px rgba(26, 58, 143, 0.45);
+  }
+  50% {
+    box-shadow: 0 16px 48px rgba(26, 58, 143, 0.65);
+  }
 }
 
 .privacy-hero-content h1 {
@@ -112,7 +130,9 @@
   margin: 0 auto 1.5rem;
   line-height: 1.75;
 
-  .dark-mode & { color: $dark-text-muted; }
+  .dark-mode & {
+    color: $dark-text-muted;
+  }
 }
 
 .privacy-meta {
@@ -129,9 +149,13 @@
     color: $light-text-muted;
     font-weight: 500;
 
-    .dark-mode & { color: $dark-text-muted; }
+    .dark-mode & {
+      color: $dark-text-muted;
+    }
 
-    i { color: $primary; }
+    i {
+      color: $primary;
+    }
   }
 }
 
@@ -156,13 +180,24 @@
   border: 1px solid $light-border;
   backdrop-filter: blur(12px);
   text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s,
+    border-color 0.3s;
   animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 
-  &:nth-child(1) { animation-delay: 0.05s; }
-  &:nth-child(2) { animation-delay: 0.1s; }
-  &:nth-child(3) { animation-delay: 0.15s; }
-  &:nth-child(4) { animation-delay: 0.2s; }
+  &:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+  &:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+  &:nth-child(4) {
+    animation-delay: 0.2s;
+  }
 
   .dark-mode & {
     background: rgba(22, 26, 36, 0.88);
@@ -171,13 +206,14 @@
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 28px rgba(26, 79, 168, 0.14);
-    border-color: rgba(26, 79, 168, 0.25);
+    box-shadow: 0 10px 28px rgba(26, 58, 143, 0.14);
+    border-color: rgba(26, 58, 143, 0.25);
   }
 }
 
 .summary-icon {
-  width: 52px; height: 52px;
+  width: 52px;
+  height: 52px;
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -186,7 +222,9 @@
   margin: 0 auto 1rem;
   transition: transform 0.3s;
 
-  .summary-card:hover & { transform: scale(1.1) rotate(-5deg); }
+  .summary-card:hover & {
+    transform: scale(1.1) rotate(-5deg);
+  }
 }
 
 .summary-card h4 {
@@ -196,7 +234,9 @@
   margin-bottom: 0.4rem;
   color: $light-text;
 
-  .dark-mode & { color: $dark-text; }
+  .dark-mode & {
+    color: $dark-text;
+  }
 }
 
 .summary-card p {
@@ -205,7 +245,9 @@
   line-height: 1.6;
   margin: 0;
 
-  .dark-mode & { color: $dark-text-muted; }
+  .dark-mode & {
+    color: $dark-text-muted;
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -270,10 +312,12 @@
     text-decoration: none;
     transition: all 0.2s;
 
-    .dark-mode & { color: $dark-text-muted; }
+    .dark-mode & {
+      color: $dark-text-muted;
+    }
 
     &:hover {
-      background: rgba(26, 79, 168, 0.08);
+      background: rgba(26, 58, 143, 0.08);
       color: $primary;
     }
   }
@@ -283,11 +327,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px; height: 22px;
+  width: 22px;
+  height: 22px;
   border-radius: 6px;
   font-size: 0.7rem;
   font-weight: 700;
-  background: rgba(26, 79, 168, 0.1);
+  background: rgba(26, 58, 143, 0.1);
   color: $primary;
   flex-shrink: 0;
 }
@@ -317,20 +362,24 @@
   }
 
   &:hover {
-    border-color: rgba(26, 79, 168, 0.25);
+    border-color: rgba(26, 58, 143, 0.25);
   }
 
   &::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 3px;
     background: $gradient-brand;
     opacity: 0;
     transition: opacity 0.3s;
   }
 
-  &:hover::before { opacity: 1; }
+  &:hover::before {
+    opacity: 1;
+  }
 }
 
 .section-num {
@@ -357,7 +406,9 @@
   margin-bottom: 1rem;
   color: $light-text;
 
-  .dark-mode & { color: $dark-text; }
+  .dark-mode & {
+    color: $dark-text;
+  }
 }
 
 .privacy-section p {
@@ -366,9 +417,13 @@
   line-height: 1.8;
   margin-bottom: 0.8rem;
 
-  .dark-mode & { color: $dark-text-muted; }
+  .dark-mode & {
+    color: $dark-text-muted;
+  }
 
-  &:last-child { margin-bottom: 0; }
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 // Lists
@@ -388,7 +443,9 @@
     color: $light-text-muted;
     line-height: 1.65;
 
-    .dark-mode & { color: $dark-text-muted; }
+    .dark-mode & {
+      color: $dark-text-muted;
+    }
 
     i {
       color: $success;
@@ -423,14 +480,18 @@
 }
 
 .highlight-box {
-  background: rgba(26, 79, 168, 0.06);
-  border: 1px solid rgba(26, 79, 168, 0.18);
+  background: rgba(26, 58, 143, 0.06);
+  border: 1px solid rgba(26, 58, 143, 0.18);
 
-  i { color: $primary; }
+  i {
+    color: $primary;
+  }
   p {
     color: $primary !important;
 
-    .dark-mode & { color: $primary !important; }
+    .dark-mode & {
+      color: $primary !important;
+    }
   }
 }
 
@@ -438,11 +499,15 @@
   background: rgba(251, 191, 36, 0.08);
   border: 1px solid rgba(251, 191, 36, 0.25);
 
-  i { color: $warning; }
+  i {
+    color: $warning;
+  }
   p {
     color: #92400e !important;
 
-    .dark-mode & { color: #fbbf24 !important; }
+    .dark-mode & {
+      color: #fbbf24 !important;
+    }
   }
 }
 
@@ -453,12 +518,12 @@
   gap: 1.5rem;
   padding: 2rem 2.2rem;
   border-radius: 22px;
-  background: linear-gradient(135deg, rgba(26, 79, 168, 0.06), rgba(167, 139, 250, 0.06));
-  border: 1px solid rgba(26, 79, 168, 0.2);
+  background: linear-gradient(135deg, rgba(26, 58, 143, 0.06), rgba(167, 139, 250, 0.06));
+  border: 1px solid rgba(26, 58, 143, 0.2);
 
   .dark-mode & {
-    background: linear-gradient(135deg, rgba(26, 79, 168, 0.08), rgba(167, 139, 250, 0.08));
-    border-color: rgba(26, 79, 168, 0.25);
+    background: linear-gradient(135deg, rgba(26, 58, 143, 0.08), rgba(167, 139, 250, 0.08));
+    border-color: rgba(26, 58, 143, 0.25);
   }
 
   > i {
@@ -474,7 +539,9 @@
     color: $light-text;
     margin-bottom: 0.3rem;
 
-    .dark-mode & { color: $dark-text; }
+    .dark-mode & {
+      color: $dark-text;
+    }
   }
 
   p {
@@ -483,13 +550,21 @@
     margin: 0;
     line-height: 1.6;
 
-    .dark-mode & { color: $dark-text-muted; }
+    .dark-mode & {
+      color: $dark-text-muted;
+    }
   }
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -531,7 +606,8 @@
   }
 
   .shield-icon-big {
-    width: 72px; height: 72px;
+    width: 72px;
+    height: 72px;
     font-size: 2rem;
   }
 }

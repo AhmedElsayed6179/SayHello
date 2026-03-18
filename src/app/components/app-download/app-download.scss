@@ -45,7 +45,7 @@
     height: 500px;
     top: -120px;
     left: -100px;
-    background: radial-gradient(circle, rgba(26, 79, 168, 0.18) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(26, 58, 143, 0.18) 0%, transparent 70%);
     animation: blobFloat 8s ease-in-out infinite;
   }
 
@@ -100,8 +100,8 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: $primary;
-    background: rgba(26, 79, 168, 0.1);
-    border: 1px solid rgba(26, 79, 168, 0.2);
+    background: rgba(26, 58, 143, 0.1);
+    border: 1px solid rgba(26, 58, 143, 0.2);
     padding: 5px 14px;
     border-radius: 100px;
     margin-bottom: 1.2rem;
@@ -180,7 +180,7 @@
 
   &:hover {
     transform: translateY(-10px);
-    box-shadow: 0 28px 60px rgba(26, 79, 168, 0.14);
+    box-shadow: 0 28px 60px rgba(26, 58, 143, 0.14);
     border-color: $light-border-accent;
 
     .dark-mode & {
@@ -206,7 +206,7 @@
   }
 
   &.ios-glow {
-    background: radial-gradient(ellipse at 50% 0%, rgba(26, 79, 168, 0.1) 0%, transparent 60%);
+    background: radial-gradient(ellipse at 50% 0%, rgba(26, 58, 143, 0.1) 0%, transparent 60%);
   }
 }
 
@@ -252,8 +252,8 @@
 
 .dl-badge-soon {
   color: $primary;
-  background: rgba(26, 79, 168, 0.1);
-  border: 1px solid rgba(26, 79, 168, 0.2);
+  background: rgba(26, 58, 143, 0.1);
+  border: 1px solid rgba(26, 58, 143, 0.2);
 }
 
 // ── OS Icon ───────────────────────────────────
@@ -274,9 +274,9 @@
   }
 
   &.ios-icon {
-    background: linear-gradient(135deg, rgba(26, 79, 168, 0.12), rgba(6, 182, 212, 0.08));
+    background: linear-gradient(135deg, rgba(26, 58, 143, 0.12), rgba(6, 182, 212, 0.08));
     color: $primary;
-    border: 1px solid rgba(26, 79, 168, 0.2);
+    border: 1px solid rgba(26, 58, 143, 0.2);
   }
 }
 
@@ -360,15 +360,15 @@
   }
 
   &.dl-btn-ios {
-    background: rgba(26, 79, 168, 0.08);
+    background: rgba(26, 58, 143, 0.08);
     color: $primary;
-    border: 1px solid rgba(26, 79, 168, 0.25);
+    border: 1px solid rgba(26, 58, 143, 0.25);
     opacity: 0.6;
     cursor: not-allowed;
 
     .dark-mode & {
-      background: rgba(26, 79, 168, 0.1);
-      border-color: rgba(26, 79, 168, 0.2);
+      background: rgba(26, 58, 143, 0.1);
+      border-color: rgba(26, 58, 143, 0.2);
     }
   }
 }
@@ -391,16 +391,16 @@
   gap: 14px;
   padding: 16px 20px;
   border-radius: 18px;
-  background: rgba(26, 79, 168, 0.06);
-  border: 1px solid rgba(26, 79, 168, 0.14);
+  background: rgba(26, 58, 143, 0.06);
+  border: 1px solid rgba(26, 58, 143, 0.14);
   margin-bottom: 2rem;
   font-size: 0.87rem;
   color: $light-text-muted;
   line-height: 1.6;
 
   .dark-mode & {
-    background: rgba(26, 79, 168, 0.09);
-    border-color: rgba(26, 79, 168, 0.18);
+    background: rgba(26, 58, 143, 0.09);
+    border-color: rgba(26, 58, 143, 0.18);
     color: $dark-text-muted;
   }
 
@@ -413,7 +413,7 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(26, 79, 168, 0.12);
+  background: rgba(26, 58, 143, 0.12);
   color: $primary;
   display: flex;
   align-items: center;
