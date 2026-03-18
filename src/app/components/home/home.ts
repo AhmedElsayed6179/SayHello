@@ -70,6 +70,7 @@ export class Home implements AfterViewInit, OnDestroy {
           Validators.maxLength(20),
           Validators.pattern(/^[a-zA-Z\u0600-\u06FF]+( [a-zA-Z\u0600-\u06FF]+)*$/),
         ],
+updateOn: 'blur'
       }),
     });
 
