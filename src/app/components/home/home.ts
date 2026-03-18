@@ -74,6 +74,18 @@ updateOn: 'blur'
       }),
     });
 
+this.usernameForm.get('username')?.valueChanges.subscribe((value) => {
+    if (value) {
+      const normalized = value
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (value !== normalized) {
+        this.usernameForm.get('username')?.setValue(normalized, { emitEvent: false });
+      }
+    }
+  });
+
     this.sections = [
       {
         icon: 'fas fa-bolt',
