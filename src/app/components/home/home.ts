@@ -70,16 +70,14 @@ export class Home implements AfterViewInit, OnDestroy {
           Validators.maxLength(20),
           Validators.pattern(/^[a-zA-Z\u0600-\u06FF]+( [a-zA-Z\u0600-\u06FF]+)*$/),
         ],
-        updateOn: 'blur'
       }),
     });
 
     this.usernameForm.get('username')?.valueChanges.subscribe((value) => {
       if (value) {
-        const normalized = value
-          .replace(/\s+/g, ' ')
-          .trim();
-
+        // trimStart immediately so leading spaces never block typing
+        // collapse multiple spaces mid-word
+        const normalized = value.replace(/\s+/g, ' ').trimStart();
         if (value !== normalized) {
           this.usernameForm.get('username')?.setValue(normalized, { emitEvent: false });
         }
@@ -307,7 +305,12 @@ export class Home implements AfterViewInit, OnDestroy {
 
   // ── Chat Navigation ────────────────────────────
   openModeWithName(mode: 'chat' | 'video') {
-    const nameVal = this.usernameForm.value.username?.trim();
+    // Final trim before navigation — handles trailing space edge case
+    const rawVal = this.usernameForm.value.username?.trim();
+    if (rawVal) {
+      this.usernameForm.get('username')?.setValue(rawVal, { emitEvent: false });
+    }
+    const nameVal = rawVal;
     if (!nameVal || this.usernameForm.invalid) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       Swal.fire({
