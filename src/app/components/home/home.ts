@@ -6,9 +6,8 @@ import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 import { environment } from '../../environments/environment.development';
-import { Observable, Subscription } from 'rxjs';
 import { ChatService } from '../../service/chat-service';
-import { io, Socket } from 'socket.io-client';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -24,10 +23,7 @@ export class Home implements AfterViewInit, OnDestroy, OnInit {
   showModeSelector = false;
   private pendingName = '';
   private observer!: IntersectionObserver;
-  connectedUsers$: Observable<number>;
-  connectedUsers = 0;
-  private socket!: Socket;
-  private usersSub!: Subscription;
+  private sub!: Subscription;
 
   // ── Video state ────────────────────────────────
   isVideoPlaying = false;
@@ -111,19 +107,10 @@ export class Home implements AfterViewInit, OnDestroy, OnInit {
         details: ['SECTIONS.THREE.DETAIL1', 'SECTIONS.THREE.DETAIL2', 'SECTIONS.THREE.DETAIL3'],
       },
     ];
-
-    this.connectedUsers$ = this.chatService.connectedUsers$;
   }
 
   ngOnInit() {
-    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
-    this.socket.on('user_count', (count: number) => this.zone.run(() => {
-      this.chatService.connectedUsers$.next(count);
-      this.cd.detectChanges();
-    }));
-
-    this.usersSub = this.connectedUsers$.subscribe((count) => {
-      this.connectedUsers = count;
+    this.sub = this.chatService.connectedUsers$.subscribe(count => {
       this.heroStats[0].value = count + '+';
     });
   }
@@ -158,7 +145,7 @@ export class Home implements AfterViewInit, OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
-    this.usersSub?.unsubscribe();
+    this.sub?.unsubscribe();
   }
 
   // ── Helpers ────────────────────────────────────

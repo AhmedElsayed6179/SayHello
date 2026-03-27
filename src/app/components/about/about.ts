@@ -97,7 +97,7 @@ export class About implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.sub?.unsubscribe();
   }
 
