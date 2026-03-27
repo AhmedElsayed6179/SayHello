@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy, HostListener, NgZone, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 import { environment } from '../../environments/environment.development';
+import { Observable, Subscription } from 'rxjs';
+import { ChatService } from '../../service/chat-service';
+import { io, Socket } from 'socket.io-client';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +16,7 @@ import { environment } from '../../environments/environment.development';
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
 })
-export class Home implements AfterViewInit, OnDestroy {
+export class Home implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('demoVideo') demoVideoRef!: ElementRef<HTMLVideoElement>;
 
   usernameForm: FormGroup;
@@ -21,6 +24,10 @@ export class Home implements AfterViewInit, OnDestroy {
   showModeSelector = false;
   private pendingName = '';
   private observer!: IntersectionObserver;
+  connectedUsers$: Observable<number>;
+  connectedUsers = 0;
+  private socket!: Socket;
+  private usersSub!: Subscription;
 
   // ── Video state ────────────────────────────────
   isVideoPlaying = false;
@@ -29,7 +36,7 @@ export class Home implements AfterViewInit, OnDestroy {
 
   // ── Hero Stats ─────────────────────────────────
   heroStats = [
-    { value: '10K+', label: 'HOME.STAT_USERS' },
+    { value: '0+', label: 'HOME.STAT_USERS' },
     { value: '50+', label: 'HOME.STAT_COUNTRIES' },
     { value: '100%', label: 'HOME.STAT_FREE' },
   ];
@@ -60,7 +67,7 @@ export class Home implements AfterViewInit, OnDestroy {
     es: 'videos/SayHello-demo-es.mp4',
   };
 
-  constructor(private router: Router, private translate: TranslateService) {
+  constructor(private router: Router, private translate: TranslateService, private chatService: ChatService, private zone: NgZone, private cd: ChangeDetectorRef) {
     this.usernameForm = new FormGroup({
       username: new FormControl<string>('', {
         nonNullable: true,
@@ -104,6 +111,21 @@ export class Home implements AfterViewInit, OnDestroy {
         details: ['SECTIONS.THREE.DETAIL1', 'SECTIONS.THREE.DETAIL2', 'SECTIONS.THREE.DETAIL3'],
       },
     ];
+
+    this.connectedUsers$ = this.chatService.connectedUsers$;
+  }
+
+  ngOnInit() {
+    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
+    this.socket.on('user_count', (count: number) => this.zone.run(() => {
+      this.chatService.connectedUsers$.next(count);
+      this.cd.detectChanges();
+    }));
+
+    this.usersSub = this.connectedUsers$.subscribe((count) => {
+      this.connectedUsers = count;
+      this.heroStats[0].value = count + '+';
+    });
   }
 
   // ── Scroll Reveal ──────────────────────────────
@@ -136,6 +158,7 @@ export class Home implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    this.usersSub?.unsubscribe();
   }
 
   // ── Helpers ────────────────────────────────────
@@ -396,4 +419,6 @@ export class Home implements AfterViewInit, OnDestroy {
   get isDarkMode(): boolean {
     return document.body.classList.contains('dark-mode');
   }
+
+
 }
