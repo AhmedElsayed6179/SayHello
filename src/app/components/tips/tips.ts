@@ -33,7 +33,7 @@ export class Tips {
     // ── Chat Tips ──
     {
       category: 'TIPS.CAT_CHAT', key: 'chat', featured: true,
-      icon: 'fas fa-hand-wave', iconBg: 'rgba(79,142,247,0.1)', iconColor: '#4f8ef7',
+      icon: 'fas fa-hand-paper', iconBg: 'rgba(79,142,247,0.1)', iconColor: '#4f8ef7',
       title: 'TIPS.T1_TITLE', desc: 'TIPS.T1_DESC',
       tags: ['TIPS.TAG_BEGINNER'],
     },
@@ -102,7 +102,7 @@ export class Tips {
     },
     {
       category: 'TIPS.CAT_TECH', key: 'tech', featured: false,
-      icon: 'fas fa-browser', iconBg: 'rgba(16,185,129,0.1)', iconColor: '#10b981',
+      icon: 'fas fa-globe', iconBg: 'rgba(16,185,129,0.1)', iconColor: '#10b981',
       title: 'TIPS.T12_TITLE', desc: 'TIPS.T12_DESC',
       tags: ['TIPS.TAG_TECH'],
     },
