@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Observable, Subscription } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
+import { ChatService } from '../../service/chat-service';
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-about',
@@ -9,34 +13,36 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
   templateUrl: './about.html',
   styleUrl: './about.scss',
 })
-export class About {
-  constructor(private translate: TranslateService) {}
+export class About implements OnInit, OnDestroy {
+  private sub!: Subscription;
+
+  constructor(private translate: TranslateService, private chatService: ChatService) { }
 
   // ── Hero badges ───────────────────────────────
   heroBadges = [
     { icon: 'fas fa-user-secret', label: 'HOME.TRUST_ANON_TITLE' },
-    { icon: 'fas fa-infinity',    label: 'HOME.STAT_FREE' },
-    { icon: 'fas fa-globe',       label: 'ABOUT.VAL3_TITLE' },
+    { icon: 'fas fa-infinity', label: 'HOME.STAT_FREE' },
+    { icon: 'fas fa-globe', label: 'ABOUT.VAL3_TITLE' },
   ];
 
   // ── Stats ─────────────────────────────────────
   stats = [
-    { value: '10K+', label: 'ABOUT.STAT_USERS' },
-    { value: '50+',  label: 'ABOUT.STAT_COUNTRIES' },
-    { value: '2024', label: 'ABOUT.STAT_FOUNDED' },
+    { value: '0+', label: 'ABOUT.STAT_USERS' },
+    { value: '50+', label: 'ABOUT.STAT_COUNTRIES' },
+    { value: '2025', label: 'ABOUT.STAT_FOUNDED' },
     { value: '100%', label: 'ABOUT.STAT_FREE' },
   ];
 
   // ── Chat / Video feature lists ────────────────
-  chatFeatures  = ['HOME.CHAT_F1', 'HOME.CHAT_F2', 'HOME.CHAT_F3', 'HOME.CHAT_F4'];
+  chatFeatures = ['HOME.CHAT_F1', 'HOME.CHAT_F2', 'HOME.CHAT_F3', 'HOME.CHAT_F4'];
   videoFeatures = ['HOME.VIDEO_F1', 'HOME.VIDEO_F2', 'HOME.VIDEO_F3', 'HOME.VIDEO_F4'];
 
   // ── How it works ──────────────────────────────
   howSteps = [
     { icon: 'fas fa-user-edit', title: 'HOME.STEP1_TITLE', desc: 'HOME.STEP1_DESC' },
-    { icon: 'fas fa-random',    title: 'HOME.STEP2_TITLE', desc: 'HOME.STEP2_DESC' },
-    { icon: 'fas fa-comments',  title: 'HOME.STEP3_TITLE', desc: 'HOME.STEP3_DESC' },
-    { icon: 'fas fa-forward',   title: 'HOME.STEP4_TITLE', desc: 'HOME.STEP4_DESC' },
+    { icon: 'fas fa-random', title: 'HOME.STEP2_TITLE', desc: 'HOME.STEP2_DESC' },
+    { icon: 'fas fa-comments', title: 'HOME.STEP3_TITLE', desc: 'HOME.STEP3_DESC' },
+    { icon: 'fas fa-forward', title: 'HOME.STEP4_TITLE', desc: 'HOME.STEP4_DESC' },
   ];
 
   // ── Values ────────────────────────────────────
@@ -84,6 +90,16 @@ export class About {
       color: '#fbbf24',
     },
   ];
+
+  ngOnInit() {
+    this.sub = this.chatService.connectedUsers$.subscribe(count => {
+      this.stats[0].value = count + '+';
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
 
   get isDarkMode(): boolean {
     return document.body.classList.contains('dark-mode');

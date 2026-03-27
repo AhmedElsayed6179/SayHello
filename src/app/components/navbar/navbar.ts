@@ -4,8 +4,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RouterLink } from "@angular/router";
 import { Observable } from 'rxjs';
 import { ChatService } from '../../service/chat-service';
-import { io, Socket } from 'socket.io-client';
-import { environment } from '../../environments/environment.development';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -18,10 +16,9 @@ export class Navbar implements OnInit {
   currentLang = localStorage.getItem('lang') || 'en';
   private translate = inject(TranslateService);
   connectedUsers$: Observable<number>;
-  private socket!: Socket;
   showDownloadLink = false;
 
-  constructor(private chatService: ChatService, private zone: NgZone, private cd: ChangeDetectorRef) {
+  constructor(private chatService: ChatService) {
     const darkMode = localStorage.getItem('darkMode');
     if (darkMode === 'true') {
       document.body.classList.add('dark-mode');
@@ -30,12 +27,6 @@ export class Navbar implements OnInit {
   }
 
   ngOnInit() {
-    this.socket = io(`${environment.SayHello_Server}`, { transports: ['websocket'] });
-    this.socket.on('user_count', (count: number) => this.zone.run(() => {
-      this.chatService.connectedUsers$.next(count);
-      this.cd.detectChanges();
-    }));
-
     const ua = navigator.userAgent || navigator.vendor || '';
 
     const isApk =
