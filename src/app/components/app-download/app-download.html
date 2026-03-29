@@ -40,10 +40,8 @@
             <span><i class="fas fa-check-circle"></i> {{ 'HOME.TRUST_ENC_TITLE' | translate }}</span>
             <span><i class="fas fa-check-circle"></i> {{ 'HOME.STAT_FREE' | translate }}</span>
           </div>
-          <a
-            href="https://www.dropbox.com/scl/fi/06zjsbedm3liml1psg9ww/SayHello.apk?rlkey=ozezzby3f9bgizg3s0o4m7lmb&st=4atr4zi6&dl=1"
-            class="dl-btn dl-btn-android"
-            download>
+          <a href="https://www.dropbox.com/scl/fi/06zjsbedm3liml1psg9ww/SayHello.apk?rlkey=ozezzby3f9bgizg3s0o4m7lmb&st=4atr4zi6&dl=1"
+            class="dl-btn dl-btn-android" download>
             <i class="fas fa-download"></i>
             {{ 'DOWNLOAD.ANDROID_BUTTON' | translate }}
           </a>
@@ -91,7 +89,7 @@
     <!-- Stats row -->
     <div class="dl-stats">
       <div class="dl-stat-item">
-        <strong>10K+</strong>
+        <strong>{{ connectedUsers$ | async }}+</strong>
         <span>{{ 'HOME.STAT_USERS' | translate }}</span>
       </div>
       <div class="dl-stat-divider"></div>
