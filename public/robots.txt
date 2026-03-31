@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sayhello.up.railway.app/sitemap.xml
+robots.txt
